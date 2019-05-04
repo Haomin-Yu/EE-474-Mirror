@@ -8,7 +8,6 @@
  * Author: Haomin Yu
  */
 #pragma once
-#include "init.h"
 #include <stdbool.h>
 
 #ifndef RAWSTRUCTS_H_
@@ -19,47 +18,46 @@
 struct Task {
 	void (*myTask)(void*);
 	void* taskDataPtr;
+  struct Task* next;
+  struct Task* prev;
 };
 typedef struct Task TCB;
 
 // Data structure for measurement
 struct MeasureData {
-	unsigned int* temperatureRaw;
-	unsigned int* systolicPressRaw;
-	unsigned int* diastolicPressRaw;
-	unsigned int* pulseRateRaw;
+	unsigned int    temperatureRawBuf[8];
+	unsigned int    bloodPressRawBuf[16];
+	unsigned int    pulseRateRawBuf[8];
+  unsigned short* measurementSelection;
 };
 typedef struct MeasureData MeasureDataStruct;
 
 // Data structure for computation
 struct ComputeData {
-	unsigned int* temperatureRaw;
-	unsigned int* systolicPressRaw;
-	unsigned int* diastolicPressRaw;
-	unsigned int* pulseRateRaw;
-	double* tempCorrected;
-	double* sysPressCorrected;
-	double* diasPressCorrected;
-	double* prCorrected;
+	unsigned int temperatureRawBuf[8];
+  unsigned int bloodPressRawBuf[16];
+  unsigned int pulseRateRawBuf[8];
+	double tempCorrectedBuf[8];
+	double bloodPressCorrectedBuf[16];
+	double prCorrectedBuf[8];
+  unsigned short* measurementSelection;
 };
 typedef struct ComputeData ComputeDataStruct;
 
 // Data structure for display
 struct DisplayData {
-	double* tempCorrected;
-	double* sysPressCorrected;
-	double* diasCorrected;
-	double* prCorrected;
+	double tempCorrectedBuf[8];
+  double bloodPressCorrectedBuf[16];
+  double prCorrectedBuf[8];
 	unsigned short* batteryState;
 };
 typedef struct DisplayData DisplayDataStruct;
 
 // Data structure for warning/alarm
 struct WarningAlarmData {
-	unsigned int* temperatureRaw;
-	unsigned int* systolicPressRaw;
-  unsigned int* diastolicPressRaw;
-	unsigned int* pulseRateRaw;
+	unsigned int    temperatureRawBuf[8];
+  unsigned int    bloodPressRawBuf[16];
+  unsigned int    pulseRateRawBuf[8];
 	unsigned short* batteryState;
  
   unsigned char* bpOutOfRange;

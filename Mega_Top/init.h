@@ -14,16 +14,16 @@
 #define INIT_H_
 
 // Measurements
-static unsigned int temperatureRaw_INIT = 75;
-static unsigned int sysPressRaw_INIT    = 80;
-static unsigned int diasPressRaw_INIT   = 80;
-static unsigned int pulseRateRaw_INIT   = 50;
+static unsigned int temperatureRawBuf_INIT[8] = {75, 0, 0, 0, 0, 0, 0, 0};
+static unsigned int bloodPressRawBuf_INIT[16] = {80, 0, 0, 0, 0, 0, 0, 0,
+                                                 80, 0, 0, 0, 0, 0, 0, 0};
+static unsigned int pulseRateRawVuf_INIT[8]   = { 0, 0, 0, 0, 0, 0, 0, 0};
 
 // Display
-static double tempCorrected_INIT      = 0.0;
-static double sysPressCorrected_INIT  = 0.0;
-static double diasPressCorrected_INIT = 0.0;
-static double pulseRateCorrected_INIT = 0.0;
+static double tempCorrectedBuf_INIT[8]        = {0, 0, 0, 0, 0, 0, 0, 0};
+static double bloodPressCorrectedBuf_INIT[16] = {0, 0, 0, 0, 0, 0, 0, 0,
+                                                 0, 0, 0, 0, 0, 0, 0, 0};
+static double pulseRateCorrectedBuf_INIT[8]   = {0, 0, 0, 0, 0, 0, 0, 0};
 
 // Status
 static unsigned short batteryState_INIT = 200;
@@ -39,5 +39,10 @@ static bool bpHigh_INIT   = false;
 static bool tempHigh_INIT = false;
 static bool pulseLow_INIT = false;
 static bool batteryLow    = false;
+
+// TFT Keypad
+static unsigned short functionSelect_INIT       = 0;
+static unsigned short measurementSelection_INIT = 0;
+static unsigned short alarmAcknowledgement_INIT = 0;
 
 #endif /* INIT_H_ */
