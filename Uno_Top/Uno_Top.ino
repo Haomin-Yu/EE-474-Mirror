@@ -7,6 +7,7 @@
  */
 extern "C" {                                            //calls in files
   #include "byteInterpreter.h"
+  #include "measureInterpreter.h"
 }
 
 void setup() {                                          //sets up the serial for sending and recieving information.

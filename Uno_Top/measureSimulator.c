@@ -19,16 +19,18 @@ bool systolicMeasurementDone  = false;
 bool diastolicMeasurementDone = false;
 
 // Simulates raw input of temperature
+static const unsigned int temperatureMin = 15;
+static const unsigned int temperatureMax = 50;
 void temperatureSimulator(unsigned int* tempValuePointer) {
 	unsigned int tempValue = *tempValuePointer;
 	static unsigned int timesCalled = 0;
 	static bool increment           = false;
 	timesCalled++;
 	// Checking the direction of change
-	if(tempValue < 15) {
+	if(tempValue < temperatureMin) {
 		increment = true;
 	}
-	else if(tempValue > 50) {
+	else if(tempValue > temperatureMax) {
 		increment = false;
 	}
 	// Calculating the change in value
@@ -46,6 +48,7 @@ void temperatureSimulator(unsigned int* tempValuePointer) {
 }
 
 // Simulates raw input of systolic press
+static const unsigned int systolicPressThreshold = 100;
 void systolicPressSimulator(unsigned int* sysValuePointer) {
 	unsigned int sysValue = *sysValuePointer;
 	static unsigned int timesCalled = 0;
@@ -57,13 +60,13 @@ void systolicPressSimulator(unsigned int* sysValuePointer) {
 	else {
 		delta = -1;
 	}
-	if(sysValue > 100) {
+	if(sysValue > systolicPressThreshold) {
 		*sysValuePointer = sysPressRaw_INIT;
 	}
 	else {
 		*sysValuePointer = sysValue + delta;
 	}
-  if(*sysValuePointer > 100) {
+  if(*sysValuePointer > systolicPressThreshold) {
     systolicMeasurementDone = true;
   }
   else {
@@ -72,6 +75,7 @@ void systolicPressSimulator(unsigned int* sysValuePointer) {
 }
 
 // Simulates raw input of diastolic press
+static const unsigned int diastolicPressThreshold = 40;
 void diastolicPressSimulator(unsigned int* diasValuePointer) {
 	unsigned int diasValue = *diasValuePointer;
 	static unsigned int timesCalled = 0;
@@ -83,13 +87,13 @@ void diastolicPressSimulator(unsigned int* diasValuePointer) {
 	else {
 		delta = 1;
 	}
-	if(diasValue < 40) {
+	if(diasValue < diastolicPressThreshold) {
 		*diasValuePointer = diasPressRaw_INIT;
 	}
 	else {
 		*diasValuePointer = diasValue + delta;
 	}
-  if(*diasValuePointer < 40) {
+  if(*diasValuePointer < diastolicPressThreshold) {
     diastolicMeasurementDone = true;
   }
   else {
@@ -98,16 +102,19 @@ void diastolicPressSimulator(unsigned int* diasValuePointer) {
 }
 
 // Simulates raw input of pulse rate
+// (This function is deprecated as of Project 3)
+static const unsigned int pulseRateMin = 15;
+static const unsigned int pulseRateMax = 40;
 void pulseRateSimulator(unsigned int* prValuePointer) {
 	unsigned int prValue = *prValuePointer;
 	static unsigned int timesCalled = 0;
 	static bool increment           = false;
 	timesCalled++;
 	// Checking the direction of change
-	if(prValue < 15) {
+	if(prValue < pulseRateMin) {
 		increment = true;
 	}
-	else if(prValue > 40) {
+	else if(prValue > pulseRateMax) {
 		increment = false;
 	}
 	// Calculating the change in value
