@@ -84,4 +84,19 @@ struct Scheduler {
 };
 typedef struct Scheduler SchedulerStruct;
 
+// Data structure for TFT-keypad data
+struct TFTKeypadData {
+  unsigned short* measurementSelection;
+  unsigned short* alarmAcknowledge;
+};
+typedef struct TFTKeypadData TFTKeypadDataStruct;
+
+// Data structure for communications data
+struct CommunicationsData {
+  double tempCorrectedBuf[8];
+  double bloodPressCorrectedBuf[16];
+  double prCorrectedBuf[8];
+};
+typedef struct CommunicationsData CommunicationsDataStruct;
+
 #endif /* RAWSTRUCTS_H_ */
