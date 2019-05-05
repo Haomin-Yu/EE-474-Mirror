@@ -110,7 +110,7 @@ void scheduler() {                                                              
   insert(AlarmTask);
   insert(DisplayTask);
 
-  while (Head != NULL) {
+  while (Head != NULL) {                                                                          //loop through tasks
     Head.myTask(Head.taskDataPtr);
     rmv(Head);
   }
