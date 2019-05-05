@@ -44,34 +44,29 @@ TCB ComputationTask = (TCB) {                                                   
   &compute,
   &ComputeData,
   NULL,
-  MeasurementTask
+  NULL
 };
 
 TCB StatusTask = (TCB) {                                                                          //defines a task for status
   &status,
   &Status,
   NULL,
-  ComputationTask
+  NULL
 };
 
 TCB AlarmTask = (TCB) {                                                                           //defines a task for alarms and warnings
   &alarm,
   &WarningAlarmData,
   NULL,
-  StatusTask
+  NULL
 };
 
 TCB DisplayTask = (TCB) {                                                                         //defines a task for display
   &display,
   &DisplayData,
   NULL,
-  AlarmTask
+  NULL
 };
-
-MeasurementTask.next() = ComputationTask;
-ComputationTask.next() = StatusTask;
-StatusTask.next() = AlarmTask;
-AlarmTask.next() = DisplayTask;
 
 void insert(TCB task) {
   if(Head == NULL) {
@@ -84,9 +79,22 @@ void insert(TCB task) {
   }
 }
 
-void rmv() {
-  Tail = Tail.prev();
-  Tail.next() = NULL;
+void rmv(TCB task) {
+  if (Head != NULL and Tail != NULL) {                    //checks to see if remove is redundant
+    if (Head == Tail) {                                   //checks for single node
+      Head = NULL;
+      Tail = NULL;
+    } else if (Head == task) {                            //checks for head task to be removed
+      Head = Head.next();
+      Head.prev() = NULL;
+    } else if (Tail == task) {                            //checks for last task to be removed
+      Tail = Tail.prev();
+      Tail.next() = NULL;
+    }
+    else {
+      //need to go through the linked list to remove
+    }
+  }
 }
 
 TCB taskQueue[] = {MeasurementTask, ComputationTask, StatusTask, AlarmTask, DisplayTask, NULL};   //creates an array of the tasks so they can easily be executed in order.
@@ -96,9 +104,19 @@ static const unsigned long EACH_TASK_TIME = 5000;                               
                                                                                                   //be executed. in this case its set to 5 seconds but can be changed in milliseconds.
 void scheduler() {                                                                                //creates scheduler function that is to be called in a loop to constantly run the order.
   static unsigned long previousTime = 0;
-  for(int i = 0; i < 5; i++) {
-    taskQueue[i].myTask(taskQueue[i].taskDataPtr);                                                //loops through tasks to be executed.
+  insert(MeasurementTask);
+  insert(ComputationTask);
+  insert(StatusTask);
+  insert(AlarmTask);
+  insert(DisplayTask);
+
+  while (Head != NULL) {
+    Head.myTask(Head.taskDataPtr);
+    rmv(Head);
   }
+  //for(int i = 0; i < 5; i++) {
+  //  taskQueue[i].myTask(taskQueue[i].taskDataPtr);                                                //loops through tasks to be executed.
+  //}
   if((millis() - previousTime) > EACH_TASK_TIME) {                                                //if its been 5 seconds or more sets enable true so the functions will execute.
     previousTime  = millis();
     enableMeasure = true;
