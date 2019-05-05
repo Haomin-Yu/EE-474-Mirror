@@ -30,30 +30,64 @@ extern bool enableCompute;                                                      
 extern bool enableDisplay;                                                                        //creates an enable variable to tell when display should run
 extern bool enableStatus;                                                                         //creates an enable variable to tell when status should run
 
+TCB Head = NULL;
+TCB Tail = NULL;
+
 TCB MeasurementTask = (TCB) {                                                                     //defines a task for measurements
   &measure,
-  &MeasureData
+  &MeasureData,
+  NULL,
+  NULL
 };
 
 TCB ComputationTask = (TCB) {                                                                     //defines a task for computation
   &compute,
-  &ComputeData
+  &ComputeData,
+  NULL,
+  MeasurementTask
 };
 
 TCB StatusTask = (TCB) {                                                                          //defines a task for status
   &status,
-  &Status
+  &Status,
+  NULL,
+  ComputationTask
 };
 
 TCB AlarmTask = (TCB) {                                                                           //defines a task for alarms and warnings
   &alarm,
-  &WarningAlarmData
+  &WarningAlarmData,
+  NULL,
+  StatusTask
 };
 
 TCB DisplayTask = (TCB) {                                                                         //defines a task for display
   &display,
-  &DisplayData
+  &DisplayData,
+  NULL,
+  AlarmTask
 };
+
+MeasurementTask.next() = ComputationTask;
+ComputationTask.next() = StatusTask;
+StatusTask.next() = AlarmTask;
+AlarmTask.next() = DisplayTask;
+
+void insert(TCB task) {
+  if(Head == NULL) {
+    Head = task;
+    Tail = task;
+  } else {
+    Tail.next() = task;
+    task.prev() = Tail;
+    Tail = task;
+  }
+}
+
+void rmv() {
+  Tail = Tail.prev();
+  Tail.next() = NULL;
+}
 
 TCB taskQueue[] = {MeasurementTask, ComputationTask, StatusTask, AlarmTask, DisplayTask, NULL};   //creates an array of the tasks so they can easily be executed in order.
 
