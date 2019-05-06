@@ -12,6 +12,13 @@ static const unsigned short measureTemp      = 0;
 static const unsigned short measureSysPress  = 1;
 static const unsigned short measureDiasPress = 2;
 static const unsigned short measurePulseRate = 3;
+// Global variables
+// (Indicating whether a new measurement has been made)
+bool tempRawChanged      = true;
+bool sysPressRawChanged  = true;
+bool diasPressRawChanged = true;
+bool pulseRateRawChanged = true;
+
 // Measures the data 'temperatureRaw', 'systolicPressRaw',
 // 'diastolicPressRaw', and/or 'pulseRateRaw' beased on
 // the given measureSelection in 'Data'
@@ -22,18 +29,22 @@ void measure(void* Data) {
       case measureTemp:
         data.temperatureRawBuf[*data.nextTemperatureIndex] = getSerialTemp();
         *data.nextTemperatureIndex = (*data.nextTemperatureIndex + 1) % 8;
+        tempRawChanged = true;
         break;
       case measureSysPress:
         data.bloodPressRawBuf[*data.nextSysPressIndex] = getSysPress();
         *data.nextSysPressIndex = (*data.nextSysPressIndex + 1) % 8;
+        sysPressRawChanged = true;
         break;
       case measureDiasPress:
         data.bloodPressRawBuf[*data.nextDiasPressIndex] = getDiasPress();
         *data.nextDiasPressIndex = ((*data.nextDiasPressIndex + 1) % 8) + 8;
+        diasPressRawChanged = true;
         break;
       case measurePulseRate:
         data.pulseRateRawBuf[*data.nextPulseRateIndex] = getPulseRate();
         *data.nextPulseRateIndex = (*data.nextPulseRateIndex + 1) % 8;
+        pulseRateRawChanged = true;
         break;
       default:
         break;
