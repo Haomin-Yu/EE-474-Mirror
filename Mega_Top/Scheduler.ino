@@ -9,8 +9,7 @@
  * Author: Nathan Ness
  * 
  */
-
- //importing files
+// Importing files
 extern "C" {
   #include "compute.h"
   #include "status.h"
