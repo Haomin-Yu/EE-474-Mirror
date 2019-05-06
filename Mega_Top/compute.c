@@ -43,16 +43,16 @@ void compute(void* Data) {
    if(sysPressRawChanged) {
      unsigned short index = (*data.nextSysPressIndex == 0)? 
                             7: (*data.nextSysPressIndex - 1);
-     
+     data.bloodPressCorrectedBuf[index] = computeSys(data.bloodPressRawBuf[*data.nextSysPressIndex]);
      sysPressRawChanged  = false;
      newSysPressComputed = true;
    }
    if(diasPressRawChanged) {
      unsigned short index = (*data.nextDiasPressIndex == 0)? 
                             7: (*data.nextDiasPressIndex - 1);
-     
+     data.bloodPressCorrectedBuf[index] = computeDias(data.bloodPressRawBuf[*data.nextDiasPressIndex]);
      diasPressRawChanged = false;
-     newSysPressComputed = true;
+     newDiasPressComputed = true;
    }
    if(pulseRateRawChanged) {
      unsigned short index = (*data.nextPulseRateIndex == 0)? 
@@ -61,9 +61,6 @@ void compute(void* Data) {
      pulseRateRawChanged = false;
      newSysPressComputed = true;
    }
-
-   bloodPressRawBuf
-   bloodPressCorrectedBuf
 }
 
 // Computes the temperature in celsius
