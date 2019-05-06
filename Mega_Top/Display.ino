@@ -7,22 +7,23 @@
  *                       the user of the device.
  * Author: Haomin Yu
  */
-extern "C" {                                                  //calls in created files to be used.
+// Compiler Linkage
+extern "C" {
   #include "rawStructs.h"
   #include "initialize.h"
   #include "init.h"
 }
 // Global structures
-MeasureDataStruct MeasureData;                                //saves measurement data
-DisplayDataStruct DisplayData;                                //saves display data
-ComputeDataStruct ComputeData;                                //saves computational data
-WarningAlarmDataStruct WarningAlarmData;                      //saves warnign and alarm data
-StatusStruct    Status;                                       //saves status data
-SchedulerStruct Scheduler;                                    //saves scheduler
+MeasureDataStruct MeasureData;                                // Saves measurement data
+DisplayDataStruct DisplayData;                                // Saves display data
+ComputeDataStruct ComputeData;                                // Saves computational data
+WarningAlarmDataStruct WarningAlarmData;                      // Saves warnign and alarm data
+StatusStruct    Status;                                       // Saves status data
+SchedulerStruct Scheduler;                                    // Saves scheduler
 // Global indicator
 extern bool measurementChanged;
 
-void userSetup() {                                            //initializes the display to its initial display.
+void userSetup() {                                            // Initializes the display to its initial display
   // Makes the whole screen black
   tft.fillScreen(BLACK);
   // Sets texts to font 3
@@ -40,8 +41,8 @@ void userSetup() {                                            //initializes the 
 }
 
 void loop() {
-   scheduler();                                                 //calls scheduler function to runthe schedule
-   if(measurementChanged) {                                     //updates the measurements on the board if data is updated.
+   scheduler();                                                 // Calls scheduler function to runthe schedule
+   if(measurementChanged) {                                     // Updates the measurements on the board if data is updated.
      updateMeasurements(*DisplayData.tempCorrected, 
                         *DisplayData.sysPressCorrected,
                         *DisplayData.diasCorrected,
