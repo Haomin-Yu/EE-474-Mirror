@@ -71,27 +71,29 @@ void touchScreen() {
   pinMode(YP, OUTPUT);
 
   p.x = map(p.x, TS_MINY, TS_MAXY, tft.height(), 0);
-    //p.x = tft.width()-map(p.x, TS_MINX, TS_MAXX, tft.width(), 0);
-    p.y = (tft.height()-map(p.y, TS_MINX, TS_MAXX, tft.width(), 0));
-    
-     //p.y = map(p.y, TS_MINY, TS_MAXY, tft.height(), 0);
+  //p.x = tft.width()-map(p.x, TS_MINX, TS_MAXX, tft.width(), 0);
+  p.y = (tft.height()-map(p.y, TS_MINX, TS_MAXX, tft.width(), 0));
+  //p.y = map(p.y, TS_MINY, TS_MAXY, tft.height(), 0);
 
-       if (p.z > MINPRESSURE && p.z < MAXPRESSURE) {
-        if((p.x < (BUTTONHEIGHT + 165)) && (p.x > 165)) {
-    if(((tft.height()-p.y) < (BUTTONWIDTH + 10)) && ((tft.height()-p.y) > 10)) {
-          tempCheck = true;
-          tft.fillScreen(GREEN);
-      } else if(((tft.height()-p.y) < (12 + BUTTONWIDTH * 2)) && ((tft.height()-p.y) > (12 + BUTTONWIDTH))) {
-          sysCheck = true;
-          tft.fillScreen(RED);
-      } else if(((tft.height()-p.y) < (14 + BUTTONWIDTH * 3)) && ((tft.height()-p.y) > (14 + BUTTONWIDTH * 2))) {
-          diasCheck = true;
+  if (p.z > MINPRESSURE && p.z < MAXPRESSURE) {
+     if((p.x < (BUTTONHEIGHT + 165)) && (p.x > 165)) {
+        if(((tft.height()-p.y) < (BUTTONWIDTH + 10)) && ((tft.height()-p.y) > 10)) {
+           tempCheck = true;
+           tft.fillScreen(GREEN);
+        }
+        else if(((tft.height()-p.y) < (12 + BUTTONWIDTH * 2)) && ((tft.height()-p.y) > (12 + BUTTONWIDTH))) {
+           sysCheck = true;
+           tft.fillScreen(RED);
+        } 
+        else if(((tft.height()-p.y) < (14 + BUTTONWIDTH * 3)) && ((tft.height()-p.y) > (14 + BUTTONWIDTH * 2))) {
+           diasCheck = true;
            tft.fillScreen(BLUE);
-      } else if(((tft.height()-p.y) < (16 + BUTTONWIDTH * 4)) && ((tft.height()-p.y) > (16 + BUTTONWIDTH * 3))) {
-          pulseCheck = true;
-          tft.fillScreen(CYAN);
-      }
-    }
+        } 
+        else if(((tft.height()-p.y) < (16 + BUTTONWIDTH * 4)) && ((tft.height()-p.y) > (16 + BUTTONWIDTH * 3))) {
+           pulseCheck = true;
+           tft.fillScreen(CYAN);
+        }
+     }
   }
 }
 
