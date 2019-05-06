@@ -20,16 +20,20 @@ void measure(void* Data) {
     unsigned short select = *data.measurementSelection;
     switch(select) {
       case measureTemp:
-        *data.temperatureRaw    = getSerialTemp();
+        data.temperatureRawBuf[*data.nextTemperatureIndex] = getSerialTemp();
+        *data.nextTemperatureIndex = (*data.nextTemperatureIndex + 1) % 8;
         break;
       case measureSysPress:
-        *data.systolicPressRaw  = getSysPress();
+        data.bloodPressRawBuf[*data.nextSysPressIndex] = getSysPress();
+        *data.nextSysPressIndex = (*data.nextSysPressIndex + 1) % 8;
         break;
       case measureDiasPress:
-        *data.diastolicPressRaw = getDiasPress();
+        data.bloodPressRawBuf[*data.nextDiasPressIndex] = getDiasPress();
+        *data.nextDiasPressIndex = ((*data.nextDiasPressIndex + 1) % 8) + 8;
         break;
       case measurePulseRate:
-        *data.pulseRateRaw      = getPulseRate();
+        data.pulseRateRawBuf[*data.nextPulseRateIndex] = getPulseRate();
+        *data.nextPulseRateIndex = (*data.nextPulseRateIndex + 1) % 8;
         break;
       default:
         break;
