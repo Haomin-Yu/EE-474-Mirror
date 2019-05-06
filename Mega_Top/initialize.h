@@ -11,7 +11,9 @@ void initialize(MeasureDataStruct* MeasureData,
                 ComputeDataStruct* ComputeData,
                 WarningAlarmDataStruct* WarningAlarmData,
                 StatusStruct*    Status,
-                SchedulerStruct* Scheduler);
+                SchedulerStruct* Scheduler,
+                TFTKeypadDataStruct* KeypadData, 
+                CommunicationsDataStruct* CommunicationsData);
 
 #ifdef __cplusplus
 } // extern "C"
