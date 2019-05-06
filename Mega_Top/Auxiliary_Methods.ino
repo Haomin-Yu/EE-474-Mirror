@@ -95,6 +95,34 @@ void touchScreen() {
         }
      }
   }
+  if(tempCheck) {
+    tft.fillRect(10, 165, (BUTTONWIDTH), (BUTTONHEIGHT), BLUE);
+    TFT_Write(RED, 12, 180, "Temp.");
+  } else {
+    tft.fillRect(10, 165, (BUTTONWIDTH), (BUTTONHEIGHT), CYAN);
+    TFT_Write(RED, 12, 180, "Temp.");
+  }
+  if(sysCheck) {
+    tft.fillRect((12 + BUTTONWIDTH), 165, (BUTTONWIDTH), (BUTTONHEIGHT), BLUE);
+    TFT_Write(RED, (14 + BUTTONWIDTH), 180, "Sys.");
+  } else {
+    tft.fillRect((12 + BUTTONWIDTH), 165, (BUTTONWIDTH), (BUTTONHEIGHT), CYAN);
+    TFT_Write(RED, (14 + BUTTONWIDTH), 180, "Sys.");
+  }
+  if(diasCheck) {
+    tft.fillRect((14 + BUTTONWIDTH * 2), 165, (BUTTONWIDTH), (BUTTONHEIGHT), BLUE);
+    TFT_Write(RED, (16 + BUTTONWIDTH * 2), 180, "Dias.");
+  } else {
+    tft.fillRect((14 + BUTTONWIDTH * 2), 165, (BUTTONWIDTH), (BUTTONHEIGHT), CYAN);
+    TFT_Write(RED, (16 + BUTTONWIDTH * 2), 180, "Dias.");
+  }
+  if(pulseCheck) {
+    tft.fillRect((16 + BUTTONWIDTH * 3), 165, (BUTTONWIDTH), (BUTTONHEIGHT), BLUE);
+    TFT_Write(RED, (18 + BUTTONWIDTH * 3), 180, "Pulse");
+  } else {
+    tft.fillRect((16 + BUTTONWIDTH * 3), 165, (BUTTONWIDTH), (BUTTONHEIGHT), CYAN);
+    TFT_Write(RED, (18 + BUTTONWIDTH * 3), 180, "Pulse");
+  }
 }
 
 // Gets an unsigned int from the Uno
