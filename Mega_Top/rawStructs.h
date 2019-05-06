@@ -29,6 +29,11 @@ struct MeasureData {
 	unsigned int    bloodPressRawBuf[16];
 	unsigned int    pulseRateRawBuf[8];
   unsigned short* measurementSelection;
+  
+  unsigned short* nextTemperatureIndex;
+  unsigned short* nextSysPressIndex;
+  unsigned short* nextDiasPressIndex;
+  unsigned short* nextPulseRateIndex;
 };
 typedef struct MeasureData MeasureDataStruct;
 
@@ -41,6 +46,11 @@ struct ComputeData {
 	double bloodPressCorrectedBuf[16];
 	double prCorrectedBuf[8];
   unsigned short* measurementSelection;
+
+  unsigned short* nextTemperatureIndex;
+  unsigned short* nextSysPressIndex;
+  unsigned short* nextDiasPressIndex;
+  unsigned short* nextPulseRateIndex;
 };
 typedef struct ComputeData ComputeDataStruct;
 
@@ -50,6 +60,11 @@ struct DisplayData {
   double bloodPressCorrectedBuf[16];
   double prCorrectedBuf[8];
 	unsigned short* batteryState;
+
+  unsigned short* nextTemperatureIndex;
+  unsigned short* nextSysPressIndex;
+  unsigned short* nextDiasPressIndex;
+  unsigned short* nextPulseRateIndex;
 };
 typedef struct DisplayData DisplayDataStruct;
 
@@ -69,6 +84,11 @@ struct WarningAlarmData {
   bool* tempHigh;
   bool* pulseLow;
   bool* batteryLow;
+
+  unsigned short* nextTemperatureIndex;
+  unsigned short* nextSysPressIndex;
+  unsigned short* nextDiasPressIndex;
+  unsigned short* nextPulseRateIndex;
 };
 typedef struct WarningAlarmData WarningAlarmDataStruct;
 
