@@ -11,10 +11,10 @@
 
 // Function prototypes
 void compute(void* Data);
-double computeTemp(unsigned int* tempRaw);
-double computeSys(unsigned int* systolicRaw);
-double computeDias(unsigned int* diastolicRaw);
-double computePr(unsigned int* bpRaw);
+double computeTemp(unsigned int tempRaw);
+double computeSys(unsigned int systolicRaw);
+double computeDias(unsigned int diastolicRaw);
+double computePr(unsigned int bpRaw);
 
 // Getting global indicators from measure.ino
 extern bool tempRawChanged;

@@ -17,7 +17,7 @@
 static unsigned int temperatureRawBuf_INIT[8] = {75, 0, 0, 0, 0, 0, 0, 0};
 static unsigned int bloodPressRawBuf_INIT[16] = {80, 0, 0, 0, 0, 0, 0, 0,
                                                  80, 0, 0, 0, 0, 0, 0, 0};
-static unsigned int pulseRateRawVuf_INIT[8]   = { 0, 0, 0, 0, 0, 0, 0, 0};
+static unsigned int pulseRateRawBuf_INIT[8]   = { 0, 0, 0, 0, 0, 0, 0, 0};
 
 // Display
 static double tempCorrectedBuf_INIT[8]        = {0, 0, 0, 0, 0, 0, 0, 0};
