@@ -34,10 +34,10 @@ void initialize(MeasureDataStruct* MeasureData,
      pulseRateRawBuf_INIT,
      &measurementSelection_INIT,
 
-     &nextTemperatureIndex_INIT,
-     &nextSysPressIndex_INIT,
-     &nextDiasPressIndex_INIT,
-     &nextPulseRateIndex_INIT
+     &currentTemperatureIndex_INIT,
+     &currentSysPressIndex_INIT,
+     &currentDiasPressIndex_INIT,
+     &currentPulseRateIndex_INIT
   };
 	// Initializing display variables
   *DisplayData = (DisplayDataStruct) {
@@ -46,10 +46,10 @@ void initialize(MeasureDataStruct* MeasureData,
      pulseRateCorrectedBuf_INIT,
      &batteryState_INIT,
 
-     &nextTemperatureIndex_INIT,
-     &nextSysPressIndex_INIT,
-     &nextDiasPressIndex_INIT,
-     &nextPulseRateIndex_INIT
+     &currentTemperatureIndex_INIT,
+     &currentSysPressIndex_INIT,
+     &currentDiasPressIndex_INIT,
+     &currentPulseRateIndex_INIT
   };
 	// Initializing compute variables
   *ComputeData = (ComputeDataStruct) {
@@ -61,10 +61,10 @@ void initialize(MeasureDataStruct* MeasureData,
      pulseRateCorrectedBuf_INIT,
      &measurementSelection_INIT,
 
-     &nextTemperatureIndex_INIT,
-     &nextSysPressIndex_INIT,
-     &nextDiasPressIndex_INIT,
-     &nextPulseRateIndex_INIT
+     &currentTemperatureIndex_INIT,
+     &currentSysPressIndex_INIT,
+     &currentDiasPressIndex_INIT,
+     &currentPulseRateIndex_INIT
   };
 	// Initializing warning/alarm variables
   *WarningAlarmData = (WarningAlarmDataStruct) {
@@ -83,10 +83,10 @@ void initialize(MeasureDataStruct* MeasureData,
      &pulseLow_INIT,
      &batteryLow,
 
-     &nextTemperatureIndex_INIT,
-     &nextSysPressIndex_INIT,
-     &nextDiasPressIndex_INIT,
-     &nextPulseRateIndex_INIT
+     &currentTemperatureIndex_INIT,
+     &currentSysPressIndex_INIT,
+     &currentDiasPressIndex_INIT,
+     &currentPulseRateIndex_INIT
   };
 	// Initializing status variables
   *Status = (StatusStruct) {
@@ -101,6 +101,11 @@ void initialize(MeasureDataStruct* MeasureData,
   *CommunicationsData = (CommunicationsDataStruct) {
      tempCorrectedBuf_INIT,
      bloodPressCorrectedBuf_INIT,
-     pulseRateCorrectedBuf_INIT
+     pulseRateCorrectedBuf_INIT,
+
+     &currentTemperatureIndex_INIT,
+     &currentSysPressIndex_INIT,
+     &currentDiasPressIndex_INIT,
+     &currentPulseRateIndex_INIT
   };
 }
