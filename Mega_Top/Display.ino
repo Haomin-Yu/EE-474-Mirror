@@ -42,6 +42,7 @@ void userSetup() {                                            // Initializes the
 
 void loop() {
    scheduler();                                                 // Calls scheduler function to runthe schedule
+   touchScreen();
    if(measurementChanged) {                                     // Updates the measurements on the board if data is updated.
      updateMeasurements(*DisplayData.tempCorrected, 
                         *DisplayData.sysPressCorrected,
