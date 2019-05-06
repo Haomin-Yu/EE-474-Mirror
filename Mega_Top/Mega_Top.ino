@@ -6,6 +6,20 @@
 
 #include "Elegoo_GFX.h"    // Core graphics library
 #include "Elegoo_TFTLCD.h" // Hardware-specific library
+#include "TouchScreen.h"
+
+#define TS_MINX 120
+#define TS_MAXX 900
+
+#define TS_MINY 70
+#define TS_MAXY 920
+
+#define YP A3  // must be an analog pin, use "An" notation!
+#define XM A2  // must be an analog pin, use "An" notation!
+#define YM 9   // can be a digital pin
+#define XP 8   // can be a digital pin
+
+TouchScreen ts = TouchScreen(XP, YP, XM, YM, 300);
 
 // The control pins for the LCD can be assigned to any digital or
 // analog pins...but we'll use the analog pins as this allows us to
@@ -48,7 +62,10 @@ Elegoo_TFTLCD tft(LCD_CS, LCD_CD, LCD_WR, LCD_RD, LCD_RESET);
 // a simpler declaration can optionally be used:
 // Elegoo_TFTLCD tft;
 
-
+bool tempCheck = false;
+bool pulseCheck = false;
+bool sysCheck = false;
+bool diasCheck = false;
 
 void setup(void) {
   // Setting up data rate for the serial monitor
