@@ -20,6 +20,8 @@ ComputeDataStruct ComputeData;                                // Saves computati
 WarningAlarmDataStruct WarningAlarmData;                      // Saves warnign and alarm data
 StatusStruct    Status;                                       // Saves status data
 SchedulerStruct Scheduler;                                    // Saves scheduler
+TFTKeypadDataStruct KeypadData;                               // Saves keypad data
+CommunicationsDataStruct CommunicationsData;                  // Saves communications data
 // Global indicator
 extern bool measurementChanged;
 
@@ -35,7 +37,8 @@ void userSetup() {                                            // Initializes the
   // Initializes the values
   initialize(&MeasureData, &DisplayData,
              &ComputeData, &WarningAlarmData,
-             &Status, &Scheduler);
+             &Status, &Scheduler,
+             &KeypadData, &CommunicationsData);
   // Baud rate for data transmittion
   Serial1.begin(9600);
 }

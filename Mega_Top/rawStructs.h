@@ -25,9 +25,9 @@ typedef struct Task TCB;
 
 // Data structure for measurement
 struct MeasureData {
-	unsigned int    temperatureRawBuf[8];
-	unsigned int    bloodPressRawBuf[16];
-	unsigned int    pulseRateRawBuf[8];
+	unsigned int* temperatureRawBuf;
+	unsigned int* bloodPressRawBuf;
+	unsigned int* pulseRateRawBuf;
   unsigned short* measurementSelection;
   
   unsigned short* nextTemperatureIndex;
@@ -39,12 +39,12 @@ typedef struct MeasureData MeasureDataStruct;
 
 // Data structure for computation
 struct ComputeData {
-	unsigned int temperatureRawBuf[8];
-  unsigned int bloodPressRawBuf[16];
-  unsigned int pulseRateRawBuf[8];
-	double tempCorrectedBuf[8];
-	double bloodPressCorrectedBuf[16];
-	double prCorrectedBuf[8];
+	unsigned int* temperatureRawBuf;
+  unsigned int* bloodPressRawBuf;
+  unsigned int* pulseRateRawBuf;
+	double* tempCorrectedBuf;
+	double* bloodPressCorrectedBuf;
+	double* prCorrectedBuf;
   unsigned short* measurementSelection;
 
   unsigned short* nextTemperatureIndex;
@@ -56,9 +56,9 @@ typedef struct ComputeData ComputeDataStruct;
 
 // Data structure for display
 struct DisplayData {
-	double tempCorrectedBuf[8];
-  double bloodPressCorrectedBuf[16];
-  double prCorrectedBuf[8];
+	double* tempCorrectedBuf;
+  double* bloodPressCorrectedBuf;
+  double* prCorrectedBuf;
 	unsigned short* batteryState;
 
   unsigned short* nextTemperatureIndex;
@@ -70,9 +70,9 @@ typedef struct DisplayData DisplayDataStruct;
 
 // Data structure for warning/alarm
 struct WarningAlarmData {
-	unsigned int    temperatureRawBuf[8];
-  unsigned int    bloodPressRawBuf[16];
-  unsigned int    pulseRateRawBuf[8];
+	unsigned int* temperatureRawBuf;
+  unsigned int* bloodPressRawBuf;
+  unsigned int* pulseRateRawBuf;
 	unsigned short* batteryState;
  
   unsigned char* bpOutOfRange;
@@ -113,9 +113,9 @@ typedef struct TFTKeypadData TFTKeypadDataStruct;
 
 // Data structure for communications data
 struct CommunicationsData {
-  double tempCorrectedBuf[8];
-  double bloodPressCorrectedBuf[16];
-  double prCorrectedBuf[8];
+  double* tempCorrectedBuf;
+  double* bloodPressCorrectedBuf;
+  double* prCorrectedBuf;
 };
 typedef struct CommunicationsData CommunicationsDataStruct;
 
