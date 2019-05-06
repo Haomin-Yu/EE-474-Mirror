@@ -13,6 +13,7 @@
  * 
  * 
  */
+// Compiler Linkage
 extern "C" {
   #include "rawStructs.h"
   #include "init.h"

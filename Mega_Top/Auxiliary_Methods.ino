@@ -105,33 +105,32 @@ unsigned int getSerialUInt() {
 // Calls on the Uno to get the temperature
 unsigned int getSerialTemp() {
   if(tempCheck) {
-  Serial1.write(0x00);
-  tempCheck = false;
-  return getSerialUInt();
-
+    Serial1.write(0x00);
+    tempCheck = false;
+    return getSerialUInt();
   }
 }
 // Calls on the Uno to get the systolic pressure
 unsigned int getSysPress() {
   if(sysCheck){
-  Serial1.write(0x01);
-  sysCheck = false;
-  return getSerialUInt();
+    Serial1.write(0x01);
+    sysCheck = false;
+    return getSerialUInt();
   }
 }
 // Calls on the Uno to get the diastolic pressure
 unsigned int getDiasPress() {
   if(diasCheck) {
-  Serial1.write(0x02);
-  diasCheck = false;
-  return getSerialUInt();
+    Serial1.write(0x02);
+    diasCheck = false;
+    return getSerialUInt();
   }
 }
 // Calls on the Uno to get the pulse rate
 unsigned int getPulseRate() {
   if(pulseCheck) {
-  Serial1.write(0x03);
-  pulseCheck = false;
-  return getSerialUInt();
+    Serial1.write(0x03);
+    pulseCheck = false;
+    return getSerialUInt();
   }
 }
