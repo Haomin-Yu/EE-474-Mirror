@@ -19,8 +19,8 @@ bool pulseRateChanged = true;
 // Display function of the system
 void display(void* Data) {
    DisplayDataStruct data = *((DisplayDataStruct*)Data);
-   *data.tempCorrected = *data.tempCorrected;
-   *data.sysPressCorrected = *data.sysPressCorrected;
-   *data.diasCorrected = *data.diasCorrected;
-   *data.prCorrected = *data.prCorrected;
+   data.tempCorrectedBuf[*data.currentTemperatureIndex]     = data.tempCorrectedBuf[*data.currentTemperatureIndex];
+   data.bloodPressCorrectedBuf[*data.currentSysPressIndex]  = data.bloodPressCorrectedBuf[*data.currentSysPressIndex];
+   data.bloodPressCorrectedBuf[*data.currentDiasPressIndex] = data.bloodPressCorrectedBuf[*data.currentDiasPressIndex];
+   data.prCorrectedBuf[*data.currentDiasPressIndex]         = data.prCorrectedBuf[*data.currentDiasPressIndex];
 }

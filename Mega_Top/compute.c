@@ -40,19 +40,19 @@ void compute(void* Data) {
      newTempComputed = true;
    }
    if(sysPressRawChanged) {
-     unsigned short index = *data.nextSysPressIndex;
+     unsigned short index = *data.currentSysPressIndex;
      data.bloodPressCorrectedBuf[index] = computeSys(data.bloodPressRawBuf[index]);
      sysPressRawChanged  = false;
      newSysPressComputed = true;
    }
    if(diasPressRawChanged) {
-     unsigned short index = *data.nextDiasPressIndex;
+     unsigned short index = *data.currentDiasPressIndex;
      data.bloodPressCorrectedBuf[index] = computeDias(data.bloodPressRawBuf[index]);
      diasPressRawChanged = false;
      newDiasPressComputed = true;
    }
    if(pulseRateRawChanged) {
-     unsigned short index = *data.nextPulseRateIndex;
+     unsigned short index = *data.currentPulseRateIndex;
      data.prCorrectedBuf[index] = computePr(data.pulseRateRawBuf[index]);
      pulseRateRawChanged = false;
      newSysPressComputed = true;
