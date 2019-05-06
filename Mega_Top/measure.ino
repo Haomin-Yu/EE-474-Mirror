@@ -6,19 +6,32 @@
  *                       this data can be used in other files for portions such as warning and alarm
  *                       or computation
  * Author: Haomin Yu
- */
- 
-// Global variable
-bool enableMeasure = true;
-
+ */ 
+// Class constants
+static const unsigned short measureTemp      = 0;
+static const unsigned short measureSysPress  = 1;
+static const unsigned short measureDiasPress = 2;
+static const unsigned short measurePulseRate = 3;
 // Measures the data 'temperatureRaw', 'systolicPressRaw',
-// 'diastolicPressRaw', and 'pulseRateRaw'
+// 'diastolicPressRaw', and/or 'pulseRateRaw' beased on
+// the given measureSelection in 'Data'
 void measure(void* Data) {
-	if(enableMeasure) {
   	MeasureDataStruct data = *((MeasureDataStruct*)Data);
-    *data.temperatureRaw    = getSerialTemp();
-    *data.systolicPressRaw  = getSysPress();
-    *data.diastolicPressRaw = getDiasPress();
-    *data.pulseRateRaw      = getPulseRate();
-	}
+    unsigned short select = *data.measurementSelection;
+    switch(select) {
+      case measureTemp:
+        *data.temperatureRaw    = getSerialTemp();
+        break;
+      case measureSysPress:
+        *data.systolicPressRaw  = getSysPress();
+        break;
+      case measureDiasPress:
+        *data.diastolicPressRaw = getDiasPress();
+        break;
+      case measurePulseRate:
+        *data.pulseRateRaw      = getPulseRate();
+        break;
+      default:
+        break;
+    }
 }
