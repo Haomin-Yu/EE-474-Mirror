@@ -8,10 +8,11 @@
  * Author: Haomin Yu
  */ 
 // Class constants
-static const unsigned short measureTemp      = 0;
-static const unsigned short measureSysPress  = 1;
-static const unsigned short measureDiasPress = 2;
-static const unsigned short measurePulseRate = 3;
+static const unsigned short outOfBounds      = 0;
+static const unsigned short measureTemp      = 1;
+static const unsigned short measureSysPress  = 2;
+static const unsigned short measureDiasPress = 3;
+static const unsigned short measurePulseRate = 4;
 // Global variables
 // (Indicating whether a new measurement has been made)
 bool tempRawChanged      = true;
@@ -37,24 +38,28 @@ void measure(void* Data) {
         *data.nextTemperatureIndex = (*data.nextTemperatureIndex + 1) % 8;
         tempRawChanged = true;
         tempCheck = false;
+        *data.measurementSelection = outOfBounds;
         break;
       case measureSysPress:
         data.bloodPressRawBuf[*data.nextSysPressIndex] = getSysPress();
         *data.nextSysPressIndex = (*data.nextSysPressIndex + 1) % 8;
         sysPressRawChanged = true;
         sysCheck = false;
+        *data.measurementSelection = outOfBounds;
         break;
       case measureDiasPress:
         data.bloodPressRawBuf[*data.nextDiasPressIndex] = getDiasPress();
         *data.nextDiasPressIndex = ((*data.nextDiasPressIndex + 1) % 8) + 8;
         diasPressRawChanged = true;
         diasCheck = false;
+        *data.measurementSelection = outOfBounds;
         break;
       case measurePulseRate:
         data.pulseRateRawBuf[*data.nextPulseRateIndex] = getPulseRate();
         *data.nextPulseRateIndex = (*data.nextPulseRateIndex + 1) % 8;
         pulseRateRawChanged = true;
         pulseCheck = false;
+        *data.measurementSelection = outOfBounds;
         break;
       default:
         break;
