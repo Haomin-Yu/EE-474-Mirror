@@ -34,30 +34,26 @@ bool newPulseRateComputed;
 void compute(void* Data) {
    ComputeDataStruct data = *((ComputeDataStruct*)Data);
    if(tempRawChanged) {
-     unsigned short index = (*data.nextTemperatureIndex == 0)? 
-                            7: (*data.nextTemperatureIndex - 1);
-     data.tempCorrectedBuf[index] = computeTemp(data.temperatureRawBuf[*data.nextTemperatureIndex]);
+     unsigned short index = *data.currentTemperatureIndex;
+     data.tempCorrectedBuf[index] = computeTemp(data.temperatureRawBuf[index]);
      tempRawChanged  = false;
      newTempComputed = true;
    }
    if(sysPressRawChanged) {
-     unsigned short index = (*data.nextSysPressIndex == 0)? 
-                            7: (*data.nextSysPressIndex - 1);
-     data.bloodPressCorrectedBuf[index] = computeSys(data.bloodPressRawBuf[*data.nextSysPressIndex]);
+     unsigned short index = *data.nextSysPressIndex;
+     data.bloodPressCorrectedBuf[index] = computeSys(data.bloodPressRawBuf[index]);
      sysPressRawChanged  = false;
      newSysPressComputed = true;
    }
    if(diasPressRawChanged) {
-     unsigned short index = (*data.nextDiasPressIndex == 0)? 
-                            7: (*data.nextDiasPressIndex - 1);
-     data.bloodPressCorrectedBuf[index] = computeDias(data.bloodPressRawBuf[*data.nextDiasPressIndex]);
+     unsigned short index = *data.nextDiasPressIndex;
+     data.bloodPressCorrectedBuf[index] = computeDias(data.bloodPressRawBuf[index]);
      diasPressRawChanged = false;
      newDiasPressComputed = true;
    }
    if(pulseRateRawChanged) {
-     unsigned short index = (*data.nextPulseRateIndex == 0)? 
-                            7: (*data.nextPulseRateIndex - 1);
-     data.prCorrectedBuf[index] = computePr(data.pulseRateRawBuf[*data.nextPulseRateIndex]);
+     unsigned short index = *data.nextPulseRateIndex;
+     data.prCorrectedBuf[index] = computePr(data.pulseRateRawBuf[index]);
      pulseRateRawChanged = false;
      newSysPressComputed = true;
    }
