@@ -25,6 +25,12 @@ static double bloodPressCorrectedBuf_INIT[16] = {0, 0, 0, 0, 0, 0, 0, 0,
                                                  0, 0, 0, 0, 0, 0, 0, 0};
 static double pulseRateCorrectedBuf_INIT[8]   = {0, 0, 0, 0, 0, 0, 0, 0};
 
+// 
+unsigned short nextTemperatureIndex_INIT = 1;
+unsigned short nextSysPressIndex_INIT    = 1;
+unsigned short nextDiasPressIndex_INIT   = 9;
+unsigned short nextPulseRateIndex_INIT   = 1;
+
 // Status
 static unsigned short batteryState_INIT = 200;
 
