@@ -18,6 +18,12 @@ bool tempRawChanged      = true;
 bool sysPressRawChanged  = true;
 bool diasPressRawChanged = true;
 bool pulseRateRawChanged = true;
+// Global indicators
+// (When the corrosponding button is pressed)
+extern bool tempCheck;
+extern bool sysCheck;
+extern bool diasCheck;
+extern bool pulseCheck;
 
 // Measures the data 'temperatureRaw', 'systolicPressRaw',
 // 'diastolicPressRaw', and/or 'pulseRateRaw' beased on
@@ -30,21 +36,25 @@ void measure(void* Data) {
         data.temperatureRawBuf[*data.nextTemperatureIndex] = getSerialTemp();
         *data.nextTemperatureIndex = (*data.nextTemperatureIndex + 1) % 8;
         tempRawChanged = true;
+        tempCheck = false;
         break;
       case measureSysPress:
         data.bloodPressRawBuf[*data.nextSysPressIndex] = getSysPress();
         *data.nextSysPressIndex = (*data.nextSysPressIndex + 1) % 8;
         sysPressRawChanged = true;
+        sysCheck = false;
         break;
       case measureDiasPress:
         data.bloodPressRawBuf[*data.nextDiasPressIndex] = getDiasPress();
         *data.nextDiasPressIndex = ((*data.nextDiasPressIndex + 1) % 8) + 8;
         diasPressRawChanged = true;
+        diasCheck = false;
         break;
       case measurePulseRate:
         data.pulseRateRawBuf[*data.nextPulseRateIndex] = getPulseRate();
         *data.nextPulseRateIndex = (*data.nextPulseRateIndex + 1) % 8;
         pulseRateRawChanged = true;
+        pulseCheck = false;
         break;
       default:
         break;
