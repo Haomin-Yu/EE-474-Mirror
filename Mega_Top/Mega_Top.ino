@@ -48,7 +48,7 @@ TouchScreen ts = TouchScreen(XP, YP, XM, YM, 300);
 // (on the 2-row header at the end of the board).
 
 // Assign human-readable names to some common 16-bit color values:
-#define  BLACK   0x0000
+#define BLACK   0x0000
 #define BLUE    0x001F
 #define RED     0xF800
 #define GREEN   0x07E0
