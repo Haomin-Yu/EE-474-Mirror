@@ -30,10 +30,10 @@ struct MeasureData {
 	unsigned int* pulseRateRawBuf;
   unsigned short* measurementSelection;
   
-  unsigned short* nextTemperatureIndex;
-  unsigned short* nextSysPressIndex;
-  unsigned short* nextDiasPressIndex;
-  unsigned short* nextPulseRateIndex;
+  unsigned short* currentTemperatureIndex;
+  unsigned short* currentSysPressIndex;
+  unsigned short* currentDiasPressIndex;
+  unsigned short* currentPulseRateIndex;
 };
 typedef struct MeasureData MeasureDataStruct;
 
@@ -47,10 +47,10 @@ struct ComputeData {
 	double* prCorrectedBuf;
   unsigned short* measurementSelection;
 
-  unsigned short* nextTemperatureIndex;
-  unsigned short* nextSysPressIndex;
-  unsigned short* nextDiasPressIndex;
-  unsigned short* nextPulseRateIndex;
+  unsigned short* currentTemperatureIndex;
+  unsigned short* currentSysPressIndex;
+  unsigned short* currentDiasPressIndex;
+  unsigned short* currentPulseRateIndex;
 };
 typedef struct ComputeData ComputeDataStruct;
 
@@ -61,10 +61,10 @@ struct DisplayData {
   double* prCorrectedBuf;
 	unsigned short* batteryState;
 
-  unsigned short* nextTemperatureIndex;
-  unsigned short* nextSysPressIndex;
-  unsigned short* nextDiasPressIndex;
-  unsigned short* nextPulseRateIndex;
+  unsigned short* currentTemperatureIndex;
+  unsigned short* currentSysPressIndex;
+  unsigned short* currentDiasPressIndex;
+  unsigned short* currentPulseRateIndex;
 };
 typedef struct DisplayData DisplayDataStruct;
 
@@ -85,10 +85,10 @@ struct WarningAlarmData {
   bool* pulseLow;
   bool* batteryLow;
 
-  unsigned short* nextTemperatureIndex;
-  unsigned short* nextSysPressIndex;
-  unsigned short* nextDiasPressIndex;
-  unsigned short* nextPulseRateIndex;
+  unsigned short* currentTemperatureIndex;
+  unsigned short* currentSysPressIndex;
+  unsigned short* currentDiasPressIndex;
+  unsigned short* currentPulseRateIndex;
 };
 typedef struct WarningAlarmData WarningAlarmDataStruct;
 
@@ -116,6 +116,11 @@ struct CommunicationsData {
   double* tempCorrectedBuf;
   double* bloodPressCorrectedBuf;
   double* prCorrectedBuf;
+
+  unsigned short* currentTemperatureIndex;
+  unsigned short* currentSysPressIndex;
+  unsigned short* currentDiasPressIndex;
+  unsigned short* currentPulseRateIndex;
 };
 typedef struct CommunicationsData CommunicationsDataStruct;
 
