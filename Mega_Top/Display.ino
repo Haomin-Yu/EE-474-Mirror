@@ -47,10 +47,10 @@ void loop() {
    scheduler();                                                 // Calls scheduler function to runthe schedule
    touchScreen();
    if(measurementChanged) {                                     // Updates the measurements on the board if data is updated.
-     updateMeasurements(*DisplayData.tempCorrected, 
-                        *DisplayData.sysPressCorrected,
-                        *DisplayData.diasCorrected,
-                        *DisplayData.prCorrected,
+     updateMeasurements(DisplayData.tempCorrectedBuf[*DisplayData.currentTemperatureIndex], 
+                        DisplayData.bloodPressCorrectedBuf[*DisplayData.currentSysPressIndex],
+                        DisplayData.bloodPressCorrectedBuf[*DisplayData.currentDiasPressIndex],
+                        DisplayData.prCorrectedBuf[*DisplayData.currentPulseRateIndex],
                         *DisplayData.batteryState);
    }
 }
