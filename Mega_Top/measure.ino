@@ -34,29 +34,33 @@ void measure(void* Data) {
     unsigned short select = *data.measurementSelection;
     switch(select) {
       case measureTemp:
-        data.temperatureRawBuf[*data.nextTemperatureIndex] = getSerialTemp();
-        *data.nextTemperatureIndex = (*data.nextTemperatureIndex + 1) % 8;
+        unsigned short nextIndex = (*data.currentTemperatureIndex + 1) % 8;
+        data.temperatureRawBuf[nextIndex] = getSerialTemp();
+        *data.currentTemperatureIndex = nextIndex;
         tempRawChanged = true;
         tempCheck = false;
         *data.measurementSelection = outOfBounds;
         break;
       case measureSysPress:
-        data.bloodPressRawBuf[*data.nextSysPressIndex] = getSysPress();
-        *data.nextSysPressIndex = (*data.nextSysPressIndex + 1) % 8;
+        unsigned short nextIndex = (*data.currentSysPressIndex + 1) % 8;
+        data.bloodPressRawBuf[nextIndex] = getSysPress();
+        *data.currentSysPressIndex = nextIndex;
         sysPressRawChanged = true;
         sysCheck = false;
         *data.measurementSelection = outOfBounds;
         break;
       case measureDiasPress:
-        data.bloodPressRawBuf[*data.nextDiasPressIndex] = getDiasPress();
-        *data.nextDiasPressIndex = ((*data.nextDiasPressIndex + 1) % 8) + 8;
+        unsigned short nextIndex = ((*data.currentDiasPressIndex + 1) % 8) + 8;
+        data.bloodPressRawBuf[nextIndex] = getDiasPress();
+        *data.nextDiasPressIndex = nextIndex;
         diasPressRawChanged = true;
         diasCheck = false;
         *data.measurementSelection = outOfBounds;
         break;
       case measurePulseRate:
-        data.pulseRateRawBuf[*data.nextPulseRateIndex] = getPulseRate();
-        *data.nextPulseRateIndex = (*data.nextPulseRateIndex + 1) % 8;
+        unsigned short nextIndex = (*data.currentPulseRateIndex + 1) % 8;
+        data.pulseRateRawBuf[nextIndex] = getPulseRate();
+        *data.nextPulseRateIndex = nextIndex;
         pulseRateRawChanged = true;
         pulseCheck = false;
         *data.measurementSelection = outOfBounds;
