@@ -16,57 +16,91 @@ void initialize(MeasureDataStruct* MeasureData,
                 ComputeDataStruct* ComputeData,
                 WarningAlarmDataStruct* WarningAlarmData,
                 StatusStruct*    Status,
-                SchedulerStruct* Scheduler);
+                SchedulerStruct* Scheduler,
+                TFTKeypadDataStruct* KeypadData, 
+                CommunicationsDataStruct* CommunicationsData);
 void initialize(MeasureDataStruct* MeasureData,
                 DisplayDataStruct* DisplayData,
                 ComputeDataStruct* ComputeData,
                 WarningAlarmDataStruct* WarningAlarmData,
                 StatusStruct*    Status,
-                SchedulerStruct* Scheduler) {
+                SchedulerStruct* Scheduler,
+                TFTKeypadDataStruct* KeypadData, 
+                CommunicationsDataStruct* CommunicationsData) {
 	// Initializing measurement variables
   *MeasureData = (MeasureDataStruct) {
-     &temperatureRaw_INIT,
-     &sysPressRaw_INIT,
-     &diasPressRaw_INIT,
-     &pulseRateRaw_INIT
+     temperatureRawBuf_INIT,
+     bloodPressRawBuf_INIT,
+     pulseRateRawBuf_INIT,
+     &measurementSelection_INIT,
+
+     &nextTemperatureIndex_INIT,
+     &nextSysPressIndex_INIT,
+     &nextDiasPressIndex_INIT,
+     &nextPulseRateIndex_INIT
   };
 	// Initializing display variables
   *DisplayData = (DisplayDataStruct) {
-     &tempCorrected_INIT,
-     &sysPressCorrected_INIT,
-     &diasPressCorrected_INIT,
-     &pulseRateCorrected_INIT,
-     &batteryState_INIT
+     tempCorrectedBuf_INIT,
+     bloodPressCorrectedBuf_INIT,
+     pulseRateCorrectedBuf_INIT,
+     &batteryState_INIT,
+
+     &nextTemperatureIndex_INIT,
+     &nextSysPressIndex_INIT,
+     &nextDiasPressIndex_INIT,
+     &nextPulseRateIndex_INIT
   };
 	// Initializing compute variables
   *ComputeData = (ComputeDataStruct) {
-     &temperatureRaw_INIT,
-     &sysPressRaw_INIT,
-     &diasPressRaw_INIT,
-     &pulseRateRaw_INIT,
-     &tempCorrected_INIT,
-     &sysPressCorrected_INIT,
-     &diasPressCorrected_INIT,
-     &pulseRateCorrected_INIT
+     temperatureRawBuf_INIT,
+     bloodPressRawBuf_INIT,
+     pulseRateRawBuf_INIT,
+     tempCorrectedBuf_INIT,
+     bloodPressCorrectedBuf_INIT,
+     pulseRateCorrectedBuf_INIT,
+     &measurementSelection_INIT,
+
+     &nextTemperatureIndex_INIT,
+     &nextSysPressIndex_INIT,
+     &nextDiasPressIndex_INIT,
+     &nextPulseRateIndex_INIT
   };
 	// Initializing warning/alarm variables
   *WarningAlarmData = (WarningAlarmDataStruct) {
-     &temperatureRaw_INIT,
-     &sysPressRaw_INIT,
-     &diasPressRaw_INIT,
-     &pulseRateRaw_INIT,
+     temperatureRawBuf_INIT,
+     bloodPressRawBuf_INIT,
+     pulseRateRawBuf_INIT,
      &batteryState_INIT,
+     
      &bpOutOfRange_INIT,
      &tempOutOfRange_INIT,
      &pulseOutOfRange_INIT,
      &batteryOutOfRange_INIT,
+     
      &bpHigh_INIT,
      &tempHigh_INIT,
      &pulseLow_INIT,
-     &batteryLow
+     &batteryLow,
+
+     &nextTemperatureIndex_INIT,
+     &nextSysPressIndex_INIT,
+     &nextDiasPressIndex_INIT,
+     &nextPulseRateIndex_INIT
   };
 	// Initializing status variables
   *Status = (StatusStruct) {
      &batteryState_INIT
+  };
+  // Initializing keypad data
+  *KeypadData = (TFTKeypadDataStruct) {
+     &measurementSelection_INIT,
+     &alarmAcknowledgement_INIT
+  };
+  // Initializing communications data
+  *CommunicationsData = (CommunicationsDataStruct) {
+     tempCorrectedBuf_INIT,
+     bloodPressCorrectedBuf_INIT,
+     pulseRateCorrectedBuf_INIT
   };
 }
