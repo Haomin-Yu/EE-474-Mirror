@@ -32,9 +32,10 @@ extern bool pulseCheck;
 void measure(void* Data) {
   	MeasureDataStruct data = *((MeasureDataStruct*)Data);
     unsigned short select = *data.measurementSelection;
+    unsigned short nextIndex;
     switch(select) {
       case measureTemp:
-        unsigned short nextIndex = (*data.currentTemperatureIndex + 1) % 8;
+        nextIndex = (*data.currentTemperatureIndex + 1) % 8;
         data.temperatureRawBuf[nextIndex] = getSerialTemp();
         *data.currentTemperatureIndex = nextIndex;
         tempRawChanged = true;
@@ -42,7 +43,7 @@ void measure(void* Data) {
         *data.measurementSelection = outOfBounds;
         break;
       case measureSysPress:
-        unsigned short nextIndex = (*data.currentSysPressIndex + 1) % 8;
+        nextIndex = (*data.currentSysPressIndex + 1) % 8;
         data.bloodPressRawBuf[nextIndex] = getSysPress();
         *data.currentSysPressIndex = nextIndex;
         sysPressRawChanged = true;
@@ -50,17 +51,17 @@ void measure(void* Data) {
         *data.measurementSelection = outOfBounds;
         break;
       case measureDiasPress:
-        unsigned short nextIndex = ((*data.currentDiasPressIndex + 1) % 8) + 8;
+        nextIndex = ((*data.currentDiasPressIndex + 1) % 8) + 8;
         data.bloodPressRawBuf[nextIndex] = getDiasPress();
-        *data.nextDiasPressIndex = nextIndex;
+        *data.currentDiasPressIndex = nextIndex;
         diasPressRawChanged = true;
         diasCheck = false;
         *data.measurementSelection = outOfBounds;
         break;
       case measurePulseRate:
-        unsigned short nextIndex = (*data.currentPulseRateIndex + 1) % 8;
+        nextIndex = (*data.currentPulseRateIndex + 1) % 8;
         data.pulseRateRawBuf[nextIndex] = getPulseRate();
-        *data.nextPulseRateIndex = nextIndex;
+        *data.currentPulseRateIndex = nextIndex;
         pulseRateRawChanged = true;
         pulseCheck = false;
         *data.measurementSelection = outOfBounds;
