@@ -23,7 +23,10 @@ SchedulerStruct Scheduler;                                    // Saves scheduler
 TFTKeypadDataStruct KeypadData;                               // Saves keypad data
 CommunicationsDataStruct CommunicationsData;                  // Saves communications data
 // Global indicator
-extern bool measurementChanged;
+extern bool tempRawChanged;
+extern bool sysPressRawChanged;
+extern bool diasPressRawChanged;
+extern bool pulseRateRawChanged;
 
 void userSetup() {                                            // Initializes the display to its initial display
   // Makes the whole screen black
@@ -46,7 +49,7 @@ void userSetup() {                                            // Initializes the
 void loop() {
    scheduler();                                                 // Calls scheduler function to runthe schedule
    touchScreen();
-   if(measurementChanged) {                                     // Updates the measurements on the board if data is updated.
+   if(tempRawChanged || sysPressRawChanged || diasPressRawChanged || pulseRateRawChanged) {  // Updates the measurements on the board if data is updated.
      updateMeasurements(DisplayData.tempCorrectedBuf[*DisplayData.currentTemperatureIndex], 
                         DisplayData.bloodPressCorrectedBuf[*DisplayData.currentSysPressIndex],
                         DisplayData.bloodPressCorrectedBuf[*DisplayData.currentDiasPressIndex],
