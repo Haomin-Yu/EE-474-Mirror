@@ -6,7 +6,7 @@
  * Function description: this creates a task queue and schedules the execution of the tasks for
  *                       the system based off of the order the tasks are assigned and a internal
  *                       clock stating when the tasks are actually meant to be executed.
- * Author: Nathan Ness
+ * Author: Nathan Ness & Nathan Park
  * 
  */
 // Importing files
@@ -36,8 +36,17 @@ TCB nullTCB = (TCB) {                                                           
   NULL
 };
 
-bool operator == (const TCB task1, const TCB task2) {
-  if ((task1.myTask == task2.myTask) and (task1.taskDataPtr == task2.taskDataPtr)) {
+bool operator == (const TCB task1, const TCB* task2) {
+  if ((task1.myTask == task2->myTask) and (task1.taskDataPtr == task2->taskDataPtr)) {
+    return true;
+  }
+  else {
+    return false;
+  }
+}
+
+bool operator != (const TCB task1, const TCB* task2) {
+  if ((task1.myTask != task2->myTask) or (task1.taskDataPtr != task2->taskDataPtr)) {
     return true;
   }
   else {
@@ -54,8 +63,8 @@ bool operator != (const TCB task1, const TCB task2) {
   }
 }
 
-TCB *Head = NULL;
-TCB *Tail = NULL;
+TCB* Head = NULL;
+TCB* Tail = NULL;
 
 
 
@@ -95,18 +104,18 @@ TCB DisplayTask = (TCB) {                                                       
 };
 
 
-void insert(TCB& task) {
+void insert(TCB* task) {
   if(Head == NULL) {
-    Head = &task;
-    Tail = &task;
+    Head = task;
+    Tail = task;
   } else {
-    Tail->next = &task;
-    task.prev = Tail;
-    Tail = &task;
+    Tail->next = task;
+    task->prev = Tail;
+    Tail = task;
   }
 }
 
-void rmv(TCB& task) {
+void rmv(TCB* task) {
   TCB *tempHead = Head;
   TCB *tempTail = Tail;
   if (tempHead != NULL and tempTail != NULL) {                    //checks to see if remove is redundant
@@ -146,15 +155,15 @@ static const unsigned long EACH_TASK_TIME = 5000;                               
                                                                                                   //be executed. in this case its set to 5 seconds but can be changed in milliseconds.
 void scheduler() {                                                                                //creates scheduler function that is to be called in a loop to constantly run the order.
   static unsigned long previousTime = 0;
-  insert(MeasurementTask);
-  insert(ComputationTask);
-  insert(StatusTask);
-  insert(AlarmTask);
-  insert(DisplayTask);
+  insert(&MeasurementTask);
+  insert(&ComputationTask);
+  insert(&StatusTask);
+  insert(&AlarmTask);
+  insert(&DisplayTask);
 
   while (Head != NULL) {                                                                          //loop through tasks
     Head->myTask(Head->taskDataPtr);
-    rmv(*Head);
+    rmv(Head);
   }
   //for(int i = 0; i < 5; i++) {
   //  taskQueue[i].myTask(taskQueue[i].taskDataPtr);                                                //loops through tasks to be executed.
