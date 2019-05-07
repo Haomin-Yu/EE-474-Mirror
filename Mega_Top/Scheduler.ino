@@ -24,13 +24,40 @@ extern WarningAlarmDataStruct WarningAlarmData;                                 
 extern StatusStruct Status;                                                                       //takes information from status datastruct and saves the data for use
 
 // Getting global indicators
-extern bool enableMeasure;                                                                        //creates an enable variable to tell when measure should run
-extern bool enableCompute;                                                                        //creates an enable variable to tell when compute should run
-extern bool enableDisplay;                                                                        //creates an enable variable to tell when display should run
-extern bool enableStatus;                                                                         //creates an enable variable to tell when status should run
+//extern bool enableMeasure;                                                                        //creates an enable variable to tell when measure should run
+//extern bool enableCompute;                                                                        //creates an enable variable to tell when compute should run
+//extern bool enableDisplay;                                                                        //creates an enable variable to tell when display should run
+//extern bool enableStatus;                                                                         //creates an enable variable to tell when status should run
 
-TCB Head = NULL;
-TCB Tail = NULL;
+TCB nullTCB = (TCB) {                                                                     //defines a task for measurements
+  NULL,
+  NULL,
+  NULL,
+  NULL
+};
+
+bool operator == (const TCB task1, const TCB task2) {
+  if ((task1.myTask == task2.myTask) and (task1.taskDataPtr == task2.taskDataPtr)) {
+    return true;
+  }
+  else {
+    return false;
+  }
+}
+
+bool operator != (const TCB task1, const TCB task2) {
+  if ((task1.myTask != task2.myTask) or (task1.taskDataPtr != task2.taskDataPtr)) {
+    return true;
+  }
+  else {
+    return false;
+  }
+}
+
+TCB *Head = NULL;
+TCB *Tail = NULL;
+
+
 
 TCB MeasurementTask = (TCB) {                                                                     //defines a task for measurements
   &measure,
@@ -67,36 +94,52 @@ TCB DisplayTask = (TCB) {                                                       
   NULL
 };
 
-void insert(TCB task) {
+
+void insert(TCB& task) {
   if(Head == NULL) {
-    Head = task;
-    Tail = task;
+    Head = &task;
+    Tail = &task;
   } else {
-    Tail.next() = task;
-    task.prev() = Tail;
-    Tail = task;
+    Tail->next = &task;
+    task.prev = Tail;
+    Tail = &task;
   }
 }
 
-void rmv(TCB task) {
-  if (Head != NULL and Tail != NULL) {                    //checks to see if remove is redundant
-    if (Head == Tail) {                                   //checks for single node
+void rmv(TCB& task) {
+  TCB *tempHead = Head;
+  TCB *tempTail = Tail;
+  if (tempHead != NULL and tempTail != NULL) {                    //checks to see if remove is redundant
+    if (tempHead == tempTail) {                                   //checks for single node
       Head = NULL;
       Tail = NULL;
-    } else if (Head == task) {                            //checks for head task to be removed
-      Head = Head.next();
-      Head.prev() = NULL;
-    } else if (Tail == task) {                            //checks for last task to be removed
-      Tail = Tail.prev();
-      Tail.next() = NULL;
+    } else if (*tempHead == task) {                            //checks for head task to be removed
+      tempHead->next->prev = NULL;
+      Head = tempHead->next;
+    } else if (*tempTail == task) {                            //checks for last task to be removed
+      tempTail->next->prev = NULL;
+      Tail = tempTail->next;
     }
     else {
+      
       //need to go through the linked list to remove
+      TCB *temp = tempHead->next;
+      while ((*temp != task) and (*temp != nullTCB)) {
+        temp = temp->next;
+        tempHead = tempHead->next;
+      }
+      if (*temp != nullTCB) {
+        tempHead->next = temp->next;
+        if (temp->next != NULL) {
+          temp->next->prev = tempHead->prev;
+        }
+      }
+      
     }
   }
 }
 
-TCB taskQueue[] = {MeasurementTask, ComputationTask, StatusTask, AlarmTask, DisplayTask, NULL};   //creates an array of the tasks so they can easily be executed in order.
+//TCB taskQueue[] = {MeasurementTask, ComputationTask, StatusTask, AlarmTask, DisplayTask, NULL};   //creates an array of the tasks so they can easily be executed in order.
 
 // Global constants
 static const unsigned long EACH_TASK_TIME = 5000;                                                 //defines the constant that states how often the tasks other than alarm will
@@ -110,22 +153,22 @@ void scheduler() {                                                              
   insert(DisplayTask);
 
   while (Head != NULL) {                                                                          //loop through tasks
-    Head.myTask(Head.taskDataPtr);
-    rmv(Head);
+    Head->myTask(Head->taskDataPtr);
+    rmv(*Head);
   }
   //for(int i = 0; i < 5; i++) {
   //  taskQueue[i].myTask(taskQueue[i].taskDataPtr);                                                //loops through tasks to be executed.
   //}
-  if((millis() - previousTime) > EACH_TASK_TIME) {                                                //if its been 5 seconds or more sets enable true so the functions will execute.
-    previousTime  = millis();
-    enableMeasure = true;
-    enableCompute = true;
-    enableDisplay = true;
-    enableStatus  = true;
-  } else {                                                                                        //if it hasnt been 5 seconds or more sets enable to false so functions wont execute.
-    enableMeasure = false;
-    enableCompute = false;
-    enableDisplay = false;
-    enableStatus  = false;
-  }
+//  if((millis() - previousTime) > EACH_TASK_TIME) {                                                //if its been 5 seconds or more sets enable true so the functions will execute.
+//    previousTime  = millis();
+//    enableMeasure = true;
+//    enableCompute = true;
+//    enableDisplay = true;
+//    enableStatus  = true;
+//  } else {                                                                                        //if it hasnt been 5 seconds or more sets enable to false so functions wont execute.
+//    enableMeasure = false;
+//    enableCompute = false;
+//    enableDisplay = false;
+//    enableStatus  = false;
+//  }
 }
