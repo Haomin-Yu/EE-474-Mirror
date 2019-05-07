@@ -25,11 +25,11 @@ static double bloodPressCorrectedBuf_INIT[16] = {0, 0, 0, 0, 0, 0, 0, 0,
                                                  0, 0, 0, 0, 0, 0, 0, 0};
 static double pulseRateCorrectedBuf_INIT[8]   = {0, 0, 0, 0, 0, 0, 0, 0};
 
-// 
-unsigned short currentTemperatureIndex_INIT = 0;
-unsigned short currentSysPressIndex_INIT    = 0;
-unsigned short currentDiasPressIndex_INIT   = 8;
-unsigned short currentPulseRateIndex_INIT   = 0;
+// Start index of the buffers
+static unsigned short currentTemperatureIndex_INIT = 0;
+static unsigned short currentSysPressIndex_INIT    = 0;
+static unsigned short currentDiasPressIndex_INIT   = 8;
+static unsigned short currentPulseRateIndex_INIT   = 0;
 
 // Status
 static unsigned short batteryState_INIT = 200;
