@@ -7,11 +7,15 @@
  * Author: Haomin Yu
  *
  */
-
-#define BUTTONWIDTH 80
+extern "C" {
+  #include "rawStructs.h";
+}
+extern MeasureDataStruct MeasureData;
+#define BUTTONWIDTH  80
 #define BUTTONHEIGHT 40
-#define MINPRESSURE 10
-#define MAXPRESSURE 1000
+#define MINPRESSURE  10
+#define MAXPRESSURE  1000
+#define selectionPointer MeasureData.measurementSelection;
 
 // Writes 'content' in the given 'color' at position (x, y)
 void TFT_Write(int Color, int x, int y, String content) {
