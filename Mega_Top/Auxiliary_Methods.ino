@@ -15,7 +15,6 @@ extern MeasureDataStruct MeasureData;
 #define BUTTONHEIGHT 40
 #define MINPRESSURE  10
 #define MAXPRESSURE  1000
-#define selectionPointer MeasureData.measurementSelection;
 
 // Writes 'content' in the given 'color' at position (x, y)
 void TFT_Write(int Color, int x, int y, String content) {
@@ -83,21 +82,25 @@ void touchScreen() {
      if((p.x < (BUTTONHEIGHT + 165)) && (p.x > 165)) {
         if(((tft.height()-p.y) < (BUTTONWIDTH + 10)) && ((tft.height()-p.y) > 10)) {
            tempCheck = true;
+           *MeasureData.measurementSelection = 1; 
            tft.fillRect(10, 165, BUTTONWIDTH, BUTTONHEIGHT, BLUE);
            TFT_Write(RED, 12, 180, "Temp.");
         }
         else if(((tft.height()-p.y) < (12 + BUTTONWIDTH * 2)) && ((tft.height()-p.y) > (12 + BUTTONWIDTH))) {
            sysCheck = true;
+           *MeasureData.measurementSelection = 2; 
            tft.fillRect((12 + BUTTONWIDTH), 165, BUTTONWIDTH, BUTTONHEIGHT, BLUE);
            TFT_Write(RED, (14 + BUTTONWIDTH), 180, "Sys.");
         } 
         else if(((tft.height()-p.y) < (14 + BUTTONWIDTH * 3)) && ((tft.height()-p.y) > (14 + BUTTONWIDTH * 2))) {
            diasCheck = true;
+           *MeasureData.measurementSelection = 3; 
            tft.fillRect((14 + BUTTONWIDTH * 2), 165, BUTTONWIDTH, BUTTONHEIGHT, BLUE);
            TFT_Write(RED, (16 + BUTTONWIDTH * 2), 180, "Dias.");
         } 
         else if(((tft.height()-p.y) < (16 + BUTTONWIDTH * 4)) && ((tft.height()-p.y) > (16 + BUTTONWIDTH * 3))) {
            pulseCheck = true;
+           *MeasureData.measurementSelection = 4; 
            tft.fillRect((16 + BUTTONWIDTH * 3), 165, BUTTONWIDTH, BUTTONHEIGHT, BLUE);
            TFT_Write(RED, (18 + BUTTONWIDTH * 3), 180, "Pulse");
         }
