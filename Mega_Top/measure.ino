@@ -40,6 +40,8 @@ void measure(void* Data) {
         *data.currentTemperatureIndex = nextIndex;
         tempRawChanged = true;
         tempCheck = false;
+        tft.fillRect(10, 165, BUTTONWIDTH, BUTTONHEIGHT, CYAN);
+        TFT_Write(RED, 12, 180, "Temp.");
         *data.measurementSelection = outOfBounds;
         break;
       case measureSysPress:
@@ -48,6 +50,8 @@ void measure(void* Data) {
         *data.currentSysPressIndex = nextIndex;
         sysPressRawChanged = true;
         sysCheck = false;
+        tft.fillRect((12 + BUTTONWIDTH), 165, BUTTONWIDTH, BUTTONHEIGHT, CYAN);
+        TFT_Write(RED, (14 + BUTTONWIDTH), 180, "Sys.");
         *data.measurementSelection = outOfBounds;
         break;
       case measureDiasPress:
@@ -56,6 +60,8 @@ void measure(void* Data) {
         *data.currentDiasPressIndex = nextIndex;
         diasPressRawChanged = true;
         diasCheck = false;
+        tft.fillRect((14 + BUTTONWIDTH * 2), 165, BUTTONWIDTH, BUTTONHEIGHT, CYAN);
+        TFT_Write(RED, (16 + BUTTONWIDTH * 2), 180, "Dias.");
         *data.measurementSelection = outOfBounds;
         break;
       case measurePulseRate:
@@ -64,6 +70,8 @@ void measure(void* Data) {
         *data.currentPulseRateIndex = nextIndex;
         pulseRateRawChanged = true;
         pulseCheck = false;
+        tft.fillRect((16 + BUTTONWIDTH * 3), 165, BUTTONWIDTH, BUTTONHEIGHT, CYAN);
+        TFT_Write(RED, (18 + BUTTONWIDTH * 3), 180, "Pulse");
         *data.measurementSelection = outOfBounds;
         break;
       default:
