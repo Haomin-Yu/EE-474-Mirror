@@ -36,17 +36,8 @@ TCB nullTCB = (TCB) {                                                           
   NULL
 };
 
-bool operator == (const TCB task1, const TCB* task2) {
-  if ((task1.myTask == task2->myTask) and (task1.taskDataPtr == task2->taskDataPtr)) {
-    return true;
-  }
-  else {
-    return false;
-  }
-}
-
-bool operator != (const TCB task1, const TCB* task2) {
-  if ((task1.myTask != task2->myTask) or (task1.taskDataPtr != task2->taskDataPtr)) {
+bool operator == (const TCB task1, const TCB task2) {
+  if ((task1.myTask == task2.myTask) and (task1.taskDataPtr == task2.taskDataPtr)) {
     return true;
   }
   else {
@@ -122,18 +113,17 @@ void rmv(TCB* task) {
     if (tempHead == tempTail) {                                   //checks for single node
       Head = NULL;
       Tail = NULL;
-    } else if (*tempHead == task) {                            //checks for head task to be removed
+    } else if (*tempHead == *task) {                            //checks for head task to be removed
       tempHead->next->prev = NULL;
       Head = tempHead->next;
-    } else if (*tempTail == task) {                            //checks for last task to be removed
+    } else if (*tempTail == *task) {                            //checks for last task to be removed
       tempTail->next->prev = NULL;
       Tail = tempTail->next;
     }
     else {
-      
       //need to go through the linked list to remove
       TCB *temp = tempHead->next;
-      while ((*temp != task) and (*temp != nullTCB)) {
+      while ((*temp != *task) and (*temp != nullTCB)) {
         temp = temp->next;
         tempHead = tempHead->next;
       }
