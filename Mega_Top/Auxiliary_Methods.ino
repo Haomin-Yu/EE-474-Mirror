@@ -11,6 +11,11 @@ extern "C" {
   #include "rawStructs.h";
 }
 extern MeasureDataStruct MeasureData;
+extern WarningAlarmDataStruct WarningAlarmData;
+extern bool newTempComputed;
+extern bool newSysPressComputed;
+extern bool newDiasPressComputed;
+extern bool newPulseRateComputed;
 #define BUTTONWIDTH  80
 #define BUTTONHEIGHT 40
 #define MINPRESSURE  10
@@ -18,39 +23,38 @@ extern MeasureDataStruct MeasureData;
 
 // Writes 'content' in the given 'color' at position (x, y)
 void TFT_Write(int Color, int x, int y, String content) {
-// Sets the color of the text
+  // Sets the color of the text
   tft.setTextColor(Color);
-// Sets the position of the text
+  // Sets the position of the text
   tft.setCursor(x, y);
-// Prints the text
+  // Prints the text
   tft.print(content);
 }
 // Sets up labels
 void labelsInit() {
-  TFT_Write(GREEN, 10, 30,  "Body.Temp  ->        C");
-  TFT_Write(GREEN, 10, 65,  "Sys.Press  ->        mmHg"); 
-  TFT_Write(GREEN, 10, 90,  "Dias.Press ->        mmHg"); 
-  TFT_Write(GREEN, 10, 115, "Pulse Rate ->        BPM"); 
-  TFT_Write(GREEN, 10, 140, "Battery    ->");
+  TFT_Write(GREEN, 10, 23,  "Body.Temp  ->        C");
+  TFT_Write(GREEN, 10, 48,  "Sys.Press  ->        mmHg"); 
+  TFT_Write(GREEN, 10, 73,  "Dias.Press ->        mmHg"); 
+  TFT_Write(GREEN, 10, 98, "Pulse Rate ->        BPM"); 
+  TFT_Write(GREEN, 10, 123, "Battery    ->");
   tft.fillRect(10, 165, (BUTTONWIDTH), (BUTTONHEIGHT), CYAN);
   tft.fillRect((12 + BUTTONWIDTH), 165, (BUTTONWIDTH), (BUTTONHEIGHT), CYAN);
   tft.fillRect((14 + BUTTONWIDTH * 2), 165, (BUTTONWIDTH), (BUTTONHEIGHT), CYAN);
   tft.fillRect((16 + BUTTONWIDTH * 3), 165, (BUTTONWIDTH), (BUTTONHEIGHT), CYAN);
-  TFT_Write(RED, 12, 180, "Temp.");
-  TFT_Write(RED, (14 + BUTTONWIDTH), 180, "Sys.");
-  TFT_Write(RED, (16 + BUTTONWIDTH * 2), 180, "Dias.");
+  TFT_Write(RED, 12, 180, " Temp.");
+  TFT_Write(RED, (14 + BUTTONWIDTH), 180, " Sys.");
+  TFT_Write(RED, (16 + BUTTONWIDTH * 2), 180, " Dias.");
   TFT_Write(RED, (18 + BUTTONWIDTH * 3), 180, "Pulse");
 }
 // Updates the measurement values(Erases the previous value)
-extern WarningAlarmDataStruct WarningAlarmData;
 void updateMeasurements(double tempCorrected, 
                         double systolicPressCorrected,
                         double diastolicPressCorrected,
                         double pulseRateCorrected,
                         unsigned short batteryState) {
-// Erasing the measurements
-  tft.fillRect(170, 30, 80, 125, BLACK);
-// Updating the measurements
+  // Erasing the measurements
+  tft.fillRect(175, 23, 80, 125, BLACK);
+  // Updating the measurements
   int tempColor = (*WarningAlarmData.tempHigh   || *WarningAlarmData.tempOutOfRange)?
                     RED: GREEN;
   int bpColor   = (*WarningAlarmData.bpHigh     || *WarningAlarmData.bpOutOfRange)?
@@ -59,11 +63,23 @@ void updateMeasurements(double tempCorrected,
                     RED: GREEN;
   int battColor = (*WarningAlarmData.batteryLow || *WarningAlarmData.batteryOutOfRange)?
                     RED: GREEN;
-  TFT_Write(tempColor, 175, 30,  (String)tempCorrected);
-  TFT_Write(bpColor  , 175, 65,  (String)systolicPressCorrected); 
-  TFT_Write(bpColor  , 175, 90, (String)diastolicPressCorrected); 
-  TFT_Write(prColor  , 175, 115, (String)pulseRateCorrected); 
-  TFT_Write(battColor, 175, 140, (String)batteryState); 
+  if(newTempComputed) {
+     TFT_Write(tempColor, 175, 23,  (String)tempCorrected);
+     newTempComputed = false;
+  }
+  if(newSysPressComputed) {
+     TFT_Write(bpColor  , 175, 48,  (String)systolicPressCorrected); 
+     newSysPressComputed = false;
+  }
+  if(newDiasPressComputed) {
+     TFT_Write(bpColor  , 175, 73,  (String)diastolicPressCorrected); 
+     newDiasPressComputed = false;
+  }
+  if(newPulseRateComputed) {
+     TFT_Write(prColor  , 175, 98,  (String)pulseRateCorrected); 
+     newPulseRateComputed = false;
+  }
+  TFT_Write(battColor, 175, 123, (String)batteryState); 
 }
 
 void touchScreen() {

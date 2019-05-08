@@ -55,7 +55,7 @@ void compute(void* Data) {
      unsigned short index = *data.currentPulseRateIndex;
      data.prCorrectedBuf[index] = computePr(data.pulseRateRawBuf[index]);
      pulseRateRawChanged = false;
-     newSysPressComputed = true;
+     newPulseRateComputed = true;
    }
 }
 
