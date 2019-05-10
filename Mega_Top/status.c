@@ -12,7 +12,7 @@
 void status(void* Data);
 
 // Global variable
-bool enableStatus = true;
+bool enableStatus = false;
 
 // Status of the system
 void status(void* Data) {
