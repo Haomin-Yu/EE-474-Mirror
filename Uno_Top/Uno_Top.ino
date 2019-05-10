@@ -13,6 +13,7 @@ extern "C" {                                            //calls in files
 void setup() {                                          //sets up the serial for sending and recieving information.
   // Setting the baud rate
   Serial.begin(9600);
+  pinMode(13, OUTPUT);
 }
 
 void loop() {
