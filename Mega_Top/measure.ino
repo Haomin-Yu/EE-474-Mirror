@@ -25,6 +25,7 @@ extern bool tempCheck;
 extern bool sysCheck;
 extern bool diasCheck;
 extern bool pulseCheck;
+extern bool enableStatus;
 
 // Measures the data 'temperatureRaw', 'systolicPressRaw',
 // 'diastolicPressRaw', and/or 'pulseRateRaw' beased on
@@ -39,7 +40,8 @@ void measure(void* Data) {
         data.temperatureRawBuf[nextIndex] = getSerialTemp();
         *data.currentTemperatureIndex = nextIndex;
         tempRawChanged = true;
-        tempCheck = false;
+        tempCheck      = false;
+        enableStatus   = true;
         tft.fillRect(10, 165, BUTTONWIDTH, BUTTONHEIGHT, CYAN);
         TFT_Write(RED, 12, 180, "Temp.");
         *data.measurementSelection = outOfBounds;
@@ -49,7 +51,8 @@ void measure(void* Data) {
         data.bloodPressRawBuf[nextIndex] = getSysPress();
         *data.currentSysPressIndex = nextIndex;
         sysPressRawChanged = true;
-        sysCheck = false;
+        sysCheck           = false;
+        enableStatus       = true;
         tft.fillRect((12 + BUTTONWIDTH), 165, BUTTONWIDTH, BUTTONHEIGHT, CYAN);
         TFT_Write(RED, (14 + BUTTONWIDTH), 180, "Sys.");
         *data.measurementSelection = outOfBounds;
@@ -59,7 +62,8 @@ void measure(void* Data) {
         data.bloodPressRawBuf[nextIndex] = getDiasPress();
         *data.currentDiasPressIndex = nextIndex;
         diasPressRawChanged = true;
-        diasCheck = false;
+        diasCheck           = false;
+        enableStatus        = true;
         tft.fillRect((14 + BUTTONWIDTH * 2), 165, BUTTONWIDTH, BUTTONHEIGHT, CYAN);
         TFT_Write(RED, (16 + BUTTONWIDTH * 2), 180, "Dias.");
         *data.measurementSelection = outOfBounds;
@@ -69,7 +73,8 @@ void measure(void* Data) {
         data.pulseRateRawBuf[nextIndex] = getPulseRate();
         *data.currentPulseRateIndex = nextIndex;
         pulseRateRawChanged = true;
-        pulseCheck = false;
+        pulseCheck          = false;
+        enableStatus        = true;
         tft.fillRect((16 + BUTTONWIDTH * 3), 165, BUTTONWIDTH, BUTTONHEIGHT, CYAN);
         TFT_Write(RED, (18 + BUTTONWIDTH * 3), 180, "Pulse");
         *data.measurementSelection = outOfBounds;
