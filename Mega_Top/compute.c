@@ -76,5 +76,6 @@ double computeDias(unsigned int diastolicRaw) {
 
 // Computes the pulse rate in beats per minute
 double computePr(unsigned int bpRaw) {
-	return 8 + 3*bpRaw;
+	return (double)bpRaw;
+	//return 8 + 3*bpRaw;
 }
