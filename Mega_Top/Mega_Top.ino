@@ -8,6 +8,7 @@
 #include "Elegoo_TFTLCD.h" // Hardware-specific library
 #include "TouchScreen.h"
 #include "rawStructs.h"
+#include "display.h"
 
 #define TS_MINX 120
 #define TS_MAXX 900

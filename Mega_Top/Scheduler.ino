@@ -13,7 +13,6 @@
 extern "C" {
   #include "compute.h"
   #include "status.h"
-  #include "display.h"
   #include "rawStructs.h"
 }
 // Getting global structs
