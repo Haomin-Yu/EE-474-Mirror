@@ -58,7 +58,6 @@ TCB* Head = NULL;
 TCB* Tail = NULL;
 
 
-
 TCB MeasurementTask = (TCB) {                                                                     //defines a task for measurements
   &measure,
   &MeasureData,
