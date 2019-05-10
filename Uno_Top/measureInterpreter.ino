@@ -9,7 +9,7 @@ void pulseRateInterpreter(unsigned int* prValuePointer);
 // Pin assignments
 static const int INTERRUPT     = 2;
 static const int PULSE_DIGITAL = 13;
-static const int PULSE_IN      = 4;
+static const int PULSE_IN      = A0;
 // Class variable
 static unsigned long COUNTER = 0;
  
@@ -25,7 +25,7 @@ void pulseRateInterpreter(unsigned int* prValuePointer) {
   COUNTER = 0;
   attachInterrupt(digitalPinToInterrupt(INTERRUPT), pulseInterupt, FALLING);
   while (millis() - startTime < 6000) {
-    if(analogRead(PULSE_IN) < PULSE_THRESHOLD) {
+    if(analogRead(A0) < PULSE_THRESHOLD) {
       digitalWrite(PULSE_DIGITAL, LOW);
     } else {
       digitalWrite(PULSE_DIGITAL, HIGH);
