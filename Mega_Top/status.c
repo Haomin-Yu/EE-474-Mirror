@@ -21,5 +21,6 @@ void status(void* Data) {
       if(*data.batteryState > 0) {
         *data.batteryState = *data.batteryState - 1;
       }
+      enableStatus = false;
     }
 }
