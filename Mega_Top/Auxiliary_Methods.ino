@@ -63,6 +63,8 @@ void updateMeasurements(double tempCorrected,
                     RED: GREEN;
   int battColor = (*WarningAlarmData.batteryLow || *WarningAlarmData.batteryOutOfRange)?
                     RED: GREEN;
+  bool newBatteryUpdate = newTempComputed || newSysPressComputed || newDiasPressComputed ||
+                          newPulseRateComputed;
   if(newTempComputed) {
      tft.fillRect(175, 23, 80, 24, BLACK);
      TFT_Write(tempColor, 175, 23,  (String)tempCorrected);
@@ -80,10 +82,13 @@ void updateMeasurements(double tempCorrected,
   }
   if(newPulseRateComputed) {
      tft.fillRect(175, 98, 80, 24, BLACK);
-     TFT_Write(prColor  , 175, 98,  (String)pulseRateCorrected); 
+     TFT_Write(prColor  , 175, 98,  (String)(int)pulseRateCorrected); 
      newPulseRateComputed = false;
   }
-  TFT_Write(battColor, 175, 123, (String)batteryState); 
+  if(newBatteryUpdate) {
+     tft.fillRect(175, 123, 80, 24, BLACK);
+     TFT_Write(battColor, 175, 123, (String)batteryState); 
+  }
 }
 
 void touchScreen() {
