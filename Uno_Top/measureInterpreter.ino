@@ -14,9 +14,6 @@ unsigned long pulseInterupt(){
   COUNTER++;
 }
 
-
-
-
 // Simulates raw input of pulse rate
 // (This function is deprecated as of Project 3)
 static const unsigned int PULSE_THRESHOLD = 5;
