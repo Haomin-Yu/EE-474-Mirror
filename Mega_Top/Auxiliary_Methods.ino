@@ -54,8 +54,6 @@ void updateMeasurements(double tempCorrected,
                         double diastolicPressCorrected,
                         double pulseRateCorrected,
                         unsigned short batteryState) {
-  // Erasing the measurements
-  tft.fillRect(175, 23, 80, 125, BLACK);
   // Updating the measurements
   int tempColor = (*WarningAlarmData.tempHigh   || *WarningAlarmData.tempOutOfRange)?
                     RED: GREEN;
@@ -66,18 +64,22 @@ void updateMeasurements(double tempCorrected,
   int battColor = (*WarningAlarmData.batteryLow || *WarningAlarmData.batteryOutOfRange)?
                     RED: GREEN;
   if(newTempComputed) {
+     tft.fillRect(175, 23, 80, 24, BLACK);
      TFT_Write(tempColor, 175, 23,  (String)tempCorrected);
      newTempComputed = false;
   }
   if(newSysPressComputed) {
+     tft.fillRect(175, 48, 80, 24, BLACK);
      TFT_Write(bpColor  , 175, 48,  (String)systolicPressCorrected); 
      newSysPressComputed = false;
   }
   if(newDiasPressComputed) {
+     tft.fillRect(175, 73, 80, 24, BLACK);
      TFT_Write(bpColor  , 175, 73,  (String)diastolicPressCorrected); 
      newDiasPressComputed = false;
   }
   if(newPulseRateComputed) {
+     tft.fillRect(175, 98, 80, 24, BLACK);
      TFT_Write(prColor  , 175, 98,  (String)pulseRateCorrected); 
      newPulseRateComputed = false;
   }
