@@ -14,6 +14,7 @@
  * (Others will do nothing)
  */
 #include "init.h"
+#include "measureInterpreter.h"
 #include <stdbool.h>
 
 // Getting the global indicators
@@ -30,6 +31,7 @@ extern void temperatureSimulator(unsigned int* tempValuePointer);
 extern void systolicPressSimulator(unsigned int* sysValuePointer);
 extern void diastolicPressSimulator(unsigned int* diasValuePointer);
 extern void pulseRateSimulator(unsigned int* prValuePointer);
+extern void pulseRateInterpreter(unsigned int* prValuePointer);
 
 // Interprets the byte as described in class header
 unsigned int interpretByte(unsigned char input);
@@ -52,7 +54,7 @@ unsigned int interpretByte(unsigned char input) {
          return *diasValuePointer;
          break;
       case 0x03:
-         pulseRateSimulator(prValuePointer);
+         pulseRateInterpreter(prValuePointer);
          return *prValuePointer;
          break;
       default:
