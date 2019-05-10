@@ -41,10 +41,12 @@ void labelsInit() {
   tft.fillRect((12 + BUTTONWIDTH), 165, (BUTTONWIDTH), (BUTTONHEIGHT), CYAN);
   tft.fillRect((14 + BUTTONWIDTH * 2), 165, (BUTTONWIDTH), (BUTTONHEIGHT), CYAN);
   tft.fillRect((16 + BUTTONWIDTH * 3), 165, (BUTTONWIDTH), (BUTTONHEIGHT), CYAN);
+  tft.fillRect(10, 210, (BUTTONWIDTH), (BUTTONHEIGHT), CYAN);
   TFT_Write(RED, 12, 180, " Temp.");
   TFT_Write(RED, (14 + BUTTONWIDTH), 180, " Sys.");
   TFT_Write(RED, (16 + BUTTONWIDTH * 2), 180, " Dias.");
   TFT_Write(RED, (18 + BUTTONWIDTH * 3), 180, "Pulse");
+  TFT_Write(RED, 12, 225,"Alarm");
 }
 // Updates the measurement values(Erases the previous value)
 void updateMeasurements(double tempCorrected, 
@@ -119,6 +121,13 @@ void touchScreen() {
            *MeasureData.measurementSelection = 4; 
            tft.fillRect((16 + BUTTONWIDTH * 3), 165, BUTTONWIDTH, BUTTONHEIGHT, BLUE);
            TFT_Write(RED, (18 + BUTTONWIDTH * 3), 180, "Pulse");
+        }
+     }
+     else if((p.x < (BUTTONHEIGHT + 210)) && (p.x > 210)) {
+      if(((tft.height()-p.y) < (BUTTONWIDTH + 10)) && ((tft.height()-p.y) > 10)) {
+           alarmAcknowledged = true; 
+           tft.fillRect(10, 210, BUTTONWIDTH, BUTTONHEIGHT, BLUE);
+           TFT_Write(RED, 12, 225, "Alarm");
         }
      }
   }

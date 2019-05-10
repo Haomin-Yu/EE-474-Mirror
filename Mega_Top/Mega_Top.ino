@@ -67,6 +67,7 @@ bool tempCheck = false;
 bool pulseCheck = false;
 bool sysCheck = false;
 bool diasCheck = false;
+bool alarmAcknowledged = true;
 
 void setup(void) {
   // Setting up data rate for the serial monitor
