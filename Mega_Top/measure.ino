@@ -33,7 +33,9 @@ extern bool alarmCheck;
 // the given measureSelection in 'Data'
 void measure(void* Data) {
   	MeasureDataStruct data = *((MeasureDataStruct*)Data);
+    static const double THRESHOLD_PULSE_PERCENT = 15.0;
     unsigned short select = *data.measurementSelection;
+    unsigned short currentIndex;
     unsigned short nextIndex;
     switch(select) {
       case measureTemp:
@@ -73,9 +75,17 @@ void measure(void* Data) {
         *data.measurementSelection = outOfBounds;
         break;
       case measurePulseRate:
-        nextIndex = (*data.currentPulseRateIndex + 1) % 8;
-        data.pulseRateRawBuf[nextIndex] = getPulseRate();
-        *data.currentPulseRateIndex = nextIndex;
+        currentIndex = *data.currentPulseRateIndex;
+        nextIndex    = (*data.currentPulseRateIndex + 1) % 8;
+        unsigned int prevPulseRate     = data.pulseRateRawBuf[currentIndex];
+        unsigned int incomingPulseRate = getPulseRate();
+        unsigned int difference = (incomingPulseRate > prevPulseRate)?
+                                  (incomingPulseRate - prevPulseRate):
+                                  (prevPulseRate - incomingPulseRate);
+        if((difference * 100.0 / prevPulseRate) > THRESHOLD_PULSE_PERCENT) {
+          data.pulseRateRawBuf[nextIndex] = incomingPulseRate;
+          *data.currentPulseRateIndex = nextIndex;
+        }
         pulseRateRawChanged = true;
         pulseCheck          = false;
         alarmCheck          = true;
