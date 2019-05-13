@@ -139,13 +139,17 @@ void rmv(TCB* task) {
 //TCB taskQueue[] = {MeasurementTask, ComputationTask, StatusTask, AlarmTask, DisplayTask, NULL};   //creates an array of the tasks so they can easily be executed in order.
 
 // Global constants
-static const unsigned long EACH_TASK_TIME = 5000;                                                 //defines the constant that states how often the tasks other than alarm will
-                                                                                                  //be executed. in this case its set to 5 seconds but can be changed in milliseconds.
+const unsigned long BUTTON_TIME = 2000;                                                 //defines the constant that states how often the tasks other than alarm will
+unsigned long previousTime = millis();                                                                                                  //be executed. in this case its set to 5 seconds but can be changed in milliseconds.
 void scheduler() {                                                                                //creates scheduler function that is to be called in a loop to constantly run the order.
-  static unsigned long previousTime = 0;
-  insert(&MeasurementTask);
-  insert(&ComputationTask);
-  insert(&StatusTask);
+  if(((millis() - previousTime) > BUTTON_TIME)) {
+    previousTime = millis();
+    if ((tempCheck || pulseCheck || sysCheck || diasCheck)) {
+      insert(&MeasurementTask);
+      insert(&ComputationTask);
+      insert(&StatusTask);
+    }
+  }
   insert(&AlarmTask);
   insert(&DisplayTask);
 

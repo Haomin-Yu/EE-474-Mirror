@@ -16,6 +16,8 @@ extern bool newTempComputed;
 extern bool newSysPressComputed;
 extern bool newDiasPressComputed;
 extern bool newPulseRateComputed;
+extern const unsigned long BUTTON_TIME;
+extern unsigned long previousTime;
 #define MINPRESSURE  10
 #define MAXPRESSURE  1000
 
@@ -42,11 +44,15 @@ void labelsInit() {
   tft.fillRect((14 + BUTTONWIDTH * 2), 160, (BUTTONWIDTH), (BUTTONHEIGHT), CYAN);
   tft.fillRect((16 + BUTTONWIDTH * 3), 160, (BUTTONWIDTH), (BUTTONHEIGHT), CYAN);
   tft.fillRect((54 + BUTTONWIDTH), 202, (BUTTONWIDTH), (BUTTONHEIGHT), CYAN);
+  tft.fillRect(10, 202, (BUTTONWIDTH), (BUTTONHEIGHT), CYAN);
+  tft.fillRect((16 + BUTTONWIDTH * 3), 202, (BUTTONWIDTH), (BUTTONHEIGHT), CYAN);
   TFT_Write(RED, 12, 175, " Temp.");
   TFT_Write(RED, (14 + BUTTONWIDTH), 175, " Sys.");
   TFT_Write(RED, (16 + BUTTONWIDTH * 2), 175, " Dias.");
   TFT_Write(RED, (18 + BUTTONWIDTH * 3), 175, "Pulse");
   TFT_Write(RED, (60 + BUTTONWIDTH), 217,"Alarm");
+  TFT_Write(RED, 12, 217,"Blank");
+  TFT_Write(RED, (18 + BUTTONWIDTH * 3), 217,"Blank");
 }
 // Updates the measurement values(Erases the previous value)
 void updateMeasurements(double tempCorrected, 
@@ -115,19 +121,19 @@ void touchScreen() {
            tempCheck = true;
            *MeasureData.measurementSelection = 1; 
            tft.fillRect(10, 160, BUTTONWIDTH, BUTTONHEIGHT, BLUE);
-           TFT_Write(RED, 12, 175, "Temp.");
+           TFT_Write(RED, 12, 175, " Temp.");
         }
         else if(((tft.height()-p.y) < (12 + BUTTONWIDTH * 2)) && ((tft.height()-p.y) > (12 + BUTTONWIDTH))) {
            sysCheck = true;
            *MeasureData.measurementSelection = 2; 
            tft.fillRect((12 + BUTTONWIDTH), 160, BUTTONWIDTH, BUTTONHEIGHT, BLUE);
-           TFT_Write(RED, (14 + BUTTONWIDTH), 175, "Sys.");
+           TFT_Write(RED, (14 + BUTTONWIDTH), 175, " Sys.");
         } 
         else if(((tft.height()-p.y) < (14 + BUTTONWIDTH * 3)) && ((tft.height()-p.y) > (14 + BUTTONWIDTH * 2))) {
            diasCheck = true;
            *MeasureData.measurementSelection = 3; 
            tft.fillRect((14 + BUTTONWIDTH * 2), 160, BUTTONWIDTH, BUTTONHEIGHT, BLUE);
-           TFT_Write(RED, (16 + BUTTONWIDTH * 2), 175, "Dias.");
+           TFT_Write(RED, (16 + BUTTONWIDTH * 2), 175, " Dias.");
         } 
         else if(((tft.height()-p.y) < (16 + BUTTONWIDTH * 4)) && ((tft.height()-p.y) > (16 + BUTTONWIDTH * 3))) {
            pulseCheck = true;
@@ -140,13 +146,20 @@ void touchScreen() {
       if(((tft.height()-p.y) < ((BUTTONWIDTH *2) + 54)) && ((tft.height()-p.y) > (54 + BUTTONWIDTH))) {
            alarmAcknowledged = true;
            alarmButton = true;
-           tft.fillRect(0, 0, 320, 20, BLACK);
            tft.fillRect((54 + BUTTONWIDTH), 202, BUTTONWIDTH, BUTTONHEIGHT, BLUE);
            TFT_Write(RED, (60 + BUTTONWIDTH), 217, "Alarm");
+        } else if (((tft.height()-p.y) < ((BUTTONWIDTH) + 10)) && ((tft.height()-p.y) > 10)) {
+          tft.fillRect(10, 202, (BUTTONWIDTH), (BUTTONHEIGHT), BLUE);
+          TFT_Write(RED, 12, 217,"Blank");
+        } else if (((tft.height()-p.y) < ((16 + BUTTONWIDTH * 4))) && ((tft.height()-p.y) > 16)) {
+          tft.fillRect((16 + BUTTONWIDTH * 3), 202, (BUTTONWIDTH), (BUTTONHEIGHT), BLUE);
+          TFT_Write(RED, (18 + BUTTONWIDTH * 3), 217,"Blank");
         }
      } 
-  } else if (alarmButton){
+  } else if (alarmButton && ((millis() - previousTime) > BUTTON_TIME)){
+      previousTime = millis();
       alarmButton = false;
+      tft.fillRect(0, 0, 320, 20, BLACK);
       tft.fillRect((54 + BUTTONWIDTH), 202, BUTTONWIDTH, BUTTONHEIGHT, CYAN);
       TFT_Write(RED, (60 + BUTTONWIDTH), 217, "Alarm");
   }
