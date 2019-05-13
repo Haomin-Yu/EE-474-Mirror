@@ -67,12 +67,13 @@ Elegoo_TFTLCD tft(LCD_CS, LCD_CD, LCD_WR, LCD_RD, LCD_RESET);
 #define BUTTONWIDTH  80
 #define BUTTONHEIGHT 40
 
+unsigned short annonciationCounter = 6;
 bool tempCheck = false;
 bool pulseCheck = false;
 bool sysCheck = false;
 bool diasCheck = false;
-bool alarmAcknowledged = true;
 bool alarmCheck = false;
+
 
 void setup(void) {
   // Setting up data rate for the serial monitor
