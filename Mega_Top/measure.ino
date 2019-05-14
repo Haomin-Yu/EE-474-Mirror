@@ -37,6 +37,9 @@ void measure(void* Data) {
     unsigned short select = *data.measurementSelection;
     unsigned short currentIndex;
     unsigned short nextIndex;
+    unsigned int prevPulseRate;
+     unsigned int incomingPulseRate;
+     unsigned int difference;
     switch(select) {
       case measureTemp:
         nextIndex = (*data.currentTemperatureIndex + 1) % 8;
@@ -77,14 +80,17 @@ void measure(void* Data) {
       case measurePulseRate:
         currentIndex = *data.currentPulseRateIndex;
         nextIndex    = (*data.currentPulseRateIndex + 1) % 8;
-        unsigned int prevPulseRate     = data.pulseRateRawBuf[currentIndex];
-        unsigned int incomingPulseRate = getPulseRate();
-        unsigned int difference = (incomingPulseRate > prevPulseRate)?
+         prevPulseRate     = data.pulseRateRawBuf[currentIndex];
+         incomingPulseRate = getPulseRate();
+        difference = (incomingPulseRate > prevPulseRate)?
                                   (incomingPulseRate - prevPulseRate):
                                   (prevPulseRate - incomingPulseRate);
         if((difference * 100.0 / prevPulseRate) > THRESHOLD_PULSE_PERCENT) {
           data.pulseRateRawBuf[nextIndex] = incomingPulseRate;
           *data.currentPulseRateIndex = nextIndex;
+        }
+        else {
+          data.pulseRateRawBuf[currentIndex] = incomingPulseRate;
         }
         pulseRateRawChanged = true;
         pulseCheck          = false;
