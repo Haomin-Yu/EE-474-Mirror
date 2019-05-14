@@ -5,7 +5,7 @@
  * Function description: this sets the raw data to the measured data from sensors so 
  *                       this data can be used in other files for portions such as warning and alarm
  *                       or computation
- * Author: Haomin Yu
+ * Author: Haomin Yu and Nathan Ness
  */ 
 // Class constants
 static const unsigned short outOfBounds      = 0;
@@ -92,6 +92,7 @@ void measure(void* Data) {
         else {
           data.pulseRateRawBuf[currentIndex] = incomingPulseRate;
         }
+        //changes check booleans accordingly as well as changes color of puse back to original color
         pulseRateRawChanged = true;
         pulseCheck          = false;
         alarmCheck          = true;

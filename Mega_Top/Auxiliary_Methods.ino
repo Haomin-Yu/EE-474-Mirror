@@ -1,15 +1,20 @@
 /*
  * Function name: Auxiliary_Methods
- * Function inputs: warning data struct to tell if there are any warnings or alarms
- * Function outputs: contains many miscillanious methods mentioned below such as tft labels.
+ * Function inputs: warning data struct to tell if there are any warnings or alarms, as well as touchscreen data
+ * Function outputs: contains many miscillanious methods mentioned below such as tft labels and data from touchscreen.
  * Function description: Creatues many miscillanious methods to be used throughout
  *                       the rest of out programs so it can be cleaner, easier to understand, and easier to call.
- * Author: Haomin Yu
+ *                       this includes the touchscreen funcitonality
+ * Author: Haomin Yu and Nathan Ness
  *
  */
+
+//includes rawStructs file
 extern "C" {
   #include "rawStructs.h";
 }
+
+//includes all needed data structs, computational booleans, and variables needed to keep time.
 extern MeasureDataStruct MeasureData;
 extern WarningAlarmDataStruct WarningAlarmData;
 extern TFTKeypadDataStruct KeypadData;
@@ -19,10 +24,11 @@ extern bool newDiasPressComputed;
 extern bool newPulseRateComputed;
 extern const unsigned long BUTTON_TIME;
 extern unsigned long previousTime;
-#define MINPRESSURE  10
-#define MAXPRESSURE  1000
 
-bool alarmButton = false;
+#define MINPRESSURE  10     //minimum pressure for a tft touch to be acknowledged.
+#define MAXPRESSURE  1000   //maximum pressure for a tft touch to be acknowledged.
+
+bool alarmButton = false;   //boolean used to keep track of if alarm button was pressed.
 
 // Writes 'content' in the given 'color' at position (x, y)
 void TFT_Write(int Color, int x, int y, String content) {
@@ -61,10 +67,10 @@ void updateMeasurements(double tempCorrected,
                         double diastolicPressCorrected,
                         double pulseRateCorrected,
                         unsigned short batteryState) {
-  // Updating the measurements
+  // Updating the measurements as well as decides the color at which each measurement should be displayed.
   bool newBatteryUpdate = newTempComputed || newSysPressComputed || newDiasPressComputed ||
                           newPulseRateComputed;
-  if(newTempComputed || alarmCheck) {
+  if(newTempComputed || alarmCheck) {               //temperature color and data display
     int tempColor;
     if(*WarningAlarmData.tempOutOfRange) {
       tempColor = YELLOW;
@@ -75,7 +81,7 @@ void updateMeasurements(double tempCorrected,
      TFT_Write(tempColor, 175, 23,  (String)tempCorrected);
      newTempComputed = false;
   }
-  if(newSysPressComputed || alarmCheck) {
+  if(newSysPressComputed || alarmCheck) {           //systolic color and data display
     int bpColor;
     if(*WarningAlarmData.bpOutOfRange && (systolicPressCorrected > 156) && (annonciationCounter > 4)) {
       bpColor = RED;
@@ -88,7 +94,7 @@ void updateMeasurements(double tempCorrected,
      TFT_Write(bpColor  , 175, 48,  (String)systolicPressCorrected); 
      newSysPressComputed = false;
   }
-  if(newDiasPressComputed || alarmCheck) {
+  if(newDiasPressComputed || alarmCheck) {         //diastolic color and data display
     int bpColor;
     if(*WarningAlarmData.bpOutOfRange) {
       bpColor = YELLOW;
@@ -99,7 +105,7 @@ void updateMeasurements(double tempCorrected,
      TFT_Write(bpColor  , 175, 73,  (String)diastolicPressCorrected); 
      newDiasPressComputed = false;
   }
-  if(newPulseRateComputed || alarmCheck) {
+  if(newPulseRateComputed || alarmCheck) {         //pulse color and data display
      int pulseColor;
      if(*WarningAlarmData.pulseOutOfRange) {
        pulseColor = YELLOW;
@@ -110,7 +116,7 @@ void updateMeasurements(double tempCorrected,
      TFT_Write(pulseColor  , 175, 98,  (String)(int)pulseRateCorrected); 
      newPulseRateComputed = false;
   }
-  if(newBatteryUpdate) {
+  if(newBatteryUpdate) {                           //battery color and data display
      int battColor;
      if(*WarningAlarmData.batteryOutOfRange && (annonciationCounter > 4)) {
        battColor = RED;
@@ -124,6 +130,7 @@ void updateMeasurements(double tempCorrected,
   }
 }
 
+//This is used to check for any buttons pressed and assign coordinating pointers and flags based off of buttons pressed
 void touchScreen() {
   digitalWrite(13, HIGH);
   TSPoint p = ts.getPoint();
@@ -131,7 +138,7 @@ void touchScreen() {
   pinMode(XM, OUTPUT);
   pinMode(YP, OUTPUT);
 
-  if (!(*KeypadData.alarmAcknowledge == 0) && alarmCheck) {
+  if (!(*KeypadData.alarmAcknowledge == 0) && alarmCheck) {   //if an alarm is meant to go off and it is not acknowledged, it will display an alarm warning
     if (annonciationCounter > 4) {
       tft.fillRect(0, 0, 320, 20, RED);
       TFT_Write(WHITE, 5, 3, "ALARM ACTIVE  ALARM ACTIVE");
@@ -139,66 +146,68 @@ void touchScreen() {
     }
   }
 
+  //maps our tft display based off of the fact that we have a horizontal display.
   p.x = map(p.x, TS_MINY, TS_MAXY, tft.height(), 0);
   //p.x = tft.width()-map(p.x, TS_MINX, TS_MAXX, tft.width(), 0);
   p.y = (tft.height()-map(p.y, TS_MINX, TS_MAXX, tft.width(), 0));
   //p.y = map(p.y, TS_MINY, TS_MAXY, tft.height(), 0);
 
-  if (p.z > MINPRESSURE && p.z < MAXPRESSURE) {
-     if((p.x < (BUTTONHEIGHT + 160)) && (p.x > 160) && (*KeypadData.alarmAcknowledge == 0)) {
-        if(((tft.height()-p.y) < (BUTTONWIDTH + 10)) && ((tft.height()-p.y) > 10)) {
+  if (p.z > MINPRESSURE && p.z < MAXPRESSURE) {                                                                       //checks to see if the tft is pressed anywhere
+     if((p.x < (BUTTONHEIGHT + 160)) && (p.x > 160) && (*KeypadData.alarmAcknowledge == 0)) {                         //checks to see if it alligns with the buttons horizontal axis.
+        if(((tft.height()-p.y) < (BUTTONWIDTH + 10)) && ((tft.height()-p.y) > 10)) {                                  //checks to see if the vertical axis for temp was pressed.
            tempCheck = true;
-           *MeasureData.measurementSelection = 1; 
+           *MeasureData.measurementSelection = 1; //assigns button selected data
            *KeypadData.measurementSelection = 1; 
-           tft.fillRect(10, 160, BUTTONWIDTH, BUTTONHEIGHT, BLUE);
+           tft.fillRect(10, 160, BUTTONWIDTH, BUTTONHEIGHT, BLUE);//changes color to represent a button press
            TFT_Write(RED, 12, 175, " Temp.");
         }
-        else if(((tft.height()-p.y) < (12 + BUTTONWIDTH * 2)) && ((tft.height()-p.y) > (12 + BUTTONWIDTH))) {
+        else if(((tft.height()-p.y) < (12 + BUTTONWIDTH * 2)) && ((tft.height()-p.y) > (12 + BUTTONWIDTH))) {         //checks to see if the vertical axis for sys was pressed.
            sysCheck = true;
-           *MeasureData.measurementSelection = 2;
+           *MeasureData.measurementSelection = 2;//assigns button selected data
            *KeypadData.measurementSelection = 2; 
-           tft.fillRect((12 + BUTTONWIDTH), 160, BUTTONWIDTH, BUTTONHEIGHT, BLUE);
+           tft.fillRect((12 + BUTTONWIDTH), 160, BUTTONWIDTH, BUTTONHEIGHT, BLUE);//changes color to represent a button press
            TFT_Write(RED, (14 + BUTTONWIDTH), 175, " Sys.");
         } 
-        else if(((tft.height()-p.y) < (14 + BUTTONWIDTH * 3)) && ((tft.height()-p.y) > (14 + BUTTONWIDTH * 2))) {
+        else if(((tft.height()-p.y) < (14 + BUTTONWIDTH * 3)) && ((tft.height()-p.y) > (14 + BUTTONWIDTH * 2))) {     //checks to see if the vertical axis for dias was pressed.
            diasCheck = true;
-           *MeasureData.measurementSelection = 3; 
+           *MeasureData.measurementSelection = 3; //assigns button selected data
            *KeypadData.measurementSelection = 3;
-           tft.fillRect((14 + BUTTONWIDTH * 2), 160, BUTTONWIDTH, BUTTONHEIGHT, BLUE);
+           tft.fillRect((14 + BUTTONWIDTH * 2), 160, BUTTONWIDTH, BUTTONHEIGHT, BLUE);//changes color to represent a button press
            TFT_Write(RED, (16 + BUTTONWIDTH * 2), 175, " Dias.");
         } 
-        else if(((tft.height()-p.y) < (16 + BUTTONWIDTH * 4)) && ((tft.height()-p.y) > (16 + BUTTONWIDTH * 3))) {
+        else if(((tft.height()-p.y) < (16 + BUTTONWIDTH * 4)) && ((tft.height()-p.y) > (16 + BUTTONWIDTH * 3))) {     //checks to see if the vertical axis for pulse was pressed.
            pulseCheck = true;
-           *MeasureData.measurementSelection = 4; 
+           *MeasureData.measurementSelection = 4; //assigns button selected data
            *KeypadData.measurementSelection = 4;
-           tft.fillRect((16 + BUTTONWIDTH * 3), 160, BUTTONWIDTH, BUTTONHEIGHT, BLUE);
+           tft.fillRect((16 + BUTTONWIDTH * 3), 160, BUTTONWIDTH, BUTTONHEIGHT, BLUE);//changes color to represent a button press
            TFT_Write(RED, (18 + BUTTONWIDTH * 3), 175, "Pulse");
         }
      }
-     else if((p.x < (BUTTONHEIGHT + 202)) && (p.x > 202)) {
-      if(((tft.height()-p.y) < ((BUTTONWIDTH *2) + 54)) && ((tft.height()-p.y) > (54 + BUTTONWIDTH))) {
+     else if((p.x < (BUTTONHEIGHT + 202)) && (p.x > 202)) {                                                           //checks to see if it alligns with the buttons horizontal axis.
+      if(((tft.height()-p.y) < ((BUTTONWIDTH *2) + 54)) && ((tft.height()-p.y) > (54 + BUTTONWIDTH))) {               //checks to see if the vertical axis for alarm was pressed.
            
-            annonciationCounter = 0;
-           
-           *KeypadData.alarmAcknowledge = 0;
-           alarmButton = true;
-           tft.fillRect((54 + BUTTONWIDTH), 202, BUTTONWIDTH, BUTTONHEIGHT, BLUE);
+            annonciationCounter = 0;                                              //sets counter used to see how long its been since an acknowledgment to zero
+           *KeypadData.alarmAcknowledge = 0;                                      //sets alarm acknowledgement
+           alarmButton = true;                                                    //says alarm button was pressed
+           tft.fillRect((54 + BUTTONWIDTH), 202, BUTTONWIDTH, BUTTONHEIGHT, BLUE);//changes color to represent a button press
            TFT_Write(RED, (60 + BUTTONWIDTH), 217, "Alarm");
-        } else if (((tft.height()-p.y) < ((BUTTONWIDTH) + 10)) && ((tft.height()-p.y) > 10)) {
-          tft.fillRect(10, 202, (BUTTONWIDTH), (BUTTONHEIGHT), BLUE);
+           
+        } else if (((tft.height()-p.y) < ((BUTTONWIDTH) + 10)) && ((tft.height()-p.y) > 10)) {                        //checks to see if the vertical axis for blank was pressed.
+          tft.fillRect(10, 202, (BUTTONWIDTH), (BUTTONHEIGHT), BLUE);             //changes color to represent a button press
           TFT_Write(RED, 12, 217,"Blank");
-        } else if (((tft.height()-p.y) < ((16 + BUTTONWIDTH * 4))) && ((tft.height()-p.y) > 16)) {
-          tft.fillRect((16 + BUTTONWIDTH * 3), 202, (BUTTONWIDTH), (BUTTONHEIGHT), BLUE);
+          
+        } else if (((tft.height()-p.y) < ((16 + BUTTONWIDTH * 4))) && ((tft.height()-p.y) > 16)) {                    //checks to see if the vertical axis for blank was pressed.
+          tft.fillRect((16 + BUTTONWIDTH * 3), 202, (BUTTONWIDTH), (BUTTONHEIGHT), BLUE);//changes color to represent a button press
           TFT_Write(RED, (18 + BUTTONWIDTH * 3), 217,"Blank");
         }
      } 
-  } else if (alarmButton && ((millis() - previousTime) > BUTTON_TIME)){
-      previousTime = millis();
+  } else if (alarmButton && ((millis() - previousTime) > BUTTON_TIME)){                                               //if the alarm button was pressed and its time to look at the 
+      previousTime = millis();                                                                                        //buttons pressed we will check them
       alarmButton = false;
-      tft.fillRect(0, 0, 320, 20, BLACK);
+      tft.fillRect(0, 0, 320, 20, BLACK);                                                            //clears screen to normal and buttons back to unpressed.
       tft.fillRect((54 + BUTTONWIDTH), 202, BUTTONWIDTH, BUTTONHEIGHT, CYAN);
       TFT_Write(RED, (60 + BUTTONWIDTH), 217, "Alarm");
-      Serial.println("Alarm Acknowledged");
+      Serial.println("Alarm Acknowledged");                                                          //will print in serial that alarm was acknowledged
   }
 }
 
@@ -207,8 +216,8 @@ unsigned int getSerialUInt() {
   while(Serial1.available() == 0) {}
   return Serial1.read();
 }
-// Calls on the Uno to get the temperature
-int serialValue;
+// Calls on the Uno to get the temperature & prints information in serial monitor
+int serialValue; //used to hold the value recieved through serial communication
 unsigned int getSerialTemp() {
   if(tempCheck) {
     annonciationCounter++;
@@ -220,7 +229,7 @@ unsigned int getSerialTemp() {
     return serialValue;
   }
 }
-// Calls on the Uno to get the systolic pressure
+// Calls on the Uno to get the systolic pressure & prints information in serial monitor
 unsigned int getSysPress() {
   if(sysCheck){
     annonciationCounter++;
@@ -232,7 +241,7 @@ unsigned int getSysPress() {
     return serialValue;
   }
 }
-// Calls on the Uno to get the diastolic pressure
+// Calls on the Uno to get the diastolic pressure & prints information in serial monitor
 unsigned int getDiasPress() {
   if(diasCheck) {
     annonciationCounter++;
@@ -244,7 +253,7 @@ unsigned int getDiasPress() {
     return serialValue;
   }
 }
-// Calls on the Uno to get the pulse rate
+// Calls on the Uno to get the pulse rate & prints information in serial monitor
 unsigned int getPulseRate() {
   if(pulseCheck) {
     annonciationCounter++;

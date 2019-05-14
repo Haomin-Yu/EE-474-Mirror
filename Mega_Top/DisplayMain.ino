@@ -5,7 +5,7 @@
  * Function outputs: a display on a TFT display.
  * Function description: this uses the information gathered and properly uploads it onto the TFT display to be shown for
  *                       the user of the device.
- * Author: Haomin Yu
+ * Author: Haomin Yu and Nathan Ness
  */
 // Compiler Linkage
 extern "C" {

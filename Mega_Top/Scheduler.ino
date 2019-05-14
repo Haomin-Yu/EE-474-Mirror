@@ -93,7 +93,7 @@ TCB DisplayTask = (TCB) {                                                       
 };
 
 
-void insert(TCB* task) {
+void insert(TCB* task) {                                        //allows for tasks to be inserted into the queue
   if(Head == NULL) {
     Head = task;
     Tail = task;
@@ -104,7 +104,7 @@ void insert(TCB* task) {
   }
 }
 
-void rmv(TCB* task) {
+void rmv(TCB* task) {                                             //allows for tasks to be removed from queue
   TCB *tempHead = Head;
   TCB *tempTail = Tail;
   if (tempHead != NULL and tempTail != NULL) {                    //checks to see if remove is redundant
@@ -139,12 +139,12 @@ void rmv(TCB* task) {
 //TCB taskQueue[] = {MeasurementTask, ComputationTask, StatusTask, AlarmTask, DisplayTask, NULL};   //creates an array of the tasks so they can easily be executed in order.
 
 // Global constants
-const unsigned long BUTTON_TIME = 2000;                                                 //defines the constant that states how often the tasks other than alarm will
-unsigned long previousTime = millis();                                                                                                  //be executed. in this case its set to 5 seconds but can be changed in milliseconds.
-void scheduler() {                                                                                //creates scheduler function that is to be called in a loop to constantly run the order.
+const unsigned long BUTTON_TIME = 2000;                                                 //defines the constant that states how often the button should be checked
+unsigned long previousTime = millis();                                                  //be executed. in this case its set to 2 seconds but can be changed in milliseconds.
+void scheduler() {                                                                      //creates scheduler function that is to be called in a loop to constantly run the order.
   if(((millis() - previousTime) > BUTTON_TIME)) {
     previousTime = millis();
-    if ((tempCheck || pulseCheck || sysCheck || diasCheck)) {
+    if ((tempCheck || pulseCheck || sysCheck || diasCheck)) {                           //if any measure buttons were pressed they will be added to the task queue
       insert(&MeasurementTask);
       insert(&ComputationTask);
       insert(&StatusTask);

@@ -18,7 +18,10 @@ extern "C" {
   #include "rawStructs.h"
   #include "init.h"
 }
+
+//imports tft struct
 extern TFTKeypadDataStruct KeypadData;
+
 // Function prototypes
 void alarm(void* Data);                                                                        //assigns the alarm function
 unsigned char bpRangeAlarm(unsigned int systolicPressRaw, unsigned int diastolicPressRaw);     //assigns an alarm for blood pressure
@@ -48,8 +51,8 @@ void alarm(void* Data) {
 }
 
 unsigned char bpRangeAlarm(unsigned int systolicPressRaw, unsigned int diastolicPressRaw) {  //function runs if checks to see if the alarm should be on
-  if (((systolicPressRaw < 51) || (systolicPressRaw > 56)) ||                             //for blood pressure. If it is it returns 1, if not it returns 0
-     ((diastolicPressRaw > 47) || (diastolicPressRaw < 41))) {
+  if (((systolicPressRaw < 51) || (systolicPressRaw > 56)) ||                                //for blood pressure. If it is it returns 1, if not it returns 0
+     ((diastolicPressRaw > 47) || (diastolicPressRaw < 41))) {                               //also it will decide if the alarmacknowledgement must be changed
       if(alarmCheck && (annonciationCounter > 4)) {
         *KeypadData.alarmAcknowledge = 1;
       }
@@ -60,7 +63,7 @@ unsigned char bpRangeAlarm(unsigned int systolicPressRaw, unsigned int diastolic
 
 unsigned char tempRangeAlarm(unsigned int temperatureRaw) {                                    //function runs if checks to see if the alarm should be on
   if ((temperatureRaw < 42) || (temperatureRaw > 44)) {                                        //for temperature. If it is it returns 1, if not it returns 0
-    if(alarmCheck && (annonciationCounter > 4)) {
+    if(alarmCheck && (annonciationCounter > 4)) {                                              //also it will decide if the alarmacknowledgement must be changed
       *KeypadData.alarmAcknowledge = 1;
     }
     return 1;
@@ -69,8 +72,8 @@ unsigned char tempRangeAlarm(unsigned int temperatureRaw) {                     
 }
 
 unsigned char pulseRangeAlarm(unsigned int pulseRateRaw) {                                     //function runs if checks to see if the alarm should be on
-  if((pulseRateRaw < 60) || (pulseRateRaw > 100)) {                                             //for pulse. If it is it returns 1, if not it returns 0
-    if(alarmCheck && (annonciationCounter > 4)) {
+  if((pulseRateRaw < 60) || (pulseRateRaw > 100)) {                                            //for pulse. If it is it returns 1, if not it returns 0
+    if(alarmCheck && (annonciationCounter > 4)) {                                              //also it will decide if the alarmacknowledgement must be changed
       *KeypadData.alarmAcknowledge = 1;
     }
     return 1;
@@ -80,7 +83,7 @@ unsigned char pulseRangeAlarm(unsigned int pulseRateRaw) {                      
 
 unsigned char batteryRangeAlarm(unsigned short batteryState) {                                 //function runs if checks to see if the alarm should be on
   if(batteryState < 40) {                                                                      //for batery. If it is it returns 1, if not it returns 0
-    if(alarmCheck && (annonciationCounter > 4)) {
+    if(alarmCheck && (annonciationCounter > 4)) {                                              //also it will decide if the alarmacknowledgement must be changed
       *KeypadData.alarmAcknowledge = 1;
     }
     return 1;
@@ -90,7 +93,7 @@ unsigned char batteryRangeAlarm(unsigned short batteryState) {                  
 
 bool bpRangeWarning(unsigned int systolicPressRaw, unsigned int diastolicPressRaw) {          //function runs if checks to see if the warning should be on
   if ((systolicPressRaw > 56) || (diastolicPressRaw > 50)) {                                  //for blood pressure. If it is it returns true, if not it returns false.
-      if(alarmCheck && (annonciationCounter > 4)) {
+      if(alarmCheck && (annonciationCounter > 4)) {                                           //also it will decide if the alarmacknowledgement must be changed
         *KeypadData.alarmAcknowledge = 1;
       }
       return true;
@@ -100,7 +103,7 @@ bool bpRangeWarning(unsigned int systolicPressRaw, unsigned int diastolicPressRa
 
 bool tempRangeWarning(unsigned int temperatureRaw) {                                           //function runs if checks to see if the warning should be on
   if (temperatureRaw > 44) {                                                                   //for temperature. If it is it returns true, if not it returns false.
-    if(alarmCheck && (annonciationCounter > 4)) {
+    if(alarmCheck && (annonciationCounter > 4)) {                                              //also it will decide if the alarmacknowledgement must be changed
       *KeypadData.alarmAcknowledge = 1;
     }
     return true;
@@ -110,7 +113,7 @@ bool tempRangeWarning(unsigned int temperatureRaw) {                            
 
 bool pulseRangeWarning(unsigned int pulseRateRaw) {                                            //function runs if checks to see if the warning should be on
   if(pulseRateRaw < 17) {                                                                      //for pulse. If it is it returns true, if not it returns false.
-    if(alarmCheck && (annonciationCounter > 4)) {
+    if(alarmCheck && (annonciationCounter > 4)) {                                              //also it will decide if the alarmacknowledgement must be changed
       *KeypadData.alarmAcknowledge = 1;
     }
     return true;
@@ -120,7 +123,7 @@ bool pulseRangeWarning(unsigned int pulseRateRaw) {                             
 
 bool batteryRangeWarning(unsigned short batteryState) {                                        //function runs if checks to see if the warning should be on
   if(batteryState < 40) {                                                                      //for battery. If it is it returns true, if not it returns false.
-    if(alarmCheck && (annonciationCounter > 4)) {
+    if(alarmCheck && (annonciationCounter > 4)) {                                              //also it will decide if the alarmacknowledgement must be changed
       *KeypadData.alarmAcknowledge = 1;
     }
     return true;
