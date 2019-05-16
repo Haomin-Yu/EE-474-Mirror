@@ -28,12 +28,14 @@ struct MeasureData {
 	unsigned int* temperatureRawBuf;
 	unsigned int* bloodPressRawBuf;
 	unsigned int* pulseRateRawBuf;
+  unsigned int* respirationRateRawBuf;
   unsigned short* measurementSelection;
   
   unsigned short* currentTemperatureIndex;
   unsigned short* currentSysPressIndex;
   unsigned short* currentDiasPressIndex;
   unsigned short* currentPulseRateIndex;
+  unsigned short* currentRespirationRateIndex;
 };
 typedef struct MeasureData MeasureDataStruct;
 
@@ -42,29 +44,35 @@ struct ComputeData {
 	unsigned int* temperatureRawBuf;
   unsigned int* bloodPressRawBuf;
   unsigned int* pulseRateRawBuf;
+  unsigned int* respirationRateRawBuf;
 	double* tempCorrectedBuf;
 	double* bloodPressCorrectedBuf;
 	double* prCorrectedBuf;
+  double* respirationRateCorrectedBuf;
   unsigned short* measurementSelection;
 
   unsigned short* currentTemperatureIndex;
   unsigned short* currentSysPressIndex;
   unsigned short* currentDiasPressIndex;
   unsigned short* currentPulseRateIndex;
+  unsigned short* currentRespirationRateIndex;
 };
 typedef struct ComputeData ComputeDataStruct;
 
 // Data structure for display
 struct DisplayData {
+  unsigned short* mode;
 	double* tempCorrectedBuf;
   double* bloodPressCorrectedBuf;
   double* prCorrectedBuf;
+  double* respirationRateCorrectedBuf
 	unsigned short* batteryState;
 
   unsigned short* currentTemperatureIndex;
   unsigned short* currentSysPressIndex;
   unsigned short* currentDiasPressIndex;
   unsigned short* currentPulseRateIndex;
+  unsigned short* currentRespirationRateIndex;
 };
 typedef struct DisplayData DisplayDataStruct;
 
@@ -73,6 +81,7 @@ struct WarningAlarmData {
 	unsigned int* temperatureRawBuf;
   unsigned int* bloodPressRawBuf;
   unsigned int* pulseRateRawBuf;
+  unsigned int* respirationRateRawBuf;
 	unsigned short* batteryState;
  
   unsigned char* bpOutOfRange;
@@ -89,6 +98,7 @@ struct WarningAlarmData {
   unsigned short* currentSysPressIndex;
   unsigned short* currentDiasPressIndex;
   unsigned short* currentPulseRateIndex;
+  unsigned short* currentRespirationRateIndex;
 };
 typedef struct WarningAlarmData WarningAlarmDataStruct;
 
@@ -106,8 +116,9 @@ typedef struct Scheduler SchedulerStruct;
 
 // Data structure for TFT-keypad data
 struct TFTKeypadData {
-  unsigned short* measurementSelection;
+  unsigned short* localMeasurementSelection;
   unsigned short* alarmAcknowledge;
+  unsigned short* remoteMeasurementSelection;
 };
 typedef struct TFTKeypadData TFTKeypadDataStruct;
 
@@ -116,11 +127,13 @@ struct CommunicationsData {
   double* tempCorrectedBuf;
   double* bloodPressCorrectedBuf;
   double* prCorrectedBuf;
+  double* respirationRateCorrectedBuf
 
   unsigned short* currentTemperatureIndex;
   unsigned short* currentSysPressIndex;
   unsigned short* currentDiasPressIndex;
   unsigned short* currentPulseRateIndex;
+  unsigned short* currentRespirationRateIndex;
 };
 typedef struct CommunicationsData CommunicationsDataStruct;
 
