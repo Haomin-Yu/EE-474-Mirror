@@ -38,8 +38,8 @@ void measure(void* Data) {
     unsigned short currentIndex;
     unsigned short nextIndex;
     unsigned int prevPulseRate;
-     unsigned int incomingPulseRate;
-     unsigned int difference;
+    unsigned int incomingPulseRate;
+    unsigned int difference;
     switch(select) {
       case measureTemp:
         nextIndex = (*data.currentTemperatureIndex + 1) % 8;

@@ -11,6 +11,7 @@
  * 0x01: Measure Systolic Pressure
  * 0x02: Measure Diastolic Pressure
  * 0x03: Measure Pulse Rate
+ * 0x04: Measure Respiration Rate
  * (Others will do nothing)
  */
 #include "init.h"
@@ -26,19 +27,20 @@ static unsigned int* tempValuePointer = &temperatureRaw_INIT;
 static unsigned int* sysValuePointer  = &sysPressRaw_INIT;
 static unsigned int* diasValuePointer = &diasPressRaw_INIT;
 static unsigned int* prValuePointer   = &pulseRateRaw_INIT;
-// Grabbing Simulation Functions
-extern void temperatureSimulator(unsigned int* tempValuePointer);
+static unsigned int* respirationValuePointer = &respirationRateRaw_INIT;
+// Grabbing external Functions
+extern void temperatureInterpreter(unsigned int* tempValuePointer);
 extern void systolicPressSimulator(unsigned int* sysValuePointer);
 extern void diastolicPressSimulator(unsigned int* diasValuePointer);
-extern void pulseRateSimulator(unsigned int* prValuePointer);
 extern void pulseRateInterpreter(unsigned int* prValuePointer);
+extern void respirationRateInterpreter(unsigned int* respirationValuePointer);
 
 // Interprets the byte as described in class header
 unsigned int interpretByte(unsigned char input);
 unsigned int interpretByte(unsigned char input) {
    switch(input) {
       case 0x00:
-         temperatureSimulator(tempValuePointer);
+         temperatureInterpreter(tempValuePointer);
          return *tempValuePointer;
          break;
       case 0x01:
@@ -56,6 +58,10 @@ unsigned int interpretByte(unsigned char input) {
       case 0x03:
          pulseRateInterpreter(prValuePointer);
          return *prValuePointer;
+         break;
+      case 0x04:
+         respirationRateInterpreter(respirationValuePointer);
+         return *respirationValuePointer;
          break;
       default:
          return 0;

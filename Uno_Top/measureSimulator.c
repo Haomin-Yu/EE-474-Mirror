@@ -5,6 +5,8 @@
  * Function description: runs a simulation of values that are being used currently in place of sensors,
  *                       allowing us to test our system without any real sensors.
  * Author: Haomin Yu
+ * 
+ *** (This class is deprecated as of Project 4) ***
  */
 #include "init.h"
 #include <stdbool.h>
@@ -19,6 +21,7 @@ bool systolicMeasurementDone  = false;
 bool diastolicMeasurementDone = false;
 
 // Simulates raw input of temperature
+// (This function is deprecated as of Project 4)
 static const unsigned int temperatureMin = 15;
 static const unsigned int temperatureMax = 50;
 void temperatureSimulator(unsigned int* tempValuePointer) {
@@ -48,6 +51,7 @@ void temperatureSimulator(unsigned int* tempValuePointer) {
 }
 
 // Simulates raw input of systolic press
+// (This function is deprecated as of Project 4)
 static const unsigned int systolicPressThreshold = 100;
 void systolicPressSimulator(unsigned int* sysValuePointer) {
 	unsigned int sysValue = *sysValuePointer;
@@ -75,6 +79,7 @@ void systolicPressSimulator(unsigned int* sysValuePointer) {
 }
 
 // Simulates raw input of diastolic press
+// (This function is deprecated as of Project 4)
 static const unsigned int diastolicPressThreshold = 40;
 void diastolicPressSimulator(unsigned int* diasValuePointer) {
 	unsigned int diasValue = *diasValuePointer;

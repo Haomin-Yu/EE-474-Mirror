@@ -8,7 +8,9 @@
 extern "C" {
 #endif
 
+void temperatureInterpreter(unsigned int* tempValuePointer);
 void pulseRateInterpreter(unsigned int* prValuePointer);
+void respirationRateInterpreter(unsigned int* respirationValuePointer);
 
 #ifdef __cplusplus
 } // extern "C"
