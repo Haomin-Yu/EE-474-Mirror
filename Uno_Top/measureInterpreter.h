@@ -9,6 +9,8 @@ extern "C" {
 #endif
 
 void temperatureInterpreter(unsigned int* tempValuePointer);
+void systolicPressInterpreter(unsigned int* sysValuePointer);
+void diastolicPressInterpreter(unsigned int* diasValuePointer);
 void pulseRateInterpreter(unsigned int* prValuePointer);
 void respirationRateInterpreter(unsigned int* respirationValuePointer);
 

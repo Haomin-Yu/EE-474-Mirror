@@ -15,25 +15,71 @@ extern "C" {
 // Pin assignments
 static const int       PULSE_INTERRUPT = 2;
 static const int RESPIRATION_INTERRUPT = 3;
+static const int    NETWORK_CORRUPTION = 4;
 static const int       PULSE_DIGITAL_OUT = 12;
 static const int RESPIRATION_DIGITAL_OUT = 13;
 static const int        TEMP_ANALOG_IN = A1;
-static const int         SYS_ANALOG_IN = A2;
-static const int        DIAS_ANALOG_IN = A3;
+static const int      BUTTON_ANALOG_IN = A2;
+static const int      SWITCH_ANALOG_IN = A3;
 static const int       PULSE_ANALOG_IN = A4;
 static const int RESPIRATION_ANALOG_IN = A5;
+
+// Network Identifiers
+const static byte START = 0xE7;
+const static byte   END = 0xDB;
+const static byte    NA = 0xFF;
 
 void setup() {                                          //sets up the serial for sending and recieving information.
   // Setting the baud rate
   Serial.begin(9600);
   pinMode(PULSE_DIGITAL_OUT, OUTPUT);
   pinMode(RESPIRATION_DIGITAL_OUT, OUTPUT);
+  pinMode(NETWORK_CORRUPTION, OUTPUT);
 }
 
 void loop() {
   if(Serial.available() > 0) {                          //if a serial is available it will recieve incoming information and send out the measured data
-     unsigned char incoming = Serial.read();
-     unsigned int    output = interpretByte(incoming);
-     Serial.write(output);
+     // Allowing for all bytes to come in
+     delay(5);
+     // Decoding the message
+     if(Serial.available() == 5) {
+       // Throwing away start byte
+       Serial.read();
+       // Grabbing task byte
+       byte task = Serial.read();
+       // Throwing away function request
+       Serial.read();
+       // Throwing away data request
+       Serial.read();
+       // Throwing away end byte
+       Serial.read();
+       // Executing task and sending message
+       unsigned int data = interpretByte(task);
+       sendMessage(START, NA, NA, data, END);
+     }
+     else { // Flush
+       while(!Serial.available() == 0) {
+         Serial.read();
+       }
+     }
   }
+}
+
+/* Sends a message with the format:
+ * 1. Start of message
+ * 2. Requesting task identifier
+ * 3. Function being requested
+ * 4. Data being returned by the function
+ * 5. End of message
+ */
+void sendMessage(byte startByte,
+                 byte identifier, 
+                 byte task,
+                 byte data, 
+                 byte endByte) {
+  Serial.write(startByte);
+  Serial.write(identifier);
+  Serial.write(task);
+  Serial.write(data);
+  Serial.write(endByte);
 }

@@ -14,4 +14,10 @@ unsigned int interpretByte(unsigned char input);
 } // extern "C"
 #endif
 
+#define measureTemperature  0x00
+#define measureSysPressure  0x01
+#define measureDiasPressure 0x02
+#define measurePulseRate    0x03
+#define measureRespiration  0x04
+
 #endif /* __BYTEINTERPRETER_H__ */

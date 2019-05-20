@@ -16,6 +16,7 @@
  */
 #include "init.h"
 #include "measureInterpreter.h"
+#include "byteInterpreter.h"
 #include <stdbool.h>
 
 // Getting the global indicators
@@ -30,8 +31,8 @@ static unsigned int* prValuePointer   = &pulseRateRaw_INIT;
 static unsigned int* respirationValuePointer = &respirationRateRaw_INIT;
 // Grabbing external Functions
 extern void temperatureInterpreter(unsigned int* tempValuePointer);
-extern void systolicPressSimulator(unsigned int* sysValuePointer);
-extern void diastolicPressSimulator(unsigned int* diasValuePointer);
+extern void systolicPressInterpreter(unsigned int* sysValuePointer);
+extern void diastolicPressInterpreter(unsigned int* diasValuePointer);
 extern void pulseRateInterpreter(unsigned int* prValuePointer);
 extern void respirationRateInterpreter(unsigned int* respirationValuePointer);
 
@@ -39,27 +40,23 @@ extern void respirationRateInterpreter(unsigned int* respirationValuePointer);
 unsigned int interpretByte(unsigned char input);
 unsigned int interpretByte(unsigned char input) {
    switch(input) {
-      case 0x00:
+      case measureTemperature:
          temperatureInterpreter(tempValuePointer);
          return *tempValuePointer;
          break;
-      case 0x01:
-         while(!systolicMeasurementDone) {
-            systolicPressSimulator(sysValuePointer);
-         }
+      case measureSysPressure:
+         systolicPressInterpreter(sysValuePointer);
          return *sysValuePointer;
          break;
-      case 0x02:
-         while(!diastolicMeasurementDone) {
-            diastolicPressSimulator(diasValuePointer);
-         }
+      case measureDiasPressure:
+         diastolicPressInterpreter(diasValuePointer);
          return *diasValuePointer;
          break;
-      case 0x03:
+      case measurePulseRate:
          pulseRateInterpreter(prValuePointer);
          return *prValuePointer;
          break;
-      case 0x04:
+      case measureRespiration:
          respirationRateInterpreter(respirationValuePointer);
          return *respirationValuePointer;
          break;
