@@ -75,6 +75,7 @@ bool pulseCheck = false;                //boolean used to see if pulse button wa
 bool sysCheck = false;                  //boolean used to see if sys button was pressed.
 bool diasCheck = false;                 //boolean used to see if dias button was pressed.
 bool alarmCheck = false;                //boolean used to see if alarm button was pressed.
+bool respirationCheck = false;
 
 
 void setup(void) {

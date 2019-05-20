@@ -65,7 +65,7 @@ struct DisplayData {
 	double* tempCorrectedBuf;
   double* bloodPressCorrectedBuf;
   double* prCorrectedBuf;
-  double* respirationRateCorrectedBuf
+  double* respirationRateCorrectedBuf;
 	unsigned short* batteryState;
 
   unsigned short* currentTemperatureIndex;
@@ -127,7 +127,7 @@ struct CommunicationsData {
   double* tempCorrectedBuf;
   double* bloodPressCorrectedBuf;
   double* prCorrectedBuf;
-  double* respirationRateCorrectedBuf
+  double* respirationRateCorrectedBuf;
 
   unsigned short* currentTemperatureIndex;
   unsigned short* currentSysPressIndex;

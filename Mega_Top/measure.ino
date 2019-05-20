@@ -25,6 +25,7 @@ extern bool tempCheck;
 extern bool sysCheck;
 extern bool diasCheck;
 extern bool pulseCheck;
+extern bool respirationCheck;
 extern bool enableStatus;
 extern bool alarmCheck;
 

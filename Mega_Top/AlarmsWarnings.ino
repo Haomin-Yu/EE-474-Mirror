@@ -11,7 +11,6 @@
  *                       triggered.
  * Author: Nathan Ness
  * 
- * 
  */
 // Compiler Linkage
 extern "C" {

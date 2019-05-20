@@ -49,4 +49,5 @@ void userSetup() {                                            // Initializes the
 void loop() {
    scheduler();                                                // Calls scheduler function to run the schedule
    touchScreen();
+   remoteCommunication();
 }

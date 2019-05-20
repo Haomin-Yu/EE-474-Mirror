@@ -57,9 +57,9 @@ void labelsInit() {
   TFT_Write(RED, (14 + BUTTONWIDTH), 175, " Sys.");
   TFT_Write(RED, (16 + BUTTONWIDTH * 2), 175, " Dias.");
   TFT_Write(RED, (18 + BUTTONWIDTH * 3), 175, "Pulse");
-  TFT_Write(RED, (60 + BUTTONWIDTH), 217,"Alarm");
-  TFT_Write(RED, 12, 217,"Blank");
-  TFT_Write(RED, (18 + BUTTONWIDTH * 3), 217,"Blank");
+  TFT_Write(RED, (60 + BUTTONWIDTH), 217, "Alarm");
+  TFT_Write(RED, 12, 217, "Blank");
+  TFT_Write(RED, (18 + BUTTONWIDTH * 3), 217, "Blank");
 }
 // Updates the measurement values(Erases the previous value)
 void updateMeasurements(double tempCorrected, 
@@ -157,28 +157,28 @@ void touchScreen() {
         if(((tft.height()-p.y) < (BUTTONWIDTH + 10)) && ((tft.height()-p.y) > 10)) {                                  //checks to see if the vertical axis for temp was pressed.
            tempCheck = true;
            *MeasureData.measurementSelection = 1; //assigns button selected data
-           *KeypadData.measurementSelection = 1; 
+           *KeypadData.localMeasurementSelection = 1; 
            tft.fillRect(10, 160, BUTTONWIDTH, BUTTONHEIGHT, BLUE);//changes color to represent a button press
            TFT_Write(RED, 12, 175, " Temp.");
         }
         else if(((tft.height()-p.y) < (12 + BUTTONWIDTH * 2)) && ((tft.height()-p.y) > (12 + BUTTONWIDTH))) {         //checks to see if the vertical axis for sys was pressed.
            sysCheck = true;
            *MeasureData.measurementSelection = 2;//assigns button selected data
-           *KeypadData.measurementSelection = 2; 
+           *KeypadData.localMeasurementSelection = 2; 
            tft.fillRect((12 + BUTTONWIDTH), 160, BUTTONWIDTH, BUTTONHEIGHT, BLUE);//changes color to represent a button press
            TFT_Write(RED, (14 + BUTTONWIDTH), 175, " Sys.");
         } 
         else if(((tft.height()-p.y) < (14 + BUTTONWIDTH * 3)) && ((tft.height()-p.y) > (14 + BUTTONWIDTH * 2))) {     //checks to see if the vertical axis for dias was pressed.
            diasCheck = true;
            *MeasureData.measurementSelection = 3; //assigns button selected data
-           *KeypadData.measurementSelection = 3;
+           *KeypadData.localMeasurementSelection = 3;
            tft.fillRect((14 + BUTTONWIDTH * 2), 160, BUTTONWIDTH, BUTTONHEIGHT, BLUE);//changes color to represent a button press
            TFT_Write(RED, (16 + BUTTONWIDTH * 2), 175, " Dias.");
         } 
         else if(((tft.height()-p.y) < (16 + BUTTONWIDTH * 4)) && ((tft.height()-p.y) > (16 + BUTTONWIDTH * 3))) {     //checks to see if the vertical axis for pulse was pressed.
            pulseCheck = true;
            *MeasureData.measurementSelection = 4; //assigns button selected data
-           *KeypadData.measurementSelection = 4;
+           *KeypadData.localMeasurementSelection = 4;
            tft.fillRect((16 + BUTTONWIDTH * 3), 160, BUTTONWIDTH, BUTTONHEIGHT, BLUE);//changes color to represent a button press
            TFT_Write(RED, (18 + BUTTONWIDTH * 3), 175, "Pulse");
         }
@@ -261,6 +261,17 @@ unsigned int getPulseRate() {
     pulseCheck = false;
     serialValue = getSerialUInt();
     Serial.print("Pulse = ");
+    Serial.println(serialValue);
+    return serialValue;
+  }
+}
+unsigned int getRespiration() {
+  if(respirationCheck) {
+    annonciationCounter++;
+    Serial1.write(0x04);
+    respirationCheck = false;
+    serialValue = getSerialUInt();
+    Serial.print("Respiration = ");
     Serial.println(serialValue);
     return serialValue;
   }
