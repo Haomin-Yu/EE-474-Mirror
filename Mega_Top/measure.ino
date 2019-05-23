@@ -105,7 +105,17 @@ void measure(void* Data) {
         *data.measurementSelection = outOfBounds;
         break;
       case measureRespiration:
-        
+        //respirationRateRawBuf currentRespirationRateIndex
+        nextIndex = (*data.currentTemperatureIndex + 1) % 8;
+        data.temperatureRawBuf[nextIndex] = getSerialTemp();
+        *data.currentTemperatureIndex = nextIndex;
+        tempRawChanged = true;
+        tempCheck      = false;
+        alarmCheck     = true;
+        enableStatus   = true;
+        tft.fillRect(10, 160, BUTTONWIDTH, BUTTONHEIGHT, CYAN);
+        TFT_Write(RED, 12, 175, " Temp.");
+        *data.measurementSelection = outOfBounds;
         break;
       default:
         break;
