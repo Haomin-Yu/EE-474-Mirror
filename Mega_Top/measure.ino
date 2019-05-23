@@ -40,9 +40,9 @@ void measure(void* Data) {
     unsigned short select = *data.measurementSelection;
     unsigned short currentIndex;
     unsigned short nextIndex;
-    unsigned int prevPulseRate;
-    unsigned int incomingPulseRate;
-    unsigned int difference;
+    unsigned int prevData;
+    unsigned int incomingData;
+    unsigned int dataDifference;
     switch(select) {
       case measureTemp:
         nextIndex = (*data.currentTemperatureIndex + 1) % 8;
@@ -83,17 +83,17 @@ void measure(void* Data) {
       case measurePulseRate:
         currentIndex = *data.currentPulseRateIndex;
         nextIndex    = (*data.currentPulseRateIndex + 1) % 8;
-         prevPulseRate     = data.pulseRateRawBuf[currentIndex];
-         incomingPulseRate = getPulseRate();
-        difference = (incomingPulseRate > prevPulseRate)?
-                                  (incomingPulseRate - prevPulseRate):
-                                  (prevPulseRate - incomingPulseRate);
-        if((difference * 100.0 / prevPulseRate) > THRESHOLD_PULSE_PERCENT) {
-          data.pulseRateRawBuf[nextIndex] = incomingPulseRate;
+         prevData     = data.pulseRateRawBuf[currentIndex];
+         incomingData = getPulseRate();
+        dataDifference = (incomingData > prevData)?
+                                  (incomingData - prevData):
+                                  (prevData - incomingData);
+        if((dataDifference * 100.0 / prevData) > THRESHOLD_PULSE_PERCENT) {
+          data.pulseRateRawBuf[nextIndex] = incomingData;
           *data.currentPulseRateIndex = nextIndex;
         }
         else {
-          data.pulseRateRawBuf[currentIndex] = incomingPulseRate;
+          data.pulseRateRawBuf[currentIndex] = incomingData;
         }
         //changes check booleans accordingly as well as changes color of puse back to original color
         pulseRateRawChanged = true;
