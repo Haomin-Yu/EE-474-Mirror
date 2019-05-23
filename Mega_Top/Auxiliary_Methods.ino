@@ -213,16 +213,35 @@ void touchScreen() {
 
 // Gets an unsigned int from the Uno
 unsigned int getSerialUInt() {
+  unsigned int measuredInt = 0;
   while(Serial1.available() == 0) {}
-  return Serial1.read();
+  delay(5);
+  if(Serial1.available() == 5) {
+    // Throwing away start byte
+    Serial1.read();
+    // Throwing away task byte
+    Serial1.read();
+    // Throwing away requested byte
+    Serial1.read();
+    // Grabbing data byte
+    measuredInt = Serial1.read();
+    // Throwing away end byte
+    Serial1.read();
+  }
+  else { // Flush
+    while(Serial1.available() != 0) {
+      Serial1.read();
+    }
+  }
+  return measuredInt;
 }
 // Calls on the Uno to get the temperature & prints information in serial monitor
 int serialValue; //used to hold the value recieved through serial communication
 unsigned int getSerialTemp() {
   if(tempCheck) {
-    annonciationCounter++;
-    Serial1.write(0x00);
     tempCheck = false;
+    annonciationCounter++;
+    sendLocalMessage(0xE7, 0x00, 0xFF, 0xFF, 0xDB);
     serialValue = getSerialUInt();
     Serial.print("Temperature = ");
     Serial.println(serialValue);
@@ -232,9 +251,9 @@ unsigned int getSerialTemp() {
 // Calls on the Uno to get the systolic pressure & prints information in serial monitor
 unsigned int getSysPress() {
   if(sysCheck){
-    annonciationCounter++;
-    Serial1.write(0x01);
     sysCheck = false;
+    annonciationCounter++;
+    sendLocalMessage(0xE7, 0x01, 0xFF, 0xFF, 0xDB);
     serialValue = getSerialUInt();
     Serial.print("Systolic = ");
     Serial.println(serialValue);
@@ -244,9 +263,9 @@ unsigned int getSysPress() {
 // Calls on the Uno to get the diastolic pressure & prints information in serial monitor
 unsigned int getDiasPress() {
   if(diasCheck) {
-    annonciationCounter++;
-    Serial1.write(0x02);
     diasCheck = false;
+    annonciationCounter++;
+    sendLocalMessage(0xE7, 0x02, 0xFF, 0xFF, 0xDB);
     serialValue = getSerialUInt();
     Serial.print("Diastolic = ");
     Serial.println(serialValue);
@@ -256,9 +275,9 @@ unsigned int getDiasPress() {
 // Calls on the Uno to get the pulse rate & prints information in serial monitor
 unsigned int getPulseRate() {
   if(pulseCheck) {
-    annonciationCounter++;
-    Serial1.write(0x03);
     pulseCheck = false;
+    annonciationCounter++;
+    sendLocalMessage(0xE7, 0x03, 0xFF, 0xFF, 0xDB);
     serialValue = getSerialUInt();
     Serial.print("Pulse = ");
     Serial.println(serialValue);
@@ -267,9 +286,9 @@ unsigned int getPulseRate() {
 }
 unsigned int getRespiration() {
   if(respirationCheck) {
-    annonciationCounter++;
-    Serial1.write(0x04);
     respirationCheck = false;
+    annonciationCounter++;
+    sendLocalMessage(0xE7, 0x04, 0xFF, 0xFF, 0xDB);
     serialValue = getSerialUInt();
     Serial.print("Respiration = ");
     Serial.println(serialValue);

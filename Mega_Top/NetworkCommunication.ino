@@ -67,6 +67,26 @@ void remoteCommunication() {
 }
 
 /*
+ * Sends a message to the local device, with format:
+ * 1. Start of message
+ * 2. Requested task identifier
+ * 3. ID of function
+ * 4. Requested data
+ * 5. End of message
+ */
+void sendLocalMessage(byte startByte,
+                      byte task,
+                      byte ID,
+                      byte data,
+                      byte endByte) {
+  Serial1.print(startByte, HEX);
+  Serial1.print(task, HEX);
+  Serial1.print(ID, HEX);
+  Serial1.print(data, HEX);
+  Serial1.print(endByte, HEX);
+}
+
+/*
  * Sends a message to the remote device, with format:
  * 1. Start of message
  * 2. Requested task identifier

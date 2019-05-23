@@ -13,12 +13,14 @@ static const unsigned short measureTemp      = 1;
 static const unsigned short measureSysPress  = 2;
 static const unsigned short measureDiasPress = 3;
 static const unsigned short measurePulseRate = 4;
+static const unsigned short measureRespiration = 5;
 // Global variables
 // (Indicating whether a new measurement has been made)
 bool tempRawChanged      = true;
 bool sysPressRawChanged  = true;
 bool diasPressRawChanged = true;
 bool pulseRateRawChanged = true;
+bool respirationRawChanged = true;
 // Global indicators
 // (When the corrosponding button is pressed)
 extern bool tempCheck;
@@ -32,9 +34,9 @@ extern bool alarmCheck;
 // Measures the data 'temperatureRaw', 'systolicPressRaw',
 // 'diastolicPressRaw', and/or 'pulseRateRaw' beased on
 // the given measureSelection in 'Data'
+static const double THRESHOLD_PULSE_PERCENT = 15.0;
 void measure(void* Data) {
   	MeasureDataStruct data = *((MeasureDataStruct*)Data);
-    static const double THRESHOLD_PULSE_PERCENT = 15.0;
     unsigned short select = *data.measurementSelection;
     unsigned short currentIndex;
     unsigned short nextIndex;
@@ -101,6 +103,9 @@ void measure(void* Data) {
         tft.fillRect((16 + BUTTONWIDTH * 3), 160, BUTTONWIDTH, BUTTONHEIGHT, CYAN);
         TFT_Write(RED, (18 + BUTTONWIDTH * 3), 175, "Pulse");
         *data.measurementSelection = outOfBounds;
+        break;
+      case measureRespiration:
+        
         break;
       default:
         break;
