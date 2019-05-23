@@ -22,18 +22,18 @@ const static byte measureRespirationFunc  = 0x04;
  * Handles the remote communication from and to the system
  */
 void remoteCommunication() {
-  if(Serial1.available() > 0) {
+  if(Serial.available() > 0) {
     // Waiting for all bytes to come in
     delay(5);
-    if(Serial1.available() == 4) {
+    if(Serial.available() == 4) {
       // Throwing away start byte
-      Serial1.read();
+      Serial.read();
       // Grabbing task byte
-      byte task = Serial1.read();
+      byte task = Serial.read();
       // Throwing away function request
-      Serial1.read();
+      Serial.read();
       // Throwing away end byte
-      Serial1.read();
+      Serial.read();
       // Executing task and sending message
       unsigned int measuredData = 0;
       switch(task) {
@@ -59,8 +59,8 @@ void remoteCommunication() {
       sendRemoteMessage(START, NA, NA, measuredData, END);
     }
     else { // Flush
-      while(Serial1.available() > 0) {
-        Serial1.read();
+      while(Serial.available() > 0) {
+        Serial.read();
       }
     }
   }
