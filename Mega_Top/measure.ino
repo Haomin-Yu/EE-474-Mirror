@@ -8,12 +8,11 @@
  * Author: Haomin Yu and Nathan Ness
  */ 
 // Class constants
-static const unsigned short outOfBounds      = 0;
-static const unsigned short measureTemp      = 1;
-static const unsigned short measureSysPress  = 2;
-static const unsigned short measureDiasPress = 3;
-static const unsigned short measurePulseRate = 4;
-static const unsigned short measureRespiration = 5;
+static const unsigned short outOfBounds        = 0;
+static const unsigned short measureTemp        = 1;
+static const unsigned short measureBloodPress  = 2;
+static const unsigned short measureRespiration = 3;
+static const unsigned short measurePulseRate   = 4;
 // Global variables
 // (Indicating whether a new measurement has been made)
 bool tempRawChanged      = true;
@@ -24,10 +23,9 @@ bool respirationRawChanged = true;
 // Global indicators
 // (When the corrosponding button is pressed)
 extern bool tempCheck;
-extern bool sysCheck;
-extern bool diasCheck;
-extern bool pulseCheck;
+extern bool bloodPressCheck;
 extern bool respirationCheck;
+extern bool pulseCheck;
 extern bool enableStatus;
 extern bool alarmCheck;
 
@@ -56,28 +54,16 @@ void measure(void* Data) {
         TFT_Write(RED, 12, 175, " Temp.");
         *data.measurementSelection = outOfBounds;
         break;
-      case measureSysPress:
+      case measureBloodPress:
         nextIndex = (*data.currentSysPressIndex + 1) % 8;
-        data.bloodPressRawBuf[nextIndex] = getSysPress();
+        data.bloodPressRawBuf[nextIndex] = getBloodPress();
         *data.currentSysPressIndex = nextIndex;
         sysPressRawChanged = true;
-        sysCheck           = false;
+        bloodPressCheck    = false;
         alarmCheck         = true;
         enableStatus       = true;
         tft.fillRect((12 + BUTTONWIDTH), 160, BUTTONWIDTH, BUTTONHEIGHT, CYAN);
         TFT_Write(RED, (14 + BUTTONWIDTH), 175, " Sys.");
-        *data.measurementSelection = outOfBounds;
-        break;
-      case measureDiasPress:
-        nextIndex = ((*data.currentDiasPressIndex + 1) % 8) + 8;
-        data.bloodPressRawBuf[nextIndex] = getDiasPress();
-        *data.currentDiasPressIndex = nextIndex;
-        diasPressRawChanged = true;
-        diasCheck           = false;
-        alarmCheck          = true;
-        enableStatus        = true;
-        tft.fillRect((14 + BUTTONWIDTH * 2), 160, BUTTONWIDTH, BUTTONHEIGHT, CYAN);
-        TFT_Write(RED, (16 + BUTTONWIDTH * 2), 175, " Dias.");
         *data.measurementSelection = outOfBounds;
         break;
       case measurePulseRate:

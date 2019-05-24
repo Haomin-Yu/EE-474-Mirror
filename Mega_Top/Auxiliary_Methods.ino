@@ -5,6 +5,7 @@
  * Function description: Creatues many miscillanious methods to be used throughout
  *                       the rest of out programs so it can be cleaner, easier to understand, and easier to call.
  *                       this includes the touchscreen funcitonality
+ *                       
  * Author: Haomin Yu and Nathan Ness
  *
  */
@@ -44,7 +45,7 @@ void labelsInit() {
   TFT_Write(GREEN, 10, 23,  "Body.Temp  ->        C");
   TFT_Write(GREEN, 10, 48,  "Sys.Press  ->        mmHg"); 
   TFT_Write(GREEN, 10, 73,  "Dias.Press ->        mmHg"); 
-  TFT_Write(GREEN, 10, 98, "Pulse Rate ->        BPM"); 
+  TFT_Write(GREEN, 10, 98,  "Pulse Rate ->        BPM"); 
   TFT_Write(GREEN, 10, 123, "Battery    ->");
   tft.fillRect(10, 160, (BUTTONWIDTH), (BUTTONHEIGHT), CYAN);
   tft.fillRect((12 + BUTTONWIDTH), 160, (BUTTONWIDTH), (BUTTONHEIGHT), CYAN);
@@ -162,14 +163,14 @@ void touchScreen() {
            TFT_Write(RED, 12, 175, " Temp.");
         }
         else if(((tft.height()-p.y) < (12 + BUTTONWIDTH * 2)) && ((tft.height()-p.y) > (12 + BUTTONWIDTH))) {         //checks to see if the vertical axis for sys was pressed.
-           sysCheck = true;
+           bloodPressCheck = true;
            *MeasureData.measurementSelection = 2;//assigns button selected data
            *KeypadData.localMeasurementSelection = 2; 
            tft.fillRect((12 + BUTTONWIDTH), 160, BUTTONWIDTH, BUTTONHEIGHT, BLUE);//changes color to represent a button press
            TFT_Write(RED, (14 + BUTTONWIDTH), 175, " Sys.");
         } 
         else if(((tft.height()-p.y) < (14 + BUTTONWIDTH * 3)) && ((tft.height()-p.y) > (14 + BUTTONWIDTH * 2))) {     //checks to see if the vertical axis for dias was pressed.
-           diasCheck = true;
+           bloodPressCheck = true;
            *MeasureData.measurementSelection = 3; //assigns button selected data
            *KeypadData.localMeasurementSelection = 3;
            tft.fillRect((14 + BUTTONWIDTH * 2), 160, BUTTONWIDTH, BUTTONHEIGHT, BLUE);//changes color to represent a button press
@@ -212,7 +213,7 @@ void touchScreen() {
 }
 
 // Gets an unsigned int from the Uno
-unsigned int getSerialUInt() {
+unsigned int getSerialUInt(byte task) {
   unsigned int measuredInt = 0;
   while(Serial1.available() == 0) {}
   delay(5);
@@ -233,6 +234,13 @@ unsigned int getSerialUInt() {
       Serial1.read();
     }
   }
+  // Checking function type
+  if(task == 0x01) {
+    
+  }
+  else {
+    
+  }
   return measuredInt;
 }
 // Calls on the Uno to get the temperature & prints information in serial monitor
@@ -242,32 +250,32 @@ unsigned int getSerialTemp() {
     tempCheck = false;
     annonciationCounter++;
     sendLocalMessage(0xE7, 0x00, 0xFF, 0xFF, 0xDB);
-    serialValue = getSerialUInt();
+    serialValue = getSerialUInt(0x00);
     Serial.print("Temperature = ");
     Serial.println(serialValue);
     return serialValue;
   }
 }
-// Calls on the Uno to get the systolic pressure & prints information in serial monitor
-unsigned int getSysPress() {
-  if(sysCheck){
-    sysCheck = false;
+// Calls on the Uno to get the diastolic pressure & prints information in serial monitor
+unsigned int getBloodPress() {
+  if(bloodPressCheck) {
+    bloodPressCheck = false;
     annonciationCounter++;
     sendLocalMessage(0xE7, 0x01, 0xFF, 0xFF, 0xDB);
-    serialValue = getSerialUInt();
-    Serial.print("Systolic = ");
+    serialValue = getSerialUInt(0x01);
+    Serial.print("Blood Pressure = ");
     Serial.println(serialValue);
     return serialValue;
   }
 }
-// Calls on the Uno to get the diastolic pressure & prints information in serial monitor
-unsigned int getDiasPress() {
-  if(diasCheck) {
-    diasCheck = false;
+// Calls on the Uno to get the respiration & prints information in serial monitor
+unsigned int getRespiration() {
+  if(respirationCheck) {
+    respirationCheck = false;
     annonciationCounter++;
     sendLocalMessage(0xE7, 0x02, 0xFF, 0xFF, 0xDB);
-    serialValue = getSerialUInt();
-    Serial.print("Diastolic = ");
+    serialValue = getSerialUInt(0x02);
+    Serial.print("Respiration = ");
     Serial.println(serialValue);
     return serialValue;
   }
@@ -278,20 +286,8 @@ unsigned int getPulseRate() {
     pulseCheck = false;
     annonciationCounter++;
     sendLocalMessage(0xE7, 0x03, 0xFF, 0xFF, 0xDB);
-    serialValue = getSerialUInt();
+    serialValue = getSerialUInt(0x03);
     Serial.print("Pulse = ");
-    Serial.println(serialValue);
-    return serialValue;
-  }
-}
-// Calls on the Uno to get the respiration & prints information in serial monitor
-unsigned int getRespiration() {
-  if(respirationCheck) {
-    respirationCheck = false;
-    annonciationCounter++;
-    sendLocalMessage(0xE7, 0x04, 0xFF, 0xFF, 0xDB);
-    serialValue = getSerialUInt();
-    Serial.print("Respiration = ");
     Serial.println(serialValue);
     return serialValue;
   }

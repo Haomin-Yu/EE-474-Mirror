@@ -38,7 +38,6 @@ void remoteCommunication() {
       Serial.read();
       // Executing task and sending message
       unsigned int measuredData  = 0;
-      unsigned int measuredData2 = 0;
       switch(task) {
         case measureTemperatureFunc:
           remoteDataMessage = "Temperature = ";
@@ -46,8 +45,7 @@ void remoteCommunication() {
           break;
         case measureBloodPressureFunc:
           remoteDataMessage = "BloodPressure = ";
-          getSysPress();
-          getDiasPress();
+          getBloodPress();
           break;
         case measureRespirationFunc:
           remoteDataMessage = "Respiration = ";
@@ -84,11 +82,11 @@ void sendLocalMessage(byte startByte,
                       byte ID,
                       byte data,
                       byte endByte) {
-  Serial1.print(startByte, HEX);
-  Serial1.print(task, HEX);
-  Serial1.print(ID, HEX);
-  Serial1.print(data, HEX);
-  Serial1.print(endByte, HEX);
+  Serial1.write(startByte);
+  Serial1.write(task);
+  Serial1.write(ID);
+  Serial1.write(data);
+  Serial1.write(endByte);
 }
 
 /*
@@ -107,7 +105,7 @@ void sendRemoteMessage(byte startByte,
   Serial.print(remoteDataMessage);
   if(task == measureBloodPressureFunc) {
     Serial.print(data >> 8, DEC);
-    Serial.print("//");
+    Serial.print("/");
     Serial.print(data & 0xFF, DEC);
   }
   else {
