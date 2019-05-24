@@ -66,6 +66,7 @@ void updateMeasurements(double tempCorrected,
                         double systolicPressCorrected,
                         double diastolicPressCorrected,
                         double pulseRateCorrected,
+                        double respirationCorrected,
                         unsigned short batteryState) {
   // Updating the measurements as well as decides the color at which each measurement should be displayed.
   bool newBatteryUpdate = newTempComputed || newBloodPressComputed || newPulseRateComputed;

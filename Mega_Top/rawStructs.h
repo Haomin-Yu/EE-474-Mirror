@@ -35,7 +35,7 @@ struct MeasureData {
   unsigned short* currentSysPressIndex;
   unsigned short* currentDiasPressIndex;
   unsigned short* currentPulseRateIndex;
-  unsigned short* currentRespirationRateIndex;
+  unsigned short* currentRespirationIndex;
 };
 typedef struct MeasureData MeasureDataStruct;
 
@@ -65,14 +65,14 @@ struct DisplayData {
 	double* tempCorrectedBuf;
   double* bloodPressCorrectedBuf;
   double* prCorrectedBuf;
-  double* respirationRateCorrectedBuf;
+  double* respirationCorrectedBuf;
 	unsigned short* batteryState;
 
   unsigned short* currentTemperatureIndex;
   unsigned short* currentSysPressIndex;
   unsigned short* currentDiasPressIndex;
   unsigned short* currentPulseRateIndex;
-  unsigned short* currentRespirationRateIndex;
+  unsigned short* currentRespirationIndex;
 };
 typedef struct DisplayData DisplayDataStruct;
 
