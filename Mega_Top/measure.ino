@@ -15,10 +15,9 @@ static const unsigned short measureRespiration = 3;
 static const unsigned short measurePulseRate   = 4;
 // Global variables
 // (Indicating whether a new measurement has been made)
-bool tempRawChanged      = true;
-bool sysPressRawChanged  = true;
-bool diasPressRawChanged = true;
-bool pulseRateRawChanged = true;
+bool tempRawChanged          = true;
+bool bloodPressureRawChanged = true;
+bool pulseRateRawChanged   = true;
 bool respirationRawChanged = true;
 // Global indicators
 // (When the corrosponding button is pressed)
@@ -32,15 +31,17 @@ extern bool alarmCheck;
 // Measures the data 'temperatureRaw', 'systolicPressRaw',
 // 'diastolicPressRaw', and/or 'pulseRateRaw' beased on
 // the given measureSelection in 'Data'
-static const double THRESHOLD_PULSE_PERCENT = 15.0;
+static const double THRESHOLD_PULSE_PERCENT       = 15.0;
 static const double THRESHOLD_RESPIRATION_PERCENT = 15.0;
 void measure(void* Data) {
   	MeasureDataStruct data = *((MeasureDataStruct*)Data);
     unsigned short select = *data.measurementSelection;
     unsigned short currentIndex;
     unsigned short nextIndex;
+    unsigned short nextIndex2;
     unsigned int prevData;
     unsigned int incomingData;
+    unsigned int incomingData2;
     unsigned int dataDifference;
     switch(select) {
       case measureTemp:
@@ -56,17 +57,22 @@ void measure(void* Data) {
         *data.measurementSelection = outOfBounds;
         break;
       case measureBloodPress:
-        nextIndex = (*data.currentSysPressIndex + 1) % 8;
-        nextIndex = ((*data.currentDiasPressIndex + 1) % 8) + 8;
+        nextIndex  = (*data.currentSysPressIndex + 1) % 8;
+        nextIndex2 = ((*data.currentDiasPressIndex + 1) % 8) + 8;
+        incomingData = getBloodPress();
+        incomingData2 = incomingData & 0xFF;
+        incomingData  = (unsigned int)incomingData >> 8;
         
-        data.bloodPressRawBuf[nextIndex] = getBloodPress();
+        
+        
         *data.currentSysPressIndex = nextIndex;
-        sysPressRawChanged = true;
+        *data.currentDiasPressIndex = nextIndex2;
+        bloodPressureRawChanged = true;
         bloodPressCheck    = false;
         alarmCheck         = true;
         enableStatus       = true;
-        tft.fillRect((12 + BUTTONWIDTH), 160, BUTTONWIDTH, BUTTONHEIGHT, CYAN);
-        TFT_Write(RED, (14 + BUTTONWIDTH), 175, " Sys.");
+        //tft.fillRect((12 + BUTTONWIDTH), 160, BUTTONWIDTH, BUTTONHEIGHT, CYAN);
+        //TFT_Write(RED, (14 + BUTTONWIDTH), 175, " Sys.");
         *data.measurementSelection = outOfBounds;
         break;
       case measurePulseRate:

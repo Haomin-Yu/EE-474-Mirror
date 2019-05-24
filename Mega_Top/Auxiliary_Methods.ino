@@ -20,8 +20,7 @@ extern MeasureDataStruct MeasureData;
 extern WarningAlarmDataStruct WarningAlarmData;
 extern TFTKeypadDataStruct KeypadData;
 extern bool newTempComputed;
-extern bool newSysPressComputed;
-extern bool newDiasPressComputed;
+extern bool newBloodPressComputed;
 extern bool newPulseRateComputed;
 extern const unsigned long BUTTON_TIME;
 extern unsigned long previousTime;
@@ -69,8 +68,7 @@ void updateMeasurements(double tempCorrected,
                         double pulseRateCorrected,
                         unsigned short batteryState) {
   // Updating the measurements as well as decides the color at which each measurement should be displayed.
-  bool newBatteryUpdate = newTempComputed || newSysPressComputed || newDiasPressComputed ||
-                          newPulseRateComputed;
+  bool newBatteryUpdate = newTempComputed || newBloodPressComputed || newPulseRateComputed;
   if(newTempComputed || alarmCheck) {               //temperature color and data display
     int tempColor;
     if(*WarningAlarmData.tempOutOfRange) {
@@ -82,7 +80,7 @@ void updateMeasurements(double tempCorrected,
      TFT_Write(tempColor, 175, 23,  (String)tempCorrected);
      newTempComputed = false;
   }
-  if(newSysPressComputed || alarmCheck) {           //systolic color and data display
+  if(newBloodPressComputed || alarmCheck) {           //systolic color and data display
     int bpColor;
     if(*WarningAlarmData.bpOutOfRange && (systolicPressCorrected > 156) && (annonciationCounter > 4)) {
       bpColor = RED;
@@ -93,9 +91,9 @@ void updateMeasurements(double tempCorrected,
     }
      tft.fillRect(175, 48, 80, 24, BLACK);
      TFT_Write(bpColor  , 175, 48,  (String)systolicPressCorrected); 
-     newSysPressComputed = false;
+     newBloodPressComputed = false;
   }
-  if(newDiasPressComputed || alarmCheck) {         //diastolic color and data display
+  if(newBloodPressComputed || alarmCheck) {         //diastolic color and data display
     int bpColor;
     if(*WarningAlarmData.bpOutOfRange) {
       bpColor = YELLOW;
@@ -104,7 +102,7 @@ void updateMeasurements(double tempCorrected,
     }
      tft.fillRect(175, 73, 80, 24, BLACK);
      TFT_Write(bpColor  , 175, 73,  (String)diastolicPressCorrected); 
-     newDiasPressComputed = false;
+     newBloodPressComputed = false;
   }
   if(newPulseRateComputed || alarmCheck) {         //pulse color and data display
      int pulseColor;
@@ -274,7 +272,9 @@ unsigned int getBloodPress() {
     sendLocalMessage(0xE7, 0x01, 0xFF, 0xFF, 0xDB);
     serialValue = getSerialUInt(0x01);
     Serial.print("Blood Pressure = ");
-    Serial.println(serialValue);
+    Serial.print((unsigned int)serialValue >> 8);
+    Serial.print("/");
+    Serial.println(serialValue & 0xFF);
     return serialValue;
   }
 }

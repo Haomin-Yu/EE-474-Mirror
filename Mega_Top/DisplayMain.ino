@@ -24,8 +24,7 @@ TFTKeypadDataStruct KeypadData;                               // Saves keypad da
 CommunicationsDataStruct CommunicationsData;                  // Saves communications data
 // Global indicator
 extern bool tempRawChanged;
-extern bool sysPressRawChanged;
-extern bool diasPressRawChanged;
+extern bool bloodPressRawChanged;
 extern bool pulseRateRawChanged;
 
 void userSetup() {                                            // Initializes the display to its initial display

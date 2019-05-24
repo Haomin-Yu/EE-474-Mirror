@@ -18,15 +18,13 @@ double computePr(unsigned int bpRaw);
 
 // Getting global indicators from measure.ino
 extern bool tempRawChanged;
-extern bool sysPressRawChanged;
-extern bool diasPressRawChanged;
+extern bool bloodPressureRawChanged;
 extern bool pulseRateRawChanged;
 
 // Global variables
 // (Indicating whether a new computation has been made)
 bool newTempComputed;
-bool newSysPressComputed;
-bool newDiasPressComputed;
+bool newBloodPressComputed;
 bool newPulseRateComputed;
 
 // Computes the values for 'tempCorrected', 'sysCorrected',
@@ -39,17 +37,17 @@ void compute(void* Data) {
      tempRawChanged  = false;
      newTempComputed = true;
    }
-   if(sysPressRawChanged) {
+   if(bloodPressureRawChanged) {
      unsigned short index = *data.currentSysPressIndex;
      data.bloodPressCorrectedBuf[index] = computeSys(data.bloodPressRawBuf[index]);
-     sysPressRawChanged  = false;
-     newSysPressComputed = true;
+     bloodPressureRawChanged = false;
+     newBloodPressComputed   = true;
    }
-   if(diasPressRawChanged) {
+   if(bloodPressureRawChanged) {
      unsigned short index = *data.currentDiasPressIndex;
      data.bloodPressCorrectedBuf[index] = computeDias(data.bloodPressRawBuf[index]);
-     diasPressRawChanged = false;
-     newDiasPressComputed = true;
+     bloodPressureRawChanged = false;
+     newBloodPressComputed   = true;
    }
    if(pulseRateRawChanged) {
      unsigned short index = *data.currentPulseRateIndex;
