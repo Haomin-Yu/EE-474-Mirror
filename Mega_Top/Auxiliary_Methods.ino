@@ -284,6 +284,7 @@ unsigned int getPulseRate() {
     return serialValue;
   }
 }
+// Calls on the Uno to get the respiration & prints information in serial monitor
 unsigned int getRespiration() {
   if(respirationCheck) {
     respirationCheck = false;
