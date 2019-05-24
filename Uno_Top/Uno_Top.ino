@@ -1,4 +1,4 @@
-/*
+  /*
  * Function name: Project_2_Uno
  * Function inputs: takes in the byte interpreter, as well as information from the mega
  * Function outputs: outputs data from the measure sensors or simulator and sends them to the mega.
@@ -10,6 +10,7 @@
 extern "C" {
   #include "byteInterpreter.h"
   #include "measureInterpreter.h"
+  #include "init.h"
 }
 
 // Pin assignments
@@ -23,6 +24,9 @@ static const int      BUTTON_ANALOG_IN = A2;
 static const int      SWITCH_ANALOG_IN = A3;
 static const int       PULSE_ANALOG_IN = A4;
 static const int RESPIRATION_ANALOG_IN = A5;
+
+// Grabbing external variables
+extern unsigned int* bloodPressurePointer;
 
 // Network Identifiers
 const static byte START = 0xE7;
@@ -54,8 +58,16 @@ void loop() {
        // Throwing away end byte
        Serial.read();
        // Executing task and sending message
-       unsigned int data = interpretByte(task);
-       sendMessage(START, NA, NA, data, END);
+       if(task == measureBloodPressure) {
+         *bloodPressurePointer = bloodPressureRaw_INIT;
+         unsigned int data1 = interpretByte(task);
+         unsigned int data2 = interpretByte(task);
+         sendMessage(START, NA, NA, data1, data2, END);
+       }
+       else {
+         unsigned int data = interpretByte(task);
+         sendMessage(START, NA, NA, data, END);
+       }
      }
      else { // Flush
        while(!Serial.available() == 0) {
@@ -81,5 +93,28 @@ void sendMessage(byte startByte,
   Serial.write(identifier);
   Serial.write(task);
   Serial.write(data);
+  Serial.write(endByte);
+}
+
+
+/* Sends a message with the format:
+ * 1. Start of message
+ * 2. Requesting task identifier
+ * 3. Function being requested
+ * 4. Data1 being returned by the function
+ * 5. Data2 being returned by the function
+ * 6. End of message
+ */
+void sendMessage(byte startByte,
+                 byte identifier, 
+                 byte task,
+                 byte data1,
+                 byte data2, 
+                 byte endByte) {
+  Serial.write(startByte);
+  Serial.write(identifier);
+  Serial.write(task);
+  Serial.write(data1);
+  Serial.write(data2);
   Serial.write(endByte);
 }

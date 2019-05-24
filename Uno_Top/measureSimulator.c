@@ -8,6 +8,8 @@
  * 
  *** (This class is deprecated as of Project 4) ***
  */
+
+/********** (Deprecated Class) **********
 #include "init.h"
 #include <stdbool.h>
 
@@ -135,3 +137,5 @@ void pulseRateSimulator(unsigned int* prValuePointer) {
 	}
 	*prValuePointer = prValue + delta;
 }
+
+********** (Deprecated Class) **********/
