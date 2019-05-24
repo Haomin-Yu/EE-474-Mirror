@@ -22,6 +22,11 @@
 #define YM 9   // can be a digital pin
 #define XP 8   // can be a digital pin
 
+long tempTime = millis();
+long sysTime = millis();
+long diasTime = millis();
+long pulseTime = millis();
+
 TouchScreen ts = TouchScreen(XP, YP, XM, YM, 300);
 
 // The control pins for the LCD can be assigned to any digital or

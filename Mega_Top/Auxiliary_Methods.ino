@@ -72,7 +72,9 @@ void updateMeasurements(double tempCorrected,
                           newPulseRateComputed;
   if(newTempComputed || alarmCheck) {               //temperature color and data display
     int tempColor;
-    if(*WarningAlarmData.tempOutOfRange) {
+    if(*WarningAlarmData.tempOutOfRange && ((tempCorrected > 43.4) || (tempCorrected < 30.7)) && (annonciationCounter > 4)) {
+      tempColor = RED;
+    } else if(*WarningAlarmData.tempOutOfRange) {
       tempColor = YELLOW;
     } else {
       tempColor = GREEN;
@@ -83,7 +85,7 @@ void updateMeasurements(double tempCorrected,
   }
   if(newSysPressComputed || alarmCheck) {           //systolic color and data display
     int bpColor;
-    if(*WarningAlarmData.bpOutOfRange && (systolicPressCorrected > 156) && (annonciationCounter > 4)) {
+    if(*WarningAlarmData.bpOutOfRange && ((systolicPressCorrected > 156) || (systolicPressCorrected < 96)) && (annonciationCounter > 4)) {
       bpColor = RED;
     } else if (*WarningAlarmData.bpOutOfRange) {
       bpColor = YELLOW;
@@ -96,7 +98,9 @@ void updateMeasurements(double tempCorrected,
   }
   if(newDiasPressComputed || alarmCheck) {         //diastolic color and data display
     int bpColor;
-    if(*WarningAlarmData.bpOutOfRange) {
+    if(*WarningAlarmData.bpOutOfRange && ((diastolicPressCorrected > 96) || (diastolicPressCorrected < 56)) && (annonciationCounter > 4)) {
+      bpColor = RED;
+    } else if(*WarningAlarmData.bpOutOfRange) {
       bpColor = YELLOW;
     } else {
       bpColor = GREEN;
@@ -107,7 +111,9 @@ void updateMeasurements(double tempCorrected,
   }
   if(newPulseRateComputed || alarmCheck) {         //pulse color and data display
      int pulseColor;
-     if(*WarningAlarmData.pulseOutOfRange) {
+     if(*WarningAlarmData.pulseOutOfRange && ((pulseRateCorrected > 115) || (pulseRateCorrected < 51)) && (annonciationCounter > 4)) {
+      pulseColor = RED;
+    } else if(*WarningAlarmData.pulseOutOfRange) {
        pulseColor = YELLOW;
      } else {
        pulseColor = GREEN;
