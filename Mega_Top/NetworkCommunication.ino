@@ -45,7 +45,7 @@ void remoteCommunication() {
           break;
         case measureBloodPressureFunc:
           remoteDataMessage = "BloodPressure = ";
-          getBloodPress();
+          measuredData = getBloodPress();
           break;
         case measureRespirationFunc:
           remoteDataMessage = "Respiration = ";
@@ -104,7 +104,7 @@ void sendRemoteMessage(byte startByte,
                        byte endByte) {
   Serial.print(remoteDataMessage);
   if(task == measureBloodPressureFunc) {
-    Serial.print(data >> 8, DEC);
+    Serial.print((unsigned int)data >> 8, DEC);
     Serial.print("/");
     Serial.print(data & 0xFF, DEC);
   }

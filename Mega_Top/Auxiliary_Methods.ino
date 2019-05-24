@@ -220,7 +220,7 @@ unsigned int getSerialUInt(byte task) {
   if(Serial1.available() == 5) {
     // Throwing away start byte
     Serial1.read();
-    // Throwing away task byte
+    // Grabbing task byte
     Serial1.read();
     // Throwing away requested byte
     Serial1.read();
@@ -228,20 +228,30 @@ unsigned int getSerialUInt(byte task) {
     measuredInt = Serial1.read();
     // Throwing away end byte
     Serial1.read();
+    // Returning the value
+    return measuredInt;
+  }
+  else if(Serial1.available() == 6) {
+    // Throwing away start byte
+    Serial1.read();
+    // Grabbing task byte
+    Serial1.read();
+    // Throwing away requested byte
+    Serial1.read();
+    // Grabbing data byte
+    byte data1 = Serial1.read();
+    byte data2 = Serial1.read();
+    // Throwing away end byte
+    Serial1.read();
+    // Returning the value
+    measuredInt = (data1 << 8) | data2;
+    return measuredInt;
   }
   else { // Flush
     while(Serial1.available() != 0) {
       Serial1.read();
     }
   }
-  // Checking function type
-  if(task == 0x01) {
-    
-  }
-  else {
-    
-  }
-  return measuredInt;
 }
 // Calls on the Uno to get the temperature & prints information in serial monitor
 int serialValue; //used to hold the value recieved through serial communication
