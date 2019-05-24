@@ -5,6 +5,7 @@
  * Function description: Creatues many miscillanious methods to be used throughout
  *                       the rest of out programs so it can be cleaner, easier to understand, and easier to call.
  *                       this includes the touchscreen funcitonality
+ *                       
  * Author: Haomin Yu and Nathan Ness
  *
  */
@@ -19,8 +20,7 @@ extern MeasureDataStruct MeasureData;
 extern WarningAlarmDataStruct WarningAlarmData;
 extern TFTKeypadDataStruct KeypadData;
 extern bool newTempComputed;
-extern bool newSysPressComputed;
-extern bool newDiasPressComputed;
+extern bool newBloodPressComputed;
 extern bool newPulseRateComputed;
 extern const unsigned long BUTTON_TIME;
 extern unsigned long previousTime;
@@ -44,7 +44,7 @@ void labelsInit() {
   TFT_Write(GREEN, 10, 23,  "Body.Temp  ->        C");
   TFT_Write(GREEN, 10, 48,  "Sys.Press  ->        mmHg"); 
   TFT_Write(GREEN, 10, 73,  "Dias.Press ->        mmHg"); 
-  TFT_Write(GREEN, 10, 98, "Pulse Rate ->        BPM"); 
+  TFT_Write(GREEN, 10, 98,  "Pulse Rate ->        BPM"); 
   TFT_Write(GREEN, 10, 123, "Battery    ->");
   tft.fillRect(10, 160, (BUTTONWIDTH), (BUTTONHEIGHT), CYAN);
   tft.fillRect((12 + BUTTONWIDTH), 160, (BUTTONWIDTH), (BUTTONHEIGHT), CYAN);
@@ -68,8 +68,7 @@ void updateMeasurements(double tempCorrected,
                         double pulseRateCorrected,
                         unsigned short batteryState) {
   // Updating the measurements as well as decides the color at which each measurement should be displayed.
-  bool newBatteryUpdate = newTempComputed || newSysPressComputed || newDiasPressComputed ||
-                          newPulseRateComputed;
+  bool newBatteryUpdate = newTempComputed || newBloodPressComputed || newPulseRateComputed;
   if(newTempComputed || alarmCheck) {               //temperature color and data display
     int tempColor;
     if(*WarningAlarmData.tempOutOfRange && ((tempCorrected > 43.4) || (tempCorrected < 30.7)) && (annonciationCounter > 4)) {
@@ -83,7 +82,7 @@ void updateMeasurements(double tempCorrected,
      TFT_Write(tempColor, 175, 23,  (String)tempCorrected);
      newTempComputed = false;
   }
-  if(newSysPressComputed || alarmCheck) {           //systolic color and data display
+  if(newBloodPressComputed || alarmCheck) {           //systolic color and data display
     int bpColor;
     if(*WarningAlarmData.bpOutOfRange && ((systolicPressCorrected > 156) || (systolicPressCorrected < 96)) && (annonciationCounter > 4)) {
       bpColor = RED;
@@ -94,9 +93,9 @@ void updateMeasurements(double tempCorrected,
     }
      tft.fillRect(175, 48, 80, 24, BLACK);
      TFT_Write(bpColor  , 175, 48,  (String)systolicPressCorrected); 
-     newSysPressComputed = false;
+     newBloodPressComputed = false;
   }
-  if(newDiasPressComputed || alarmCheck) {         //diastolic color and data display
+  if(newBloodPressComputed || alarmCheck) {         //diastolic color and data display
     int bpColor;
     if(*WarningAlarmData.bpOutOfRange && ((diastolicPressCorrected > 96) || (diastolicPressCorrected < 56)) && (annonciationCounter > 4)) {
       bpColor = RED;
@@ -107,7 +106,7 @@ void updateMeasurements(double tempCorrected,
     }
      tft.fillRect(175, 73, 80, 24, BLACK);
      TFT_Write(bpColor  , 175, 73,  (String)diastolicPressCorrected); 
-     newDiasPressComputed = false;
+     newBloodPressComputed = false;
   }
   if(newPulseRateComputed || alarmCheck) {         //pulse color and data display
      int pulseColor;
@@ -168,14 +167,14 @@ void touchScreen() {
            TFT_Write(RED, 12, 175, " Temp.");
         }
         else if(((tft.height()-p.y) < (12 + BUTTONWIDTH * 2)) && ((tft.height()-p.y) > (12 + BUTTONWIDTH))) {         //checks to see if the vertical axis for sys was pressed.
-           sysCheck = true;
+           bloodPressCheck = true;
            *MeasureData.measurementSelection = 2;//assigns button selected data
            *KeypadData.localMeasurementSelection = 2; 
            tft.fillRect((12 + BUTTONWIDTH), 160, BUTTONWIDTH, BUTTONHEIGHT, BLUE);//changes color to represent a button press
            TFT_Write(RED, (14 + BUTTONWIDTH), 175, " Sys.");
         } 
         else if(((tft.height()-p.y) < (14 + BUTTONWIDTH * 3)) && ((tft.height()-p.y) > (14 + BUTTONWIDTH * 2))) {     //checks to see if the vertical axis for dias was pressed.
-           diasCheck = true;
+           bloodPressCheck = true;
            *MeasureData.measurementSelection = 3; //assigns button selected data
            *KeypadData.localMeasurementSelection = 3;
            tft.fillRect((14 + BUTTONWIDTH * 2), 160, BUTTONWIDTH, BUTTONHEIGHT, BLUE);//changes color to represent a button press
@@ -218,43 +217,81 @@ void touchScreen() {
 }
 
 // Gets an unsigned int from the Uno
-unsigned int getSerialUInt() {
+unsigned int getSerialUInt(byte task) {
+  unsigned int measuredInt = 0;
   while(Serial1.available() == 0) {}
-  return Serial1.read();
+  delay(5);
+  if(Serial1.available() == 5) {
+    // Throwing away start byte
+    Serial1.read();
+    // Grabbing task byte
+    Serial1.read();
+    // Throwing away requested byte
+    Serial1.read();
+    // Grabbing data byte
+    measuredInt = Serial1.read();
+    // Throwing away end byte
+    Serial1.read();
+    // Returning the value
+    return measuredInt;
+  }
+  else if(Serial1.available() == 6) {
+    // Throwing away start byte
+    Serial1.read();
+    // Grabbing task byte
+    Serial1.read();
+    // Throwing away requested byte
+    Serial1.read();
+    // Grabbing data byte
+    byte data1 = Serial1.read();
+    byte data2 = Serial1.read();
+    // Throwing away end byte
+    Serial1.read();
+    // Returning the value
+    measuredInt = (data1 << 8) | data2;
+    return measuredInt;
+  }
+  else { // Flush
+    while(Serial1.available() != 0) {
+      Serial1.read();
+    }
+  }
 }
 // Calls on the Uno to get the temperature & prints information in serial monitor
 int serialValue; //used to hold the value recieved through serial communication
 unsigned int getSerialTemp() {
   if(tempCheck) {
-    annonciationCounter++;
-    Serial1.write(0x00);
     tempCheck = false;
-    serialValue = getSerialUInt();
+    annonciationCounter++;
+    sendLocalMessage(0xE7, 0x00, 0xFF, 0xFF, 0xDB);
+    serialValue = getSerialUInt(0x00);
     Serial.print("Temperature = ");
     Serial.println(serialValue);
     return serialValue;
   }
 }
-// Calls on the Uno to get the systolic pressure & prints information in serial monitor
-unsigned int getSysPress() {
-  if(sysCheck){
+// Calls on the Uno to get the diastolic pressure & prints information in serial monitor
+unsigned int getBloodPress() {
+  if(bloodPressCheck) {
+    bloodPressCheck = false;
     annonciationCounter++;
-    Serial1.write(0x01);
-    sysCheck = false;
-    serialValue = getSerialUInt();
-    Serial.print("Systolic = ");
-    Serial.println(serialValue);
+    sendLocalMessage(0xE7, 0x01, 0xFF, 0xFF, 0xDB);
+    serialValue = getSerialUInt(0x01);
+    Serial.print("Blood Pressure = ");
+    Serial.print((unsigned int)serialValue >> 8);
+    Serial.print("/");
+    Serial.println(serialValue & 0xFF);
     return serialValue;
   }
 }
-// Calls on the Uno to get the diastolic pressure & prints information in serial monitor
-unsigned int getDiasPress() {
-  if(diasCheck) {
+// Calls on the Uno to get the respiration & prints information in serial monitor
+unsigned int getRespiration() {
+  if(respirationCheck) {
+    respirationCheck = false;
     annonciationCounter++;
-    Serial1.write(0x02);
-    diasCheck = false;
-    serialValue = getSerialUInt();
-    Serial.print("Diastolic = ");
+    sendLocalMessage(0xE7, 0x02, 0xFF, 0xFF, 0xDB);
+    serialValue = getSerialUInt(0x02);
+    Serial.print("Respiration = ");
     Serial.println(serialValue);
     return serialValue;
   }
@@ -262,22 +299,11 @@ unsigned int getDiasPress() {
 // Calls on the Uno to get the pulse rate & prints information in serial monitor
 unsigned int getPulseRate() {
   if(pulseCheck) {
-    annonciationCounter++;
-    Serial1.write(0x03);
     pulseCheck = false;
-    serialValue = getSerialUInt();
-    Serial.print("Pulse = ");
-    Serial.println(serialValue);
-    return serialValue;
-  }
-}
-unsigned int getRespiration() {
-  if(respirationCheck) {
     annonciationCounter++;
-    Serial1.write(0x04);
-    respirationCheck = false;
-    serialValue = getSerialUInt();
-    Serial.print("Respiration = ");
+    sendLocalMessage(0xE7, 0x03, 0xFF, 0xFF, 0xDB);
+    serialValue = getSerialUInt(0x03);
+    Serial.print("Pulse = ");
     Serial.println(serialValue);
     return serialValue;
   }

@@ -12,15 +12,14 @@
 void display(void* Data);
 // Global indicator
 extern bool newTempComputed;
-extern bool newSysPressComputed;
-extern bool newDiasPressComputed;
+extern bool newBloodPressComputed;
 extern bool newPulseRateComputed;
 
 // Display function of the system
 void display(void* Data) {
    DisplayDataStruct data = *((DisplayDataStruct*)Data);
    // Updates the measurements on the board if data is updated.
-   if(newTempComputed || newSysPressComputed || newDiasPressComputed || newPulseRateComputed) {
+   if(newTempComputed || newBloodPressComputed || newPulseRateComputed) {
       updateMeasurements(data.tempCorrectedBuf[*data.currentTemperatureIndex], 
                          data.bloodPressCorrectedBuf[*data.currentSysPressIndex],
                          data.bloodPressCorrectedBuf[*data.currentDiasPressIndex],

@@ -12,58 +12,81 @@ const static byte   END = 0xDB;
 const static byte    NA = 0xFF;
 
 // Measure Definitions
-const static byte measureTemperatureFunc  = 0x00;
-const static byte measureSysPressureFunc  = 0x01;
-const static byte measureDiasPressureFunc = 0x02;
-const static byte measurePulseRateFunc    = 0x03;
-const static byte measureRespirationFunc  = 0x04;
+const static byte measureTemperatureFunc   = 0x00;
+const static byte measureBloodPressureFunc = 0x01;
+const static byte measureRespirationFunc   = 0x02;
+const static byte measurePulseRateFunc     = 0x03;
+
+// Class variables
+static String remoteDataMessage = "";
 
 /*
  * Handles the remote communication from and to the system
  */
 void remoteCommunication() {
-  if(Serial1.available() > 0) {
+  if(Serial.available() > 0) {
     // Waiting for all bytes to come in
     delay(5);
-    if(Serial1.available() == 4) {
+    if(Serial.available() == 4) {
       // Throwing away start byte
-      Serial1.read();
+      Serial.read();
       // Grabbing task byte
-      byte task = Serial1.read();
+      byte task = Serial.read();
       // Throwing away function request
-      Serial1.read();
+      Serial.read();
       // Throwing away end byte
-      Serial1.read();
+      Serial.read();
       // Executing task and sending message
-      unsigned int measuredData = 0;
+      unsigned int measuredData  = 0;
       switch(task) {
         case measureTemperatureFunc:
+          remoteDataMessage = "Temperature = ";
           measuredData = getSerialTemp();
           break;
-        case measureSysPressureFunc:
-          measuredData = getSysPress();
-          break;
-        case measureDiasPressureFunc:
-          measuredData = getDiasPress();
-          break;
-        case measurePulseRateFunc:
-          measuredData = getPulseRate();
+        case measureBloodPressureFunc:
+          remoteDataMessage = "BloodPressure = ";
+          measuredData = getBloodPress();
           break;
         case measureRespirationFunc:
+          remoteDataMessage = "Respiration = ";
           measuredData = getRespiration();
+          break;
+        case measurePulseRateFunc:
+          remoteDataMessage = "Pulse Rate = ";
+          measuredData = getPulseRate();
           break;
         default:
           measuredData = 0;
           break;
       }
-      sendRemoteMessage(START, NA, NA, measuredData, END);
+      sendRemoteMessage(START, task, NA, measuredData, END);
     }
     else { // Flush
-      while(Serial1.available() > 0) {
-        Serial1.read();
+      while(Serial.available() > 0) {
+        Serial.read();
       }
     }
   }
+}
+
+/*
+ * Sends a message to the local device(Uno), with format:
+ * 1. Start of message
+ * 2. Requested task identifier
+ * 3. ID of function
+ * 4. Requested data
+ * 5. End of message
+ */
+void sendLocalMessage(byte startByte,
+                      byte task,
+                      byte ID,
+                      byte data,
+                      byte endByte) {
+  Serial1.write(startByte);
+  Serial1.write(task);
+  Serial1.write(ID);
+  Serial1.write(data);
+  Serial1.write(endByte);
 }
 
 /*
@@ -77,11 +100,16 @@ void remoteCommunication() {
 void sendRemoteMessage(byte startByte,
                        byte task,
                        byte ID,
-                       byte data,
+                       int data,
                        byte endByte) {
-  Serial.print(startByte, HEX);
-  Serial.print(task, HEX);
-  Serial.print(ID, HEX);
-  Serial.print(data, HEX);
-  Serial.print(endByte, HEX);
+  Serial.print(remoteDataMessage);
+  if(task == measureBloodPressureFunc) {
+    Serial.print((unsigned int)data >> 8, DEC);
+    Serial.print("/");
+    Serial.print(data & 0xFF, DEC);
+  }
+  else {
+    Serial.print(data, DEC);
+  }
+  Serial.println();
 }

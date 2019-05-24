@@ -76,11 +76,10 @@ Elegoo_TFTLCD tft(LCD_CS, LCD_CD, LCD_WR, LCD_RD, LCD_RESET);
 unsigned short annonciationCounter = 6; //initializes a ounter to be grater than 5 to make sure initially our
                                         //alarm will go off when a value is out of range
 bool tempCheck = false;                 //boolean used to see if temp button was pressed.
-bool pulseCheck = false;                //boolean used to see if pulse button was pressed.
-bool sysCheck = false;                  //boolean used to see if sys button was pressed.
-bool diasCheck = false;                 //boolean used to see if dias button was pressed.
-bool alarmCheck = false;                //boolean used to see if alarm button was pressed.
+bool bloodPressCheck  = false;
 bool respirationCheck = false;
+bool pulseCheck = false;                //boolean used to see if pulse button was pressed.
+bool alarmCheck = false;                //boolean used to see if alarm button was pressed.
 
 
 void setup(void) {

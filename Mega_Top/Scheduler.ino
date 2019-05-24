@@ -144,7 +144,7 @@ unsigned long previousTime = millis();                                          
 void scheduler() {                                                                      //creates scheduler function that is to be called in a loop to constantly run the order.
   if(((millis() - previousTime) > BUTTON_TIME)) {
     previousTime = millis();
-    if ((tempCheck || pulseCheck || sysCheck || diasCheck)) {                           //if any measure buttons were pressed they will be added to the task queue
+    if ((tempCheck || pulseCheck || bloodPressCheck)) {                                 //if any measure buttons were pressed they will be added to the task queue
       insert(&MeasurementTask);
       insert(&ComputationTask);
       insert(&StatusTask);

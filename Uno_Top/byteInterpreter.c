@@ -24,10 +24,9 @@ extern bool systolicMeasurementDone;
 extern bool diastolicMeasurementDone;
 
 // Storing previous data for simulation of measurements
-static unsigned int* tempValuePointer = &temperatureRaw_INIT;
-static unsigned int* sysValuePointer  = &sysPressRaw_INIT;
-static unsigned int* diasValuePointer = &diasPressRaw_INIT;
-static unsigned int* prValuePointer   = &pulseRateRaw_INIT;
+static unsigned int* tempValuePointer     = &temperatureRaw_INIT;
+       unsigned int* bloodPressurePointer = &bloodPressureRaw_INIT;
+static unsigned int* prValuePointer       = &pulseRateRaw_INIT;
 static unsigned int* respirationValuePointer = &respirationRateRaw_INIT;
 // Grabbing external Functions
 extern void temperatureInterpreter(unsigned int* tempValuePointer);
@@ -44,13 +43,15 @@ unsigned int interpretByte(unsigned char input) {
          temperatureInterpreter(tempValuePointer);
          return *tempValuePointer;
          break;
-      case measureSysPressure:
-         systolicPressInterpreter(sysValuePointer);
-         return *sysValuePointer;
-         break;
-      case measureDiasPressure:
-         diastolicPressInterpreter(diasValuePointer);
-         return *diasValuePointer;
+      case measureBloodPressure:
+         if(*bloodPressurePointer == bloodPressureRaw_INIT) {
+           systolicPressInterpreter(bloodPressurePointer);
+           return *bloodPressurePointer;
+         }
+         else {
+           diastolicPressInterpreter(bloodPressurePointer);
+           return *bloodPressurePointer;
+         }
          break;
       case measurePulseRate:
          pulseRateInterpreter(prValuePointer);

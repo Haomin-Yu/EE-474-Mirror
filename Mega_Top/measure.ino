@@ -8,39 +8,41 @@
  * Author: Haomin Yu and Nathan Ness
  */ 
 // Class constants
-static const unsigned short outOfBounds      = 0;
-static const unsigned short measureTemp      = 1;
-static const unsigned short measureSysPress  = 2;
-static const unsigned short measureDiasPress = 3;
-static const unsigned short measurePulseRate = 4;
+static const unsigned short outOfBounds        = 0;
+static const unsigned short measureTemp        = 1;
+static const unsigned short measureBloodPress  = 2;
+static const unsigned short measureRespiration = 3;
+static const unsigned short measurePulseRate   = 4;
 // Global variables
 // (Indicating whether a new measurement has been made)
-bool tempRawChanged      = true;
-bool sysPressRawChanged  = true;
-bool diasPressRawChanged = true;
-bool pulseRateRawChanged = true;
+bool tempRawChanged          = true;
+bool bloodPressureRawChanged = true;
+bool pulseRateRawChanged   = true;
+bool respirationRawChanged = true;
 // Global indicators
 // (When the corrosponding button is pressed)
 extern bool tempCheck;
-extern bool sysCheck;
-extern bool diasCheck;
-extern bool pulseCheck;
+extern bool bloodPressCheck;
 extern bool respirationCheck;
+extern bool pulseCheck;
 extern bool enableStatus;
 extern bool alarmCheck;
 
 // Measures the data 'temperatureRaw', 'systolicPressRaw',
 // 'diastolicPressRaw', and/or 'pulseRateRaw' beased on
 // the given measureSelection in 'Data'
+static const double THRESHOLD_PULSE_PERCENT       = 15.0;
+static const double THRESHOLD_RESPIRATION_PERCENT = 15.0;
 void measure(void* Data) {
   	MeasureDataStruct data = *((MeasureDataStruct*)Data);
-    static const double THRESHOLD_PULSE_PERCENT = 15.0;
     unsigned short select = *data.measurementSelection;
     unsigned short currentIndex;
     unsigned short nextIndex;
-    unsigned int prevPulseRate;
-    unsigned int incomingPulseRate;
-    unsigned int difference;
+    unsigned short nextIndex2;
+    unsigned int prevData;
+    unsigned int incomingData;
+    unsigned int incomingData2;
+    unsigned int dataDifference;
     switch(select) {
       case measureTemp:
         nextIndex = (*data.currentTemperatureIndex + 1) % 8;
@@ -54,44 +56,39 @@ void measure(void* Data) {
         TFT_Write(RED, 12, 175, " Temp.");
         *data.measurementSelection = outOfBounds;
         break;
-      case measureSysPress:
-        nextIndex = (*data.currentSysPressIndex + 1) % 8;
-        data.bloodPressRawBuf[nextIndex] = getSysPress();
+      case measureBloodPress:
+        nextIndex  = (*data.currentSysPressIndex + 1) % 8;
+        nextIndex2 = ((*data.currentDiasPressIndex + 1) % 8) + 8;
+        incomingData = getBloodPress();
+        incomingData2 = incomingData & 0xFF;
+        incomingData  = (unsigned int)incomingData >> 8;
+        
+        
+        
         *data.currentSysPressIndex = nextIndex;
-        sysPressRawChanged = true;
-        sysCheck           = false;
+        *data.currentDiasPressIndex = nextIndex2;
+        bloodPressureRawChanged = true;
+        bloodPressCheck    = false;
         alarmCheck         = true;
         enableStatus       = true;
-        tft.fillRect((12 + BUTTONWIDTH), 160, BUTTONWIDTH, BUTTONHEIGHT, CYAN);
-        TFT_Write(RED, (14 + BUTTONWIDTH), 175, " Sys.");
-        *data.measurementSelection = outOfBounds;
-        break;
-      case measureDiasPress:
-        nextIndex = ((*data.currentDiasPressIndex + 1) % 8) + 8;
-        data.bloodPressRawBuf[nextIndex] = getDiasPress();
-        *data.currentDiasPressIndex = nextIndex;
-        diasPressRawChanged = true;
-        diasCheck           = false;
-        alarmCheck          = true;
-        enableStatus        = true;
-        tft.fillRect((14 + BUTTONWIDTH * 2), 160, BUTTONWIDTH, BUTTONHEIGHT, CYAN);
-        TFT_Write(RED, (16 + BUTTONWIDTH * 2), 175, " Dias.");
+        //tft.fillRect((12 + BUTTONWIDTH), 160, BUTTONWIDTH, BUTTONHEIGHT, CYAN);
+        //TFT_Write(RED, (14 + BUTTONWIDTH), 175, " Sys.");
         *data.measurementSelection = outOfBounds;
         break;
       case measurePulseRate:
         currentIndex = *data.currentPulseRateIndex;
         nextIndex    = (*data.currentPulseRateIndex + 1) % 8;
-         prevPulseRate     = data.pulseRateRawBuf[currentIndex];
-         incomingPulseRate = getPulseRate();
-        difference = (incomingPulseRate > prevPulseRate)?
-                                  (incomingPulseRate - prevPulseRate):
-                                  (prevPulseRate - incomingPulseRate);
-        if((difference * 100.0 / prevPulseRate) > THRESHOLD_PULSE_PERCENT) {
-          data.pulseRateRawBuf[nextIndex] = incomingPulseRate;
+        prevData     = data.pulseRateRawBuf[currentIndex];
+        incomingData = getPulseRate();
+        dataDifference = (incomingData > prevData)?
+                                  (incomingData - prevData):
+                                  (prevData - incomingData);
+        if((dataDifference * 100.0 / prevData) > THRESHOLD_PULSE_PERCENT) {
+          data.pulseRateRawBuf[nextIndex] = incomingData;
           *data.currentPulseRateIndex = nextIndex;
         }
         else {
-          data.pulseRateRawBuf[currentIndex] = incomingPulseRate;
+          data.pulseRateRawBuf[currentIndex] = incomingData;
         }
         //changes check booleans accordingly as well as changes color of puse back to original color
         pulseRateRawChanged = true;
@@ -100,6 +97,29 @@ void measure(void* Data) {
         enableStatus        = true;
         tft.fillRect((16 + BUTTONWIDTH * 3), 160, BUTTONWIDTH, BUTTONHEIGHT, CYAN);
         TFT_Write(RED, (18 + BUTTONWIDTH * 3), 175, "Pulse");
+        *data.measurementSelection = outOfBounds;
+        break;
+      case measureRespiration:
+        currentIndex = *data.currentRespirationRateIndex;
+        nextIndex = (*data.currentRespirationRateIndex + 1) % 8;
+        prevData = data.respirationRateRawBuf[currentIndex];
+        incomingData = getRespiration();
+        dataDifference = (incomingData > prevData)?
+                         (incomingData - prevData):
+                         (prevData - incomingData);
+        if((dataDifference * 100.0 / prevData) > THRESHOLD_RESPIRATION_PERCENT) {
+          data.respirationRateRawBuf[nextIndex] = incomingData;
+          *data.currentRespirationRateIndex = nextIndex;
+        }
+        else {
+          data.respirationRateRawBuf[currentIndex] = incomingData;
+        }
+        respirationRawChanged = true;
+        respirationCheck      = false;
+        alarmCheck            = true;
+        enableStatus          = true;
+        //tft.fillRect(10, 160, BUTTONWIDTH, BUTTONHEIGHT, CYAN);
+        //TFT_Write(RED, 12, 175, " Temp.");
         *data.measurementSelection = outOfBounds;
         break;
       default:

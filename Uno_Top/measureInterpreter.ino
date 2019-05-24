@@ -51,54 +51,47 @@ void temperatureInterpreter(unsigned int* tempValuePointer) {
 
 // Interprets signals from BUTTON_ANALOG_IN and SWITCH_ANALOG_IN and
 // retrieves a number within MIN_SYS_PRESS and MAX_SYS_PRESS
-static bool prevSysButtonOn = false;
-static unsigned int currentSysPressure = sysPressRaw_INIT;
-void systolicPressInterpreter(unsigned int* sysValuePointer) {
-  prevSysButtonOn = false;
-  currentSysPressure = sysPressRaw_INIT;
-  while(!(*sysValuePointer >= MIN_SYS_PRESS && *sysValuePointer <= MAX_SYS_PRESS)) {
+static bool prevBloodPressureOn = false;
+void systolicPressInterpreter(unsigned int* bloodPressurePointer) {
+  prevBloodPressureOn     = false;
+  while(!(*bloodPressurePointer >= MIN_SYS_PRESS && *bloodPressurePointer <= MAX_SYS_PRESS)) {
     if(analogRead(BUTTON_ANALOG_IN) > LOGICAL_THRESHOLD) {
-      if(!prevSysButtonOn) {
+      if(!prevBloodPressureOn) {
         if(analogRead(SWITCH_ANALOG_IN) > LOGICAL_THRESHOLD) {
-          currentSysPressure = currentSysPressure * 1.1;
+          *bloodPressurePointer *= 1.1;
         }
         else {
-          currentSysPressure = currentSysPressure * 0.9;
+          *bloodPressurePointer /= 1.1;
         }
       }
-      prevSysButtonOn = true;
+      prevBloodPressureOn = true;
     }
     else {
-      prevSysButtonOn = false;
+      prevBloodPressureOn = false;
     }
   }
-  *sysValuePointer = currentSysPressure;
 }
 
 // Interprets signals from BUTTON_ANALOG_IN and SWITCH_ANALOG_IN and
 // retrieves a number within MIN_DIAS_PRESS and MAX_DIAS_PRESS
-static bool prevDiasButtonOn = false;
-static unsigned int currentDiasPressure = diasPressRaw_INIT;
-void diastolicPressInterpreter(unsigned int* diasValuePointer) {
-  prevDiasButtonOn = false;
-  currentDiasPressure = diasPressRaw_INIT;
-  while(!(*diasValuePointer >= MIN_DIAS_PRESS && *diasValuePointer <= MAX_DIAS_PRESS)) {
+void diastolicPressInterpreter(unsigned int* bloodPressurePointer) {
+  prevBloodPressureOn = false;
+  while(!(*bloodPressurePointer >= MIN_DIAS_PRESS && *bloodPressurePointer <= MAX_DIAS_PRESS)) {
     if(analogRead(BUTTON_ANALOG_IN) > LOGICAL_THRESHOLD) {
-      if(!prevDiasButtonOn) {
+      if(!prevBloodPressureOn) {
         if(analogRead(SWITCH_ANALOG_IN) > LOGICAL_THRESHOLD) {
-          currentDiasPressure = currentDiasPressure * 1.1;
+          *bloodPressurePointer *= 1.1;
         }
         else {
-          currentDiasPressure = currentDiasPressure * 0.9;
+          *bloodPressurePointer /= 1.1;
         }
       }
-      prevDiasButtonOn = true;
+      prevBloodPressureOn = true;
     }
     else {
-      prevDiasButtonOn = false;
+      prevBloodPressureOn = false;
     }
   }
-  *diasValuePointer = currentDiasPressure;
 }
 
 // Interprets signal from PULSE_ANALOG_IN as actial pulse rates
