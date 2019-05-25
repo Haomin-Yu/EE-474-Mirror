@@ -38,11 +38,14 @@ void alarm(void* Data) {
   unsigned short sysIndex   = *data.currentSysPressIndex;
   unsigned short diasIndex  = *data.currentDiasPressIndex;
   unsigned short pulseIndex = *data.currentPulseRateIndex;
-  
+  unsigned short respIndex = *data.currentRespirationRateIndex;
+
+  *data.respHigh   = respRangeWarning(data.respirationRateRawBuf[respIndex]);
   *data.bpHigh     = bpRangeWarning(data.bloodPressRawBuf[sysIndex], data.bloodPressRawBuf[diasIndex]);      //calls the function to test for the blood pressure warning
   *data.tempHigh   = tempRangeWarning(data.temperatureRawBuf[tempIndex]);                                    //calls the function to test for the temperature warning
   *data.pulseLow   = pulseRangeWarning(data.pulseRateRawBuf[pulseIndex]);                                    //calls the function to test for the pulse warning
   *data.batteryLow = batteryRangeWarning(*data.batteryState);                                                //calls the function to test for the battery warning
+  *data.respOutOfRange    = respRangeAlarm(data.respirationRateRawBuf[respIndex]);
   *data.bpOutOfRange      = bpRangeAlarm(data.bloodPressRawBuf[sysIndex], data.bloodPressRawBuf[diasIndex]); //calls the function to test for the blood pressure alarm
   *data.tempOutOfRange    = tempRangeAlarm(data.temperatureRawBuf[tempIndex]);                               //calls the function to test for the temperature alarm
   *data.pulseOutOfRange   = pulseRangeAlarm(data.pulseRateRawBuf[pulseIndex]);                               //calls the function to test for the pulse alarm
@@ -57,6 +60,16 @@ unsigned char bpRangeAlarm(unsigned int systolicPressRaw, unsigned int diastolic
       }
       return 1;
   } 
+  return 0;
+}
+
+unsigned char respRangeAlarm(unsigned int resperationRaw) {                                    //function runs if checks to see if the alarm should be on
+  if ((resperationRaw < 2) || (resperationRaw > 6)) {                                        //for temperature. If it is it returns 1, if not it returns 0
+    if(alarmCheck && (annonciationCounter > 4)) {                                              //also it will decide if the alarmacknowledgement must be changed
+      *KeypadData.alarmAcknowledge = 1;
+    }
+    return 1;
+  }
   return 0;
 }
 
@@ -102,6 +115,16 @@ bool bpRangeWarning(unsigned int systolicPressRaw, unsigned int diastolicPressRa
 
 bool tempRangeWarning(unsigned int temperatureRaw) {                                           //function runs if checks to see if the warning should be on
   if (temperatureRaw > 44) {                                                                   //for temperature. If it is it returns true, if not it returns false.
+    if(alarmCheck && (annonciationCounter > 4)) {                                              //also it will decide if the alarmacknowledgement must be changed
+      *KeypadData.alarmAcknowledge = 1;
+    }
+    return true;
+  }
+  return false;
+}
+
+bool respRangeWarning(unsigned int resperationRaw) {                                           //function runs if checks to see if the warning should be on
+  if (resperationRaw > 6) {                                                                   //for temperature. If it is it returns true, if not it returns false.
     if(alarmCheck && (annonciationCounter > 4)) {                                              //also it will decide if the alarmacknowledgement must be changed
       *KeypadData.alarmAcknowledge = 1;
     }

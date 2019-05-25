@@ -22,10 +22,10 @@
 #define YM 9   // can be a digital pin
 #define XP 8   // can be a digital pin
 
-long tempTime = millis();
-long sysTime = millis();
-long diasTime = millis();
-long pulseTime = millis();
+long tempTime = 0;
+long sysTime = 0;
+long diasTime = 0;
+long pulseTime = 0;
 
 TouchScreen ts = TouchScreen(XP, YP, XM, YM, 300);
 

@@ -21,12 +21,7 @@ extern DisplayDataStruct DisplayData;                                           
 extern ComputeDataStruct ComputeData;                                                             //takes information from compute datastruct and saves the data for use
 extern WarningAlarmDataStruct WarningAlarmData;                                                   //takes information from warning and alarm datastruct and saves the data for use
 extern StatusStruct Status;                                                                       //takes information from status datastruct and saves the data for use
-
-// Getting global indicators
-//extern bool enableMeasure;                                                                        //creates an enable variable to tell when measure should run
-//extern bool enableCompute;                                                                        //creates an enable variable to tell when compute should run
-//extern bool enableDisplay;                                                                        //creates an enable variable to tell when display should run
-//extern bool enableStatus;                                                                         //creates an enable variable to tell when status should run
+extern CommunicationsDataStruct CommunicationsData;                                               //takes information from communcations datastruct and saves the data for use
 
 TCB nullTCB = (TCB) {                                                                     //defines a task for measurements
   NULL,
@@ -92,6 +87,12 @@ TCB DisplayTask = (TCB) {                                                       
   NULL
 };
 
+TCB CommunicateTask = (TCB) {                                                                     //defines a task for communication
+  &remoteCommunication/* *myTask name */,
+  &CommunicationsData,
+  NULL,
+  NULL
+};
 
 void insert(TCB* task) {                                        //allows for tasks to be inserted into the queue
   if(Head == NULL) {
@@ -152,24 +153,9 @@ void scheduler() {                                                              
   }
   insert(&AlarmTask);
   insert(&DisplayTask);
-
+  insert(&CommunicateTask);
   while (Head != NULL) {                                                                          //loop through tasks
     Head->myTask(Head->taskDataPtr);
     rmv(Head);
   }
-  //for(int i = 0; i < 5; i++) {
-  //  taskQueue[i].myTask(taskQueue[i].taskDataPtr);                                                //loops through tasks to be executed.
-  //}
-//  if((millis() - previousTime) > EACH_TASK_TIME) {                                                //if its been 5 seconds or more sets enable true so the functions will execute.
-//    previousTime  = millis();
-//    enableMeasure = true;
-//    enableCompute = true;
-//    enableDisplay = true;
-//    enableStatus  = true;
-//  } else {                                                                                        //if it hasnt been 5 seconds or more sets enable to false so functions wont execute.
-//    enableMeasure = false;
-//    enableCompute = false;
-//    enableDisplay = false;
-//    enableStatus  = false;
-//  }
 }
