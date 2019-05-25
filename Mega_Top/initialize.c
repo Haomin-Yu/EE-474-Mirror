@@ -32,24 +32,29 @@ void initialize(MeasureDataStruct* MeasureData,
      temperatureRawBuf_INIT,
      bloodPressRawBuf_INIT,
      pulseRateRawBuf_INIT,
+     respirationRawBuf_INIT,
      &measurementSelection_INIT,
 
      &currentTemperatureIndex_INIT,
      &currentSysPressIndex_INIT,
      &currentDiasPressIndex_INIT,
-     &currentPulseRateIndex_INIT
+     &currentPulseRateIndex_INIT,
+     &currentRespirationIndex_INIT
   };
 	// Initializing display variables
   *DisplayData = (DisplayDataStruct) {
+     mode_INIT,
      tempCorrectedBuf_INIT,
      bloodPressCorrectedBuf_INIT,
      pulseRateCorrectedBuf_INIT,
+     respirationCorrectedBuf_INIT,
      &batteryState_INIT,
 
      &currentTemperatureIndex_INIT,
      &currentSysPressIndex_INIT,
      &currentDiasPressIndex_INIT,
-     &currentPulseRateIndex_INIT
+     &currentPulseRateIndex_INIT,
+     &currentRespirationIndex_INIT
   };
 	// Initializing compute variables
   *ComputeData = (ComputeDataStruct) {

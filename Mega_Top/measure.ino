@@ -100,8 +100,8 @@ void measure(void* Data) {
         *data.measurementSelection = outOfBounds;
         break;
       case measureRespiration:
-        currentIndex = *data.currentRespirationRateIndex;
-        nextIndex = (*data.currentRespirationRateIndex + 1) % 8;
+        currentIndex = *data.currentRespirationIndex;
+        nextIndex = (*data.currentRespirationIndex + 1) % 8;
         prevData = data.respirationRateRawBuf[currentIndex];
         incomingData = getRespiration();
         dataDifference = (incomingData > prevData)?
@@ -109,7 +109,7 @@ void measure(void* Data) {
                          (prevData - incomingData);
         if((dataDifference * 100.0 / prevData) > THRESHOLD_RESPIRATION_PERCENT) {
           data.respirationRateRawBuf[nextIndex] = incomingData;
-          *data.currentRespirationRateIndex = nextIndex;
+          *data.currentRespirationIndex = nextIndex;
         }
         else {
           data.respirationRateRawBuf[currentIndex] = incomingData;

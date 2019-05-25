@@ -24,6 +24,7 @@ void display(void* Data) {
                          data.bloodPressCorrectedBuf[*data.currentSysPressIndex],
                          data.bloodPressCorrectedBuf[*data.currentDiasPressIndex],
                          data.prCorrectedBuf[*data.currentPulseRateIndex],
+                         data.respirationCorrectedBuf[*data.currentRespirationIndex],
                          *data.batteryState);
    }
 }

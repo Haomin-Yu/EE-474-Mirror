@@ -18,18 +18,22 @@ static unsigned int temperatureRawBuf_INIT[8] = {75, 0, 0, 0, 0, 0, 0, 0};
 static unsigned int bloodPressRawBuf_INIT[16] = {80, 0, 0, 0, 0, 0, 0, 0,
                                                  80, 0, 0, 0, 0, 0, 0, 0};
 static unsigned int pulseRateRawBuf_INIT[8]   = { 0, 0, 0, 0, 0, 0, 0, 0};
+static unsigned int respirationRawBuf_INIT[8] = { 0, 0, 0, 0, 0, 0, 0, 0};
 
 // Display
+static unsigned short mode_INIT = 0;
 static double tempCorrectedBuf_INIT[8]        = {0, 0, 0, 0, 0, 0, 0, 0};
 static double bloodPressCorrectedBuf_INIT[16] = {0, 0, 0, 0, 0, 0, 0, 0,
                                                  0, 0, 0, 0, 0, 0, 0, 0};
 static double pulseRateCorrectedBuf_INIT[8]   = {0, 0, 0, 0, 0, 0, 0, 0};
+static double respirationCorrectedBuf_INIT[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 
 // Start index of the buffers
 static unsigned short currentTemperatureIndex_INIT = 0;
 static unsigned short currentSysPressIndex_INIT    = 0;
 static unsigned short currentDiasPressIndex_INIT   = 8;
 static unsigned short currentPulseRateIndex_INIT   = 0;
+static unsigned short currentRespirationIndex_INIT = 0;
 
 // Status
 static unsigned short batteryState_INIT = 200;
