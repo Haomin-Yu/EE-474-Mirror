@@ -74,7 +74,18 @@ void updateMeasurements(double tempCorrected,
     if(*WarningAlarmData.tempOutOfRange && ((tempCorrected > 43.4) || (tempCorrected < 30.7)) && (annonciationCounter > 4)) {
       tempColor = RED;
     } else if(*WarningAlarmData.tempOutOfRange) {
+      if ((tempCorrected > 39.7) || (tempCorrected < 34.3)) {
+        if (millis() > (tempTime + 500)) {
+          tempTime = millis();
+          if (tempColor == YELLOW) {
+            tempColor = BLACK;
+          } else {
+            tempColor = YELLOW;
+          }
+        }
+      } else {
       tempColor = YELLOW;
+      }
     } else {
       tempColor = GREEN;
     }
@@ -87,7 +98,18 @@ void updateMeasurements(double tempCorrected,
     if(*WarningAlarmData.bpOutOfRange && ((systolicPressCorrected > 156) || (systolicPressCorrected < 96)) && (annonciationCounter > 4)) {
       bpColor = RED;
     } else if (*WarningAlarmData.bpOutOfRange) {
-      bpColor = YELLOW;
+      if ((systolicPressCorrected > 136.5) || (systolicPressCorrected < 114)) {
+        if (millis() > (sysTime + 250)) {
+          sysTime = millis();
+          if (bpColor == YELLOW) {
+            bpColor = BLACK;
+          } else {
+            bpColor = YELLOW;
+          }
+        }
+      } else {
+        bpColor = YELLOW;
+      }
     } else {
       bpColor = GREEN;
     }
@@ -100,7 +122,18 @@ void updateMeasurements(double tempCorrected,
     if(*WarningAlarmData.bpOutOfRange && ((diastolicPressCorrected > 96) || (diastolicPressCorrected < 56)) && (annonciationCounter > 4)) {
       bpColor = RED;
     } else if(*WarningAlarmData.bpOutOfRange) {
-      bpColor = YELLOW;
+      if ((diastolicPressCorrected > 84) || (diastolicPressCorrected < 66.5)) {
+        if (millis() > (diasTime + 250)) {
+          diasTime = millis();
+          if (bpColor == YELLOW) {
+            bpColor = BLACK;
+          } else {
+            bpColor = YELLOW;
+          }
+        }
+      } else {
+        bpColor = YELLOW;
+      }
     } else {
       bpColor = GREEN;
     }
@@ -113,7 +146,18 @@ void updateMeasurements(double tempCorrected,
      if(*WarningAlarmData.pulseOutOfRange && ((pulseRateCorrected > 115) || (pulseRateCorrected < 51)) && (annonciationCounter > 4)) {
       pulseColor = RED;
     } else if(*WarningAlarmData.pulseOutOfRange) {
-       pulseColor = YELLOW;
+       if ((pulseRateCorrected > 105) || (pulseRateCorrected < 57)) {
+        if (millis() > (pulseTime + 1000)) {
+          pulseTime = millis();
+          if (pulseColor == YELLOW) {
+            pulseColor = BLACK;
+          } else {
+            pulseColor = YELLOW;
+          }
+        }
+      } else {
+        pulseColor = YELLOW;
+      }
      } else {
        pulseColor = GREEN;
      }
@@ -171,14 +215,14 @@ void touchScreen() {
            *MeasureData.measurementSelection = 2;//assigns button selected data
            *KeypadData.localMeasurementSelection = 2; 
            tft.fillRect((12 + BUTTONWIDTH), 160, BUTTONWIDTH, BUTTONHEIGHT, BLUE);//changes color to represent a button press
-           TFT_Write(RED, (14 + BUTTONWIDTH), 175, " Sys.");
+           TFT_Write(RED, (14 + BUTTONWIDTH), 175, " BP.");
         } 
         else if(((tft.height()-p.y) < (14 + BUTTONWIDTH * 3)) && ((tft.height()-p.y) > (14 + BUTTONWIDTH * 2))) {     //checks to see if the vertical axis for dias was pressed.
-           bloodPressCheck = true;
+           respirationCheck = true;
            *MeasureData.measurementSelection = 3; //assigns button selected data
            *KeypadData.localMeasurementSelection = 3;
            tft.fillRect((14 + BUTTONWIDTH * 2), 160, BUTTONWIDTH, BUTTONHEIGHT, BLUE);//changes color to represent a button press
-           TFT_Write(RED, (16 + BUTTONWIDTH * 2), 175, " Dias.");
+           TFT_Write(RED, (16 + BUTTONWIDTH * 2), 175, " Resp.");
         } 
         else if(((tft.height()-p.y) < (16 + BUTTONWIDTH * 4)) && ((tft.height()-p.y) > (16 + BUTTONWIDTH * 3))) {     //checks to see if the vertical axis for pulse was pressed.
            pulseCheck = true;

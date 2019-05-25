@@ -88,7 +88,9 @@ struct WarningAlarmData {
   unsigned char* tempOutOfRange;
   unsigned char* pulseOutOfRange;
   unsigned char* batteryOutOfRange;
+  unsigned char* respOutOfRange;
 
+  bool *respHigh;
   bool* bpHigh;
   bool* tempHigh;
   bool* pulseLow;
