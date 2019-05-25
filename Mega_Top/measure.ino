@@ -62,9 +62,8 @@ void measure(void* Data) {
         incomingData = getBloodPress();
         incomingData2 = incomingData & 0xFF;
         incomingData  = (unsigned int)incomingData >> 8;
-        
-        
-        
+        data.respirationRateRawBuf[nextIndex]  = incomingData;
+        data.respirationRateRawBuf[nextIndex2] = incomingData2;
         *data.currentSysPressIndex = nextIndex;
         *data.currentDiasPressIndex = nextIndex2;
         bloodPressureRawChanged = true;
@@ -72,7 +71,7 @@ void measure(void* Data) {
         alarmCheck         = true;
         enableStatus       = true;
         //tft.fillRect((12 + BUTTONWIDTH), 160, BUTTONWIDTH, BUTTONHEIGHT, CYAN);
-        //TFT_Write(RED, (14 + BUTTONWIDTH), 175, " Sys.");
+        //TFT_Write(RED, (14 + BUTTONWIDTH), 175, " B.P.");
         *data.measurementSelection = outOfBounds;
         break;
       case measurePulseRate:

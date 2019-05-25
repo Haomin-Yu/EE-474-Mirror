@@ -22,6 +22,7 @@ extern TFTKeypadDataStruct KeypadData;
 extern bool newTempComputed;
 extern bool newBloodPressComputed;
 extern bool newPulseRateComputed;
+extern bool newRespirationComputed;
 extern const unsigned long BUTTON_TIME;
 extern unsigned long previousTime;
 
@@ -121,6 +122,11 @@ void updateMeasurements(double tempCorrected,
      tft.fillRect(175, 98, 80, 24, BLACK);
      TFT_Write(pulseColor  , 175, 98,  (String)(int)pulseRateCorrected); 
      newPulseRateComputed = false;
+  }
+  if(newRespirationComputed || alarmCheck) {  
+     int respirationColor;
+     
+     newRespirationComputed = false;
   }
   if(newBatteryUpdate) {                           //battery color and data display
      int battColor;

@@ -55,7 +55,7 @@ struct ComputeData {
   unsigned short* currentSysPressIndex;
   unsigned short* currentDiasPressIndex;
   unsigned short* currentPulseRateIndex;
-  unsigned short* currentRespirationRateIndex;
+  unsigned short* currentRespirationIndex;
 };
 typedef struct ComputeData ComputeDataStruct;
 

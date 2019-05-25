@@ -15,10 +15,12 @@ double computeTemp(unsigned int tempRaw);
 double computeSys(unsigned int systolicRaw);
 double computeDias(unsigned int diastolicRaw);
 double computePr(unsigned int bpRaw);
+double computeRespiration(unsigned int respirationRaw);
 
 // Getting global indicators from measure.ino
 extern bool tempRawChanged;
 extern bool bloodPressureRawChanged;
+extern bool respirationRawChanged;
 extern bool pulseRateRawChanged;
 
 // Global variables
@@ -26,6 +28,7 @@ extern bool pulseRateRawChanged;
 bool newTempComputed;
 bool newBloodPressComputed;
 bool newPulseRateComputed;
+bool newRespirationComputed;
 
 // Computes the values for 'tempCorrected', 'sysCorrected',
 // 'diasCorrected', and 'prCorrected' if needed
@@ -49,6 +52,12 @@ void compute(void* Data) {
      bloodPressureRawChanged = false;
      newBloodPressComputed   = true;
    }
+   if(respirationRawChanged) {
+     unsigned short index = *data.currentRespirationIndex;
+     data.respirationRateCorrectedBuf[index] = computeRespiration(data.respirationRateRawBuf[index]);
+     respirationRawChanged = false;
+     newRespirationComputed = true;
+   }
    if(pulseRateRawChanged) {
      unsigned short index = *data.currentPulseRateIndex;
      data.prCorrectedBuf[index] = computePr(data.pulseRateRawBuf[index]);
@@ -67,13 +76,17 @@ double computeSys(unsigned int systolicRaw) {
 	return 9 + 2*systolicRaw;
 }
 
-// Computes the diastolic pressure in mmHg
+// Computes the diastolic pressure in mm
 double computeDias(unsigned int diastolicRaw) {
   return 6 + 1.5*diastolicRaw;
 }
 
+// Computes the respiration in breaths per minute
+double computeRespiration(unsigned int respirationRaw) {
+  return 7 + 3*respirationRaw;
+}
+
 // Computes the pulse rate in beats per minute
 double computePr(unsigned int bpRaw) {
-	return (double)bpRaw;
-	//return 8 + 3*bpRaw;
+	return 8 + 3*bpRaw;
 }
