@@ -94,8 +94,8 @@ void updateMeasurements(double tempCorrected,
     } else {
       tempColor = GREEN;
     }
-    tft.fillRect(175, 23, 80, 24, BLACK);
-    TFT_Write(tempColor, 175, 23, (String)tempCorrected);
+    tft.fillRect(170, 23, 85, 24, BLACK);
+    TFT_Write(tempColor, 170, 23, (String)tempCorrected);
     newTempComputed = false;
   }
   
@@ -139,10 +139,10 @@ void updateMeasurements(double tempCorrected,
     } else {
       diasColor = GREEN;
     }
-    tft.fillRect(175, 48, 80, 24, BLACK);
+    tft.fillRect(170, 48, 85, 24, BLACK);
     String bloodPressure = (String)(unsigned int)systolicPressCorrected + "/" 
                          + (String)(unsigned int)diastolicPressCorrected;
-    TFT_Write(sysColor, 175, 48, bloodPressure);
+    TFT_Write(sysColor, 170, 48, bloodPressure);
     newBloodPressComputed = false;
   }
 
@@ -152,8 +152,8 @@ void updateMeasurements(double tempCorrected,
      // ALARM STUFF HERE
      respirationColor = GREEN; // <-- TEMPORARY VALUE
      
-     tft.fillRect(175, 73, 80, 24, BLACK);
-     TFT_Write(respirationColor, 175, 73, (String)(int)respirationCorrected); 
+     tft.fillRect(170, 73, 85, 24, BLACK);
+     TFT_Write(respirationColor, 170, 73, (String)(int)respirationCorrected); 
      newRespirationComputed = false;
   }
   
@@ -178,8 +178,8 @@ void updateMeasurements(double tempCorrected,
      } else {
        pulseColor = GREEN;
      }
-     tft.fillRect(175, 98, 80, 24, BLACK);
-     TFT_Write(pulseColor, 175, 98,  (String)(int)pulseRateCorrected); 
+     tft.fillRect(170, 98, 85, 24, BLACK);
+     TFT_Write(pulseColor, 170, 98,  (String)(int)pulseRateCorrected); 
      newPulseRateComputed = false;
   }
   
@@ -193,8 +193,8 @@ void updateMeasurements(double tempCorrected,
      } else {
        battColor = GREEN;
      }
-     tft.fillRect(175, 123, 80, 24, BLACK);
-     TFT_Write(battColor, 175, 123, (String)batteryState); 
+     tft.fillRect(170, 123, 85, 24, BLACK);
+     TFT_Write(battColor, 170, 123, (String)batteryState); 
   }
 }
 
@@ -283,7 +283,7 @@ void touchScreen() {
 unsigned int getSerialUInt(byte task) {
   unsigned int measuredInt = 0;
   while(Serial1.available() == 0) {}
-  delay(5);
+  delay(10);
   if(Serial1.available() == 5) {
     // Throwing away start byte
     Serial1.read();
@@ -341,9 +341,9 @@ unsigned int getBloodPress() {
     sendLocalMessage(0xE7, 0x01, 0xFF, 0xFF, 0xDB);
     serialValue = getSerialUInt(0x01);
     Serial.print("Locally Received Blood Pressure = ");
-    Serial.print((unsigned int)serialValue >> 8);
+    Serial.print((unsigned int)serialValue >> 8, DEC);
     Serial.print("/");
-    Serial.println(serialValue & 0xFF);
+    Serial.println(serialValue & 0xFF, DEC);
     return serialValue;
   }
 }

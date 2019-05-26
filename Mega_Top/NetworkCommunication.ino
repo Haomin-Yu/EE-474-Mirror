@@ -62,6 +62,8 @@ void remoteCommunication() {
           bloodPressCheck = true;
           remoteDataMessage = "Remotely Received BloodPressure = ";
           measuredData = getBloodPress();
+          measuredData = (int)computeSys((unsigned int)measuredData >> 8) << 8 
+                       | (int)computeDias(measuredData & 0xFF);
           break;
         case measureRespirationFunc:
           respirationCheck = true;

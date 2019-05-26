@@ -43,11 +43,7 @@ void compute(void* Data) {
    if(bloodPressureRawChanged) {
      unsigned short index = *data.currentSysPressIndex;
      data.bloodPressCorrectedBuf[index] = computeSys(data.bloodPressRawBuf[index]);
-     bloodPressureRawChanged = false;
-     newBloodPressComputed   = true;
-   }
-   if(bloodPressureRawChanged) {
-     unsigned short index = *data.currentDiasPressIndex;
+     index = *data.currentDiasPressIndex;
      data.bloodPressCorrectedBuf[index] = computeDias(data.bloodPressRawBuf[index]);
      bloodPressureRawChanged = false;
      newBloodPressComputed   = true;
