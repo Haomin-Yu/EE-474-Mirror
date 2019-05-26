@@ -135,9 +135,8 @@ void updateMeasurements(double tempCorrected,
       diasColor = GREEN;
     }
     tft.fillRect(175, 48, 80, 24, BLACK);
-    TFT_Write(sysColor, 175, 48, (String)systolicPressCorrected);
-    TFT_Write(GREEN   , 185, 48, "/");
-    TFT_Write(GREEN   , 195, 48, (String)diastolicPressCorrected);
+    String bloodPressure = (unsigned int)systolicPressCorrected + "/" + (unsigned int)diastolicPressCorrected;
+    TFT_Write(sysColor, 175, 48, bloodPressure);
     newBloodPressComputed = false;
   }
   if(newPulseRateComputed || alarmCheck) {         //pulse color and data display
