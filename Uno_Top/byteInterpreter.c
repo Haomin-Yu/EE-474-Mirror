@@ -44,7 +44,7 @@ unsigned int interpretByte(unsigned char input) {
          return *tempValuePointer;
          break;
       case measureBloodPressure:
-         if(*bloodPressurePointer == bloodPressureRaw_INIT) {
+         if(*bloodPressurePointer == 30) {
            systolicPressInterpreter(bloodPressurePointer);
            return *bloodPressurePointer;
          }

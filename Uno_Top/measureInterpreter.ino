@@ -20,15 +20,15 @@ void respirationRateInterpreter(unsigned int* respirationValuePointer);
 // Class constants
 static const double MINUTE = 60000.0;
 static const unsigned int ANALOG_RESOLUTION = 1023;
-static const unsigned int  MIN_TEMPERATURE = 0.0;
+static const unsigned int  MIN_TEMPERATURE = 0;
 static const unsigned int  MAX_TEMPERATURE = 115;
 static const unsigned int  MIN_SYS_PRESS   = 50;
 static const unsigned int  MAX_SYS_PRESS   = 71;
 static const unsigned int  MIN_DIAS_PRESS  = 29;
-static const unsigned int  MAX_DIAS_PRESS  = 50;
+static const unsigned int  MAX_DIAS_PRESS  = 49;
 static const unsigned int PULSE_THRESHOLD       = 5;  //constant used to say what voltage represents a high signal
 static const unsigned int RESPIRATION_THRESHOLD = 7;
-static const unsigned int LOGICAL_THRESHOLD     = ANALOG_RESOLUTION / 2;
+static const unsigned int LOGICAL_THRESHOLD     = ANALOG_RESOLUTION - 1;
 
 // Class variable
 static unsigned long pulseCount       = 0;
@@ -56,6 +56,7 @@ void systolicPressInterpreter(unsigned int* bloodPressurePointer) {
   prevBloodPressureOn     = false;
   while(!(*bloodPressurePointer >= MIN_SYS_PRESS && *bloodPressurePointer <= MAX_SYS_PRESS)) {
     if(analogRead(BUTTON_ANALOG_IN) > LOGICAL_THRESHOLD) {
+      delay(50);
       if(!prevBloodPressureOn) {
         if(analogRead(SWITCH_ANALOG_IN) > LOGICAL_THRESHOLD) {
           *bloodPressurePointer *= 1.1;
@@ -78,6 +79,7 @@ void diastolicPressInterpreter(unsigned int* bloodPressurePointer) {
   prevBloodPressureOn = false;
   while(!(*bloodPressurePointer >= MIN_DIAS_PRESS && *bloodPressurePointer <= MAX_DIAS_PRESS)) {
     if(analogRead(BUTTON_ANALOG_IN) > LOGICAL_THRESHOLD) {
+      delay(50);
       if(!prevBloodPressureOn) {
         if(analogRead(SWITCH_ANALOG_IN) > LOGICAL_THRESHOLD) {
           *bloodPressurePointer *= 1.1;

@@ -13,7 +13,7 @@
 
 // Measurements initial values
 static unsigned int temperatureRaw_INIT   = 75;
-static unsigned int bloodPressureRaw_INIT = 80;
+static unsigned int bloodPressureRaw_INIT = 30;
 static unsigned int pulseRateRaw_INIT     = 0;
 static unsigned int respirationRateRaw_INIT = 0;
 
