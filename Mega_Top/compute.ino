@@ -51,13 +51,13 @@ void compute(void* Data) {
    if(respirationRawChanged) {
      unsigned short index = *data.currentRespirationIndex;
      data.respirationRateCorrectedBuf[index] = computeRespiration(data.respirationRateRawBuf[index]);
-     respirationRawChanged = false;
+     respirationRawChanged  = false;
      newRespirationComputed = true;
    }
    if(pulseRateRawChanged) {
      unsigned short index = *data.currentPulseRateIndex;
      data.prCorrectedBuf[index] = computePr(data.pulseRateRawBuf[index]);
-     pulseRateRawChanged = false;
+     pulseRateRawChanged  = false;
      newPulseRateComputed = true;
    }
 }

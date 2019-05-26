@@ -62,8 +62,8 @@ void measure(void* Data) {
         incomingData = getBloodPress();
         incomingData2 = incomingData & 0xFF;
         incomingData  = (unsigned int)incomingData >> 8;
-        data.respirationRateRawBuf[nextIndex]  = incomingData;
-        data.respirationRateRawBuf[nextIndex2] = incomingData2;
+        data.bloodPressRawBuf[nextIndex]  = incomingData;
+        data.bloodPressRawBuf[nextIndex2] = incomingData2;
         *data.currentSysPressIndex = nextIndex;
         *data.currentDiasPressIndex = nextIndex2;
         bloodPressureRawChanged = true;
