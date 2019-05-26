@@ -5,7 +5,11 @@
  * 
  * Author: Haomin Yu
  */
- 
+// Function prototypes
+void remoteCommunication();
+void sendLocalMessage(byte startByte, byte task, byte ID, byte data, byte endByte);
+void sendRemoteMessage(byte startByte, byte task, byte ID, int data, byte endByte);
+
 // Network Identifiers
 const static byte START = 0xE7;
 const static byte   END = 0xDB;
@@ -27,14 +31,24 @@ void remoteCommunication() {
   if(Serial.available() > 0) {
     // Waiting for all bytes to come in
     delay(5);
-    if(Serial.available() == 4) {
+    if(Serial.available() == 11)
       // Throwing away start byte
       Serial.read();
+      Serial.read();
+      // Clearing space
+      Serial.read();
       // Grabbing task byte
-      byte task = (byte)Serial.read();
+      byte task = Serial.read() << 8;
+      task |= Serial.read();
+      // Clearing space
+      Serial.read();
       // Throwing away function request
       Serial.read();
+      Serial.read();
+      // Clearing space
+      Serial.read();
       // Throwing away end byte
+      Serial.read();
       Serial.read();
       // Executing task and sending message
       unsigned int measuredData  = 0;
@@ -62,11 +76,11 @@ void remoteCommunication() {
       sendRemoteMessage(START, task, NA, measuredData, END);
     }
     else { // Flush
+      Serial.println("Invalid Input. Data Flushed!");
       while(Serial.available() > 0) {
         Serial.read();
       }
     }
-  }
 }
 
 /*

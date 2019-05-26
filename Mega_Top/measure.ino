@@ -71,7 +71,7 @@ void measure(void* Data) {
         alarmCheck         = true;
         enableStatus       = true;
         tft.fillRect((12 + BUTTONWIDTH), 160, BUTTONWIDTH, BUTTONHEIGHT, CYAN);
-        TFT_Write(RED, (14 + BUTTONWIDTH), 175, " BP.");
+        TFT_Write(RED, (14 + BUTTONWIDTH), 175, " B.P.");
         *data.measurementSelection = outOfBounds;
         break;
       case measurePulseRate:
@@ -117,7 +117,7 @@ void measure(void* Data) {
         alarmCheck            = true;
         enableStatus          = true;
         tft.fillRect((14 + BUTTONWIDTH * 2), 160, BUTTONWIDTH, BUTTONHEIGHT, CYAN);
-        TFT_Write(RED, (16 + BUTTONWIDTH * 2), 175, " Resp.");
+        TFT_Write(RED, (16 + BUTTONWIDTH * 2), 175, " R.R.");
         *data.measurementSelection = outOfBounds;
         break;
       default:

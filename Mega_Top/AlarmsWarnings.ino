@@ -16,6 +16,7 @@
 extern "C" {
   #include "rawStructs.h"
   #include "init.h"
+  #include "status.h"
 }
 
 //imports tft struct

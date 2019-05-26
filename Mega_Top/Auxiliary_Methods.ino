@@ -12,7 +12,8 @@
 
 //includes rawStructs file
 extern "C" {
-  #include "rawStructs.h";
+  #include "rawStructs.h"
+  #include "NetworkCommunication.h"
 }
 
 //includes all needed data structs, computational booleans, and variables needed to keep time.
@@ -71,7 +72,9 @@ void updateMeasurements(double tempCorrected,
                         unsigned short batteryState) {
   // Updating the measurements as well as decides the color at which each measurement should be displayed.
   bool newBatteryUpdate = newTempComputed || newBloodPressComputed || newPulseRateComputed;
-  if(newTempComputed || alarmCheck) {               //temperature color and data display
+  
+  //temperature color and data display
+  if(newTempComputed || alarmCheck) {               
     int tempColor;
     if(*WarningAlarmData.tempOutOfRange && ((tempCorrected > 43.4) || (tempCorrected < 30.7)) && (annonciationCounter > 4)) {
       tempColor = RED;
@@ -95,7 +98,9 @@ void updateMeasurements(double tempCorrected,
      TFT_Write(tempColor, 175, 23, (String)tempCorrected);
      newTempComputed = false;
   }
-  if(newBloodPressComputed || alarmCheck) {           //blood pressure color and data display
+  
+  //blood pressure color and data display
+  if(newBloodPressComputed || alarmCheck) {           
     int sysColor;
     if(*WarningAlarmData.bpOutOfRange && ((systolicPressCorrected > 156) || (systolicPressCorrected < 96)) && (annonciationCounter > 4)) {
       sysColor = RED;
@@ -139,7 +144,20 @@ void updateMeasurements(double tempCorrected,
     TFT_Write(sysColor, 175, 48, bloodPressure);
     newBloodPressComputed = false;
   }
-  if(newPulseRateComputed || alarmCheck) {         //pulse color and data display
+
+  //respiration color and data display
+  if(newRespirationComputed || alarmCheck) {  
+     int respirationColor;
+     // ALARM STUFF HERE
+     respirationColor = GREEN; // <-- TEMPORARY VALUE
+     
+     tft.fillRect(175, 73, 80, 24, BLACK);
+     TFT_Write(respirationColor, 175, 73, (String)(int)respirationCorrected); 
+     newRespirationComputed = false;
+  }
+  
+  //pulse color and data display
+  if(newPulseRateComputed || alarmCheck) {         
      int pulseColor;
      if(*WarningAlarmData.pulseOutOfRange && ((pulseRateCorrected > 115) || (pulseRateCorrected < 51)) && (annonciationCounter > 4)) {
       pulseColor = RED;
@@ -160,15 +178,12 @@ void updateMeasurements(double tempCorrected,
        pulseColor = GREEN;
      }
      tft.fillRect(175, 98, 80, 24, BLACK);
-     TFT_Write(pulseColor  , 175, 98,  (String)(int)pulseRateCorrected); 
+     TFT_Write(pulseColor, 175, 98,  (String)(int)pulseRateCorrected); 
      newPulseRateComputed = false;
   }
-  if(newRespirationComputed || alarmCheck) {  
-     int respirationColor;
-     
-     newRespirationComputed = false;
-  }
-  if(newBatteryUpdate) {                           //battery color and data display
+  
+  //battery color and data display
+  if(newBatteryUpdate) {                          
      int battColor;
      if(*WarningAlarmData.batteryOutOfRange && (annonciationCounter > 4)) {
        battColor = RED;
