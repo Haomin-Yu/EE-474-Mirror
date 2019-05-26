@@ -39,7 +39,7 @@ void alarm(void* Data) {
   unsigned short sysIndex   = *data.currentSysPressIndex;
   unsigned short diasIndex  = *data.currentDiasPressIndex;
   unsigned short pulseIndex = *data.currentPulseRateIndex;
-  unsigned short respIndex = *data.currentRespirationRateIndex;
+  unsigned short respIndex  = *data.currentRespirationRateIndex;
 
   *data.respHigh   = respRangeWarning(data.respirationRateRawBuf[respIndex]);
   *data.bpHigh     = bpRangeWarning(data.bloodPressRawBuf[sysIndex], data.bloodPressRawBuf[diasIndex]);      //calls the function to test for the blood pressure warning

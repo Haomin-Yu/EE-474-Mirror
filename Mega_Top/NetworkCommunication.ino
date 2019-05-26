@@ -1,10 +1,16 @@
-
 /* 
  * This class handles the communication with the Arduino Uno
  * and the remote device
+ * ==============================================================
+ * getTemp : E700FFD8
+ * getBP   : E701FFD8
+ * getRR   : E702FFD8
+ * getPulse: E703FFD8
  * 
  * Author: Haomin Yu
  */
+#include "compute.h"
+
 // Function prototypes
 void remoteCommunication();
 void sendLocalMessage(byte startByte, byte task, byte ID, byte data, byte endByte);
@@ -30,22 +36,16 @@ static String remoteDataMessage = "";
 void remoteCommunication() {
   if(Serial.available() > 0) {
     // Waiting for all bytes to come in
-    delay(5);
-    if(Serial.available() == 11)
+    delay(10);
+    if(Serial.available() == 8) {
       // Throwing away start byte
       Serial.read();
       Serial.read();
-      // Clearing space
-      Serial.read();
       // Grabbing task byte
-      byte task = Serial.read() << 8;
-      task |= Serial.read();
-      // Clearing space
-      Serial.read();
+      byte task = convertHexDump(Serial.read()) << 4;
+      task |= convertHexDump(Serial.read());
       // Throwing away function request
       Serial.read();
-      Serial.read();
-      // Clearing space
       Serial.read();
       // Throwing away end byte
       Serial.read();
@@ -54,33 +54,42 @@ void remoteCommunication() {
       unsigned int measuredData  = 0;
       switch(task) {
         case measureTemperatureFunc:
-          remoteDataMessage = "Temperature = ";
-          measuredData = getSerialTemp();
+          tempCheck = true;
+          remoteDataMessage = "Remotely Received Temperature = ";
+          measuredData = computeTemp(getSerialTemp());
           break;
         case measureBloodPressureFunc:
-          remoteDataMessage = "BloodPressure = ";
+          bloodPressCheck = true;
+          remoteDataMessage = "Remotely Received BloodPressure = ";
           measuredData = getBloodPress();
           break;
         case measureRespirationFunc:
-          remoteDataMessage = "Respiration = ";
-          measuredData = getRespiration();
+          respirationCheck = true;
+          remoteDataMessage = "Remotely Received Respiration = ";
+          measuredData = computeRespiration(getRespiration());
           break;
         case measurePulseRateFunc:
-          remoteDataMessage = "Pulse Rate = ";
-          measuredData = getPulseRate();
+          pulseCheck = true;
+          remoteDataMessage = "Remotely Received Pulse Rate = ";
+          measuredData = computePr(getPulseRate());
           break;
         default:
+          remoteDataMessage = "Unknown Function Type!";
           measuredData = 0;
+          annonciationCounter++;
           break;
       }
+      annonciationCounter--;
       sendRemoteMessage(START, task, NA, measuredData, END);
     }
     else { // Flush
-      Serial.println("Invalid Input. Data Flushed!");
+      Serial.println("Invalid input has been flushed!");
+      delay(5);
       while(Serial.available() > 0) {
         Serial.read();
       }
     }
+  }
 }
 
 /*
@@ -122,8 +131,26 @@ void sendRemoteMessage(byte startByte,
     Serial.print("/");
     Serial.print(data & 0xFF, DEC);
   }
-  else {
+  else if(task != 0xFF){
     Serial.print(data, DEC);
   }
   Serial.println();
+}
+
+/*
+ * Converts string hex dump to its hex respresentation
+ */
+byte convertHexDump(byte hexDump) {
+  if(hexDump >= 0x30 && hexDump <= 0x39) {
+    return hexDump - 0x30;
+  }
+  else if(hexDump >= 0x41 && hexDump <= 0x46) {
+    return hexDump - 0x37;
+  }
+  else if(hexDump >= 0x61 && hexDump <= 0x66) {
+    return hexDump - 0x57;
+  }
+  else {
+    return 0xFF;
+  }
 }

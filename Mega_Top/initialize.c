@@ -33,7 +33,7 @@ void initialize(MeasureDataStruct* MeasureData,
      bloodPressRawBuf_INIT,
      pulseRateRawBuf_INIT,
      respirationRawBuf_INIT,
-     &measurementSelection_INIT,
+     &localMeasurementSelection_INIT,
 
      &currentTemperatureIndex_INIT,
      &currentSysPressIndex_INIT,
@@ -66,7 +66,7 @@ void initialize(MeasureDataStruct* MeasureData,
      bloodPressCorrectedBuf_INIT,
      pulseRateCorrectedBuf_INIT,
      respirationCorrectedBuf_INIT,
-     &measurementSelection_INIT,
+     &localMeasurementSelection_INIT,
 
      &currentTemperatureIndex_INIT,
      &currentSysPressIndex_INIT,
@@ -79,13 +79,16 @@ void initialize(MeasureDataStruct* MeasureData,
      temperatureRawBuf_INIT,
      bloodPressRawBuf_INIT,
      pulseRateRawBuf_INIT,
+     respirationRawBuf_INIT,
      &batteryState_INIT,
      
      &bpOutOfRange_INIT,
      &tempOutOfRange_INIT,
      &pulseOutOfRange_INIT,
+     &respOutOfRange_INIT,
      &batteryOutOfRange_INIT,
-     
+
+     &respHigh_INIT,
      &bpHigh_INIT,
      &tempHigh_INIT,
      &pulseLow_INIT,
@@ -94,7 +97,8 @@ void initialize(MeasureDataStruct* MeasureData,
      &currentTemperatureIndex_INIT,
      &currentSysPressIndex_INIT,
      &currentDiasPressIndex_INIT,
-     &currentPulseRateIndex_INIT
+     &currentPulseRateIndex_INIT,
+     &currentRespirationIndex_INIT
   };
 	// Initializing status variables
   *Status = (StatusStruct) {
@@ -102,18 +106,21 @@ void initialize(MeasureDataStruct* MeasureData,
   };
   // Initializing keypad data
   *KeypadData = (TFTKeypadDataStruct) {
-     &measurementSelection_INIT,
-     &alarmAcknowledgement_INIT
+     &localMeasurementSelection_INIT,
+     &alarmAcknowledgement_INIT,
+     &remoteMeasurementSelection_INIT
   };
   // Initializing communications data
   *CommunicationsData = (CommunicationsDataStruct) {
      tempCorrectedBuf_INIT,
      bloodPressCorrectedBuf_INIT,
      pulseRateCorrectedBuf_INIT,
+     respirationCorrectedBuf_INIT,
 
      &currentTemperatureIndex_INIT,
      &currentSysPressIndex_INIT,
      &currentDiasPressIndex_INIT,
-     &currentPulseRateIndex_INIT
+     &currentPulseRateIndex_INIT,
+     &currentRespirationIndex_INIT
   };
 }

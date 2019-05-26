@@ -44,7 +44,7 @@ void TFT_Write(int Color, int x, int y, String content) {
 // Sets up labels
 void labelsInit() {
   TFT_Write(GREEN, 10, 23,  "Body.Temp  ->        C");
-  TFT_Write(GREEN, 10, 48,  "B.P        ->        mmHg"); 
+  TFT_Write(GREEN, 10, 48,  "   B.P     ->        mmHg"); 
   TFT_Write(GREEN, 10, 73,  "Resp. Rate ->        RR"); 
   TFT_Write(GREEN, 10, 98,  "Pulse Rate ->        BPM"); 
   TFT_Write(GREEN, 10, 123, "Battery    ->");
@@ -60,7 +60,7 @@ void labelsInit() {
   TFT_Write(RED, (16 + BUTTONWIDTH * 2), 175, " R.R.");
   TFT_Write(RED, (18 + BUTTONWIDTH * 3), 175, "Pulse");
   TFT_Write(RED, (60 + BUTTONWIDTH), 217, "Alarm");
-  TFT_Write(RED, 12, 217, "Blank");
+  TFT_Write(RED, 12, 217, " Blank");
   TFT_Write(RED, (18 + BUTTONWIDTH * 3), 217, "Blank");
 }
 // Updates the measurement values(Erases the previous value)
@@ -94,9 +94,9 @@ void updateMeasurements(double tempCorrected,
     } else {
       tempColor = GREEN;
     }
-     tft.fillRect(175, 23, 80, 24, BLACK);
-     TFT_Write(tempColor, 175, 23, (String)tempCorrected);
-     newTempComputed = false;
+    tft.fillRect(175, 23, 80, 24, BLACK);
+    TFT_Write(tempColor, 175, 23, (String)tempCorrected);
+    newTempComputed = false;
   }
   
   //blood pressure color and data display
@@ -140,7 +140,8 @@ void updateMeasurements(double tempCorrected,
       diasColor = GREEN;
     }
     tft.fillRect(175, 48, 80, 24, BLACK);
-    String bloodPressure = (unsigned int)systolicPressCorrected + "/" + (unsigned int)diastolicPressCorrected;
+    String bloodPressure = (String)(unsigned int)systolicPressCorrected + "/" 
+                         + (String)(unsigned int)diastolicPressCorrected;
     TFT_Write(sysColor, 175, 48, bloodPressure);
     newBloodPressComputed = false;
   }
@@ -327,7 +328,7 @@ unsigned int getSerialTemp() {
     annonciationCounter++;
     sendLocalMessage(0xE7, 0x00, 0xFF, 0xFF, 0xDB);
     serialValue = getSerialUInt(0x00);
-    Serial.print("Temperature = ");
+    Serial.print("Locally Received Temperature = ");
     Serial.println(serialValue);
     return serialValue;
   }
@@ -339,7 +340,7 @@ unsigned int getBloodPress() {
     annonciationCounter++;
     sendLocalMessage(0xE7, 0x01, 0xFF, 0xFF, 0xDB);
     serialValue = getSerialUInt(0x01);
-    Serial.print("Blood Pressure = ");
+    Serial.print("Locally Received Blood Pressure = ");
     Serial.print((unsigned int)serialValue >> 8);
     Serial.print("/");
     Serial.println(serialValue & 0xFF);
@@ -353,7 +354,7 @@ unsigned int getRespiration() {
     annonciationCounter++;
     sendLocalMessage(0xE7, 0x02, 0xFF, 0xFF, 0xDB);
     serialValue = getSerialUInt(0x02);
-    Serial.print("Respiration = ");
+    Serial.print("Locally Received Respiration = ");
     Serial.println(serialValue);
     return serialValue;
   }
@@ -365,7 +366,7 @@ unsigned int getPulseRate() {
     annonciationCounter++;
     sendLocalMessage(0xE7, 0x03, 0xFF, 0xFF, 0xDB);
     serialValue = getSerialUInt(0x03);
-    Serial.print("Pulse = ");
+    Serial.print("Locally Received Pulse = ");
     Serial.println(serialValue);
     return serialValue;
   }

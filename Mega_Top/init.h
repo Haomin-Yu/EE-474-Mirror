@@ -43,16 +43,19 @@ static unsigned char bpOutOfRange_INIT      = 0;
 static unsigned char tempOutOfRange_INIT    = 0;
 static unsigned char pulseOutOfRange_INIT   = 0;
 static unsigned char batteryOutOfRange_INIT = 0;
+static unsigned char respOutOfRange_INIT    = 0;
 
 // Warning
 static bool bpHigh_INIT   = false;
 static bool tempHigh_INIT = false;
 static bool pulseLow_INIT = false;
+static bool respHigh_INIT = false;
 static bool batteryLow    = false;
 
 // TFT Keypad
 static unsigned short functionSelect_INIT       = 0;
-static unsigned short measurementSelection_INIT = 0;
 static unsigned short alarmAcknowledgement_INIT = 0;
+static unsigned short localMeasurementSelection_INIT  = 0;
+static unsigned short remoteMeasurementSelection_INIT = 0;
 
 #endif /* INIT_H_ */
