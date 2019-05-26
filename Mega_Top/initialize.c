@@ -43,7 +43,7 @@ void initialize(MeasureDataStruct* MeasureData,
   };
 	// Initializing display variables
   *DisplayData = (DisplayDataStruct) {
-     mode_INIT,
+     &mode_INIT,
      tempCorrectedBuf_INIT,
      bloodPressCorrectedBuf_INIT,
      pulseRateCorrectedBuf_INIT,
@@ -61,15 +61,18 @@ void initialize(MeasureDataStruct* MeasureData,
      temperatureRawBuf_INIT,
      bloodPressRawBuf_INIT,
      pulseRateRawBuf_INIT,
+     respirationRawBuf_INIT,
      tempCorrectedBuf_INIT,
      bloodPressCorrectedBuf_INIT,
      pulseRateCorrectedBuf_INIT,
+     respirationCorrectedBuf_INIT,
      &measurementSelection_INIT,
 
      &currentTemperatureIndex_INIT,
      &currentSysPressIndex_INIT,
      &currentDiasPressIndex_INIT,
-     &currentPulseRateIndex_INIT
+     &currentPulseRateIndex_INIT,
+     &currentRespirationIndex_INIT
   };
 	// Initializing warning/alarm variables
   *WarningAlarmData = (WarningAlarmDataStruct) {

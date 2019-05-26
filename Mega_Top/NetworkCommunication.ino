@@ -31,7 +31,7 @@ void remoteCommunication() {
       // Throwing away start byte
       Serial.read();
       // Grabbing task byte
-      byte task = Serial.read();
+      byte task = (byte)Serial.read();
       // Throwing away function request
       Serial.read();
       // Throwing away end byte

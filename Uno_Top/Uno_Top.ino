@@ -62,11 +62,11 @@ void loop() {
          *bloodPressurePointer = bloodPressureRaw_INIT;
          unsigned int data1 = interpretByte(task);
          unsigned int data2 = interpretByte(task);
-         sendMessage(START, NA, NA, data1, data2, END);
+         sendMessage(START, NA, NA, (byte)data1, (byte)data2, END);
        }
        else {
          unsigned int data = interpretByte(task);
-         sendMessage(START, NA, NA, data, END);
+         sendMessage(START, NA, NA, (byte)data, END);
        }
      }
      else { // Flush

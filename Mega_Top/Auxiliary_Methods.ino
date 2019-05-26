@@ -43,8 +43,8 @@ void TFT_Write(int Color, int x, int y, String content) {
 // Sets up labels
 void labelsInit() {
   TFT_Write(GREEN, 10, 23,  "Body.Temp  ->        C");
-  TFT_Write(GREEN, 10, 48,  "Sys.Press  ->        mmHg"); 
-  TFT_Write(GREEN, 10, 73,  "Dias.Press ->        mmHg"); 
+  TFT_Write(GREEN, 10, 48,  "B.P        ->        mmHg"); 
+  TFT_Write(GREEN, 10, 73,  "Resp. Rate ->        RR"); 
   TFT_Write(GREEN, 10, 98,  "Pulse Rate ->        BPM"); 
   TFT_Write(GREEN, 10, 123, "Battery    ->");
   tft.fillRect(10, 160, (BUTTONWIDTH), (BUTTONHEIGHT), CYAN);
@@ -55,8 +55,8 @@ void labelsInit() {
   tft.fillRect(10, 202, (BUTTONWIDTH), (BUTTONHEIGHT), CYAN);
   tft.fillRect((16 + BUTTONWIDTH * 3), 202, (BUTTONWIDTH), (BUTTONHEIGHT), CYAN);
   TFT_Write(RED, 12, 175, " Temp.");
-  TFT_Write(RED, (14 + BUTTONWIDTH), 175, " Sys.");
-  TFT_Write(RED, (16 + BUTTONWIDTH * 2), 175, " Dias.");
+  TFT_Write(RED, (14 + BUTTONWIDTH), 175, " B.P.");
+  TFT_Write(RED, (16 + BUTTONWIDTH * 2), 175, " R.R.");
   TFT_Write(RED, (18 + BUTTONWIDTH * 3), 175, "Pulse");
   TFT_Write(RED, (60 + BUTTONWIDTH), 217, "Alarm");
   TFT_Write(RED, 12, 217, "Blank");
@@ -92,56 +92,53 @@ void updateMeasurements(double tempCorrected,
       tempColor = GREEN;
     }
      tft.fillRect(175, 23, 80, 24, BLACK);
-     TFT_Write(tempColor, 175, 23,  (String)tempCorrected);
+     TFT_Write(tempColor, 175, 23, (String)tempCorrected);
      newTempComputed = false;
   }
-  if(newBloodPressComputed || alarmCheck) {           //systolic color and data display
-    int bpColor;
+  if(newBloodPressComputed || alarmCheck) {           //blood pressure color and data display
+    int sysColor;
     if(*WarningAlarmData.bpOutOfRange && ((systolicPressCorrected > 156) || (systolicPressCorrected < 96)) && (annonciationCounter > 4)) {
-      bpColor = RED;
+      sysColor = RED;
     } else if (*WarningAlarmData.bpOutOfRange) {
       if ((systolicPressCorrected > 136.5) || (systolicPressCorrected < 114)) {
         if (millis() > (sysTime + 250)) {
           sysTime = millis();
-          if (bpColor == YELLOW) {
-            bpColor = BLACK;
+          if (sysColor == YELLOW) {
+            sysColor = BLACK;
           } else {
-            bpColor = YELLOW;
+            sysColor = YELLOW;
           }
         }
       } else {
-        bpColor = YELLOW;
+        sysColor = YELLOW;
       }
     } else {
-      bpColor = GREEN;
+      sysColor = GREEN;
     }
-     tft.fillRect(175, 48, 80, 24, BLACK);
-     TFT_Write(bpColor  , 175, 48,  (String)systolicPressCorrected); 
-     newBloodPressComputed = false;
-  }
-  if(newBloodPressComputed || alarmCheck) {         //diastolic color and data display
-    int bpColor;
+    int diasColor;
     if(*WarningAlarmData.bpOutOfRange && ((diastolicPressCorrected > 96) || (diastolicPressCorrected < 56)) && (annonciationCounter > 4)) {
-      bpColor = RED;
+      diasColor = RED;
     } else if(*WarningAlarmData.bpOutOfRange) {
       if ((diastolicPressCorrected > 84) || (diastolicPressCorrected < 66.5)) {
         if (millis() > (diasTime + 250)) {
           diasTime = millis();
-          if (bpColor == YELLOW) {
-            bpColor = BLACK;
+          if (diasColor == YELLOW) {
+            diasColor = BLACK;
           } else {
-            bpColor = YELLOW;
+            diasColor = YELLOW;
           }
         }
       } else {
-        bpColor = YELLOW;
+        diasColor = YELLOW;
       }
     } else {
-      bpColor = GREEN;
+      diasColor = GREEN;
     }
-     tft.fillRect(175, 73, 80, 24, BLACK);
-     TFT_Write(bpColor  , 175, 73,  (String)diastolicPressCorrected); 
-     newBloodPressComputed = false;
+    tft.fillRect(175, 48, 80, 24, BLACK);
+    TFT_Write(sysColor, 175, 48, (String)systolicPressCorrected);
+    TFT_Write(GREEN   , 185, 48, "/");
+    TFT_Write(GREEN   , 195, 48, (String)diastolicPressCorrected);
+    newBloodPressComputed = false;
   }
   if(newPulseRateComputed || alarmCheck) {         //pulse color and data display
      int pulseColor;
@@ -222,14 +219,14 @@ void touchScreen() {
            *MeasureData.measurementSelection = 2;//assigns button selected data
            *KeypadData.localMeasurementSelection = 2; 
            tft.fillRect((12 + BUTTONWIDTH), 160, BUTTONWIDTH, BUTTONHEIGHT, BLUE);//changes color to represent a button press
-           TFT_Write(RED, (14 + BUTTONWIDTH), 175, " BP.");
+           TFT_Write(RED, (14 + BUTTONWIDTH), 175, " B.P.");
         } 
         else if(((tft.height()-p.y) < (14 + BUTTONWIDTH * 3)) && ((tft.height()-p.y) > (14 + BUTTONWIDTH * 2))) {     //checks to see if the vertical axis for dias was pressed.
            respirationCheck = true;
            *MeasureData.measurementSelection = 3; //assigns button selected data
            *KeypadData.localMeasurementSelection = 3;
            tft.fillRect((14 + BUTTONWIDTH * 2), 160, BUTTONWIDTH, BUTTONHEIGHT, BLUE);//changes color to represent a button press
-           TFT_Write(RED, (16 + BUTTONWIDTH * 2), 175, " Resp.");
+           TFT_Write(RED, (16 + BUTTONWIDTH * 2), 175, " R.R.");
         } 
         else if(((tft.height()-p.y) < (16 + BUTTONWIDTH * 4)) && ((tft.height()-p.y) > (16 + BUTTONWIDTH * 3))) {     //checks to see if the vertical axis for pulse was pressed.
            pulseCheck = true;

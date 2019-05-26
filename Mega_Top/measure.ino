@@ -80,8 +80,7 @@ void measure(void* Data) {
         prevData     = data.pulseRateRawBuf[currentIndex];
         incomingData = getPulseRate();
         dataDifference = (incomingData > prevData)?
-                                  (incomingData - prevData):
-                                  (prevData - incomingData);
+                         (incomingData - prevData): (prevData - incomingData);
         if((dataDifference * 100.0 / prevData) > THRESHOLD_PULSE_PERCENT) {
           data.pulseRateRawBuf[nextIndex] = incomingData;
           *data.currentPulseRateIndex = nextIndex;
