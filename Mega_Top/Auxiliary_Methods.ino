@@ -26,11 +26,18 @@ extern bool newPulseRateComputed;
 extern bool newRespirationComputed;
 extern const unsigned long BUTTON_TIME;
 extern unsigned long previousTime;
+extern bool pulseBlink;
+extern bool tempBlink;
+extern bool bpBlink;
 
 #define MINPRESSURE  10     //minimum pressure for a tft touch to be acknowledged.
 #define MAXPRESSURE  1000   //maximum pressure for a tft touch to be acknowledged.
 
 bool alarmButton = false;   //boolean used to keep track of if alarm button was pressed.
+int pulseColor;
+int tempColor;
+int sysColor;
+int diasColor;
 
 // Writes 'content' in the given 'color' at position (x, y)
 void TFT_Write(int Color, int x, int y, String content) {
@@ -74,20 +81,16 @@ void updateMeasurements(double tempCorrected,
   bool newBatteryUpdate = newTempComputed || newBloodPressComputed || newPulseRateComputed;
   
   //temperature color and data display
-  if(newTempComputed || alarmCheck) {               
-    int tempColor;
+  if(newTempComputed || (alarmCheck && (newBloodPressComputed || newRespirationComputed || newPulseRateComputed || newTempComputed)) || (tempBlink && (((tempCorrected > 39.7) && (tempCorrected < 43.4)) || ((tempCorrected < 34.3) && (tempCorrected > 30.7))))) {          
     if(*WarningAlarmData.tempOutOfRange && ((tempCorrected > 43.4) || (tempCorrected < 30.7)) && (annonciationCounter > 4)) {
       tempColor = RED;
     } else if(*WarningAlarmData.tempOutOfRange) {
-      if ((tempCorrected > 39.7) || (tempCorrected < 34.3)) {
-        if (millis() > (tempTime + 500)) {
-          tempTime = millis();
+      if (((tempCorrected > 39.7) && (tempCorrected < 43.4)) || ((tempCorrected < 34.3) && (tempCorrected > 30.7))) {
           if (tempColor == YELLOW) {
             tempColor = BLACK;
           } else {
             tempColor = YELLOW;
           }
-        }
       } else {
       tempColor = YELLOW;
       }
@@ -96,43 +99,35 @@ void updateMeasurements(double tempCorrected,
     }
     tft.fillRect(170, 23, 85, 24, BLACK);
     TFT_Write(tempColor, 170, 23, (String)tempCorrected);
-    newTempComputed = false;
+    tempBlink = false;
   }
   
   //blood pressure color and data display
-  if(newBloodPressComputed || alarmCheck) {           
-    int sysColor;
+  if(newBloodPressComputed || (alarmCheck && (newBloodPressComputed || newRespirationComputed || newPulseRateComputed || newTempComputed)) || (bpBlink && (((systolicPressCorrected > 136.5) && (systolicPressCorrected < 156)) || ((systolicPressCorrected < 114) && (systolicPressCorrected > 96)) || ((diastolicPressCorrected > 84) && (diastolicPressCorrected < 96)) || ((diastolicPressCorrected < 66.5) && (diastolicPressCorrected > 56))))) {     
     if(*WarningAlarmData.bpOutOfRange && ((systolicPressCorrected > 156) || (systolicPressCorrected < 96)) && (annonciationCounter > 4)) {
       sysColor = RED;
     } else if (*WarningAlarmData.bpOutOfRange) {
-      if ((systolicPressCorrected > 136.5) || (systolicPressCorrected < 114)) {
-        if (millis() > (sysTime + 250)) {
-          sysTime = millis();
+      if (((systolicPressCorrected > 136.5) && (systolicPressCorrected < 156)) || ((systolicPressCorrected < 114) && (systolicPressCorrected > 96))) {
           if (sysColor == YELLOW) {
             sysColor = BLACK;
           } else {
             sysColor = YELLOW;
           }
-        }
       } else {
         sysColor = YELLOW;
       }
     } else {
       sysColor = GREEN;
     }
-    int diasColor;
     if(*WarningAlarmData.bpOutOfRange && ((diastolicPressCorrected > 96) || (diastolicPressCorrected < 56)) && (annonciationCounter > 4)) {
       diasColor = RED;
     } else if(*WarningAlarmData.bpOutOfRange) {
-      if ((diastolicPressCorrected > 84) || (diastolicPressCorrected < 66.5)) {
-        if (millis() > (diasTime + 250)) {
-          diasTime = millis();
+      if (((diastolicPressCorrected > 84) && (diastolicPressCorrected < 96)) || ((diastolicPressCorrected < 66.5) && (diastolicPressCorrected > 56))) {
           if (diasColor == YELLOW) {
             diasColor = BLACK;
           } else {
             diasColor = YELLOW;
           }
-        }
       } else {
         diasColor = YELLOW;
       }
@@ -143,35 +138,35 @@ void updateMeasurements(double tempCorrected,
     String bloodPressure = (String)(unsigned int)systolicPressCorrected + "/" 
                          + (String)(unsigned int)diastolicPressCorrected;
     TFT_Write(sysColor, 170, 48, bloodPressure);
-    newBloodPressComputed = false;
+    bpBlink = false;
   }
 
   //respiration color and data display
-  if(newRespirationComputed || alarmCheck) {  
+  if(newRespirationComputed || (alarmCheck && (newBloodPressComputed || newRespirationComputed || newPulseRateComputed || newTempComputed))) {  
      int respirationColor;
-     // ALARM STUFF HERE
-     respirationColor = GREEN; // <-- TEMPORARY VALUE
+     if(*WarningAlarmData.respOutOfRange && ((respirationCorrected > 28) || (respirationCorrected < 10)) && (annonciationCounter > 4)) {
+       respirationColor = RED;
+     } else if (*WarningAlarmData.respOutOfRange) {
+       respirationColor = YELLOW;
+     } else {
+       respirationColor = GREEN;
+     }
      
      tft.fillRect(170, 73, 85, 24, BLACK);
      TFT_Write(respirationColor, 170, 73, (String)(int)respirationCorrected); 
-     newRespirationComputed = false;
   }
   
   //pulse color and data display
-  if(newPulseRateComputed || alarmCheck) {         
-     int pulseColor;
+  if(newPulseRateComputed || (alarmCheck && (newBloodPressComputed || newRespirationComputed || newPulseRateComputed || newTempComputed)) || (pulseBlink && (((pulseRateCorrected > 105) && (pulseRateCorrected < 115)) || ((pulseRateCorrected < 57) && (pulseRateCorrected > 51))))) {
      if(*WarningAlarmData.pulseOutOfRange && ((pulseRateCorrected > 115) || (pulseRateCorrected < 51)) && (annonciationCounter > 4)) {
       pulseColor = RED;
     } else if(*WarningAlarmData.pulseOutOfRange) {
-       if ((pulseRateCorrected > 105) || (pulseRateCorrected < 57)) {
-        if (millis() > (pulseTime + 1000)) {
-          pulseTime = millis();
+       if (((pulseRateCorrected > 105) && (pulseRateCorrected < 115)) || ((pulseRateCorrected < 57) && (pulseRateCorrected > 51))) {
           if (pulseColor == YELLOW) {
             pulseColor = BLACK;
           } else {
             pulseColor = YELLOW;
           }
-        }
       } else {
         pulseColor = YELLOW;
       }
@@ -181,6 +176,10 @@ void updateMeasurements(double tempCorrected,
      tft.fillRect(170, 98, 85, 24, BLACK);
      TFT_Write(pulseColor, 170, 98,  (String)(int)pulseRateCorrected); 
      newPulseRateComputed = false;
+     newBloodPressComputed = false;
+     newRespirationComputed = false;
+     newTempComputed = false;
+     pulseBlink = false;
   }
   
   //battery color and data display

@@ -85,7 +85,7 @@ unsigned char tempRangeAlarm(unsigned int temperatureRaw) {                     
 }
 
 unsigned char pulseRangeAlarm(unsigned int pulseRateRaw) {                                     //function runs if checks to see if the alarm should be on
-  if((pulseRateRaw < 60) || (pulseRateRaw > 100)) {                                            //for pulse. If it is it returns 1, if not it returns 0
+  if((pulseRateRaw < 17) || (pulseRateRaw > 31)) {                                            //for pulse. If it is it returns 1, if not it returns 0
     if(alarmCheck && (annonciationCounter > 4)) {                                              //also it will decide if the alarmacknowledgement must be changed
       *KeypadData.alarmAcknowledge = 1;
     }
