@@ -79,10 +79,12 @@ double computeDias(unsigned int diastolicRaw) {
 
 // Computes the respiration in breaths per minute
 double computeRespiration(unsigned int respirationRaw) {
-  return 7 + 3*respirationRaw;
+  //return 7 + 3*respirationRaw;
+  return respirationRaw*10;
 }
 
 // Computes the pulse rate in beats per minute
 double computePr(unsigned int bpRaw) {
-	return 8 + 3*bpRaw;
+	//return 8 + 3*bpRaw;
+  return bpRaw*10;
 }

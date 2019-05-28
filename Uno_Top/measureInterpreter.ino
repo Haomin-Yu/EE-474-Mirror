@@ -110,7 +110,8 @@ void pulseRateInterpreter(unsigned int* prValuePointer) {
     }
   }
   detachInterrupt(PULSE_INTERRUPT);                                                 //detaches interupt
-  *prValuePointer = pulseCount * MINUTE / MEASURE_PULSE_TIME;                       //multiplies the measured data by 10 to make it beats per minute.
+  //*prValuePointer = pulseCount * MINUTE / MEASURE_PULSE_TIME;                     //multiplies the measured data by 10 to make it beats per minute.
+  *prValuePointer = pulseCount;
 }
 
 // Interprets signal from RESPIRATION_ANALOG_IN as actial respiration rates
@@ -127,5 +128,6 @@ void respirationRateInterpreter(unsigned int* respirationValuePointer) {
     }
   }
   detachInterrupt(RESPIRATION_INTERRUPT);
-  *respirationValuePointer = respirationCount * MINUTE / MEASURE_RESPIRATION_TIME;
+  //*respirationValuePointer = respirationCount * MINUTE / MEASURE_RESPIRATION_TIME;
+  *respirationValuePointer = respirationCount;
 }
