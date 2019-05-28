@@ -52,7 +52,7 @@ void measure(void* Data) {
         incomingData = getSerialTemp();
         dataDifference = (incomingData > prevData)?
                          (incomingData - prevData): (prevData - incomingData);
-        if((dataDifference * 100.0 / prevData) > THRESHOLD_PULSE_PERCENT) {
+        if((dataDifference * 100.0 / prevData) > THRESHOLD_TEMPERATURE_PERCENT) {
           data.temperatureRawBuf[nextIndex] = incomingData;
           *data.currentTemperatureIndex = nextIndex;
         }
