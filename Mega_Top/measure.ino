@@ -33,6 +33,7 @@ extern bool alarmCheck;
 // the given measureSelection in 'Data'
 static const double THRESHOLD_PULSE_PERCENT       = 15.0;
 static const double THRESHOLD_RESPIRATION_PERCENT = 15.0;
+static const double THRESHOLD_TEMPERATURE_PERCENT = 15.0;
 void measure(void* Data) {
   	MeasureDataStruct data = *((MeasureDataStruct*)Data);
     unsigned short select = *data.measurementSelection;
@@ -45,9 +46,19 @@ void measure(void* Data) {
     unsigned int dataDifference;
     switch(select) {
       case measureTemp:
+        currentIndex = *data.currentTemperatureIndex;
         nextIndex = (*data.currentTemperatureIndex + 1) % 8;
-        data.temperatureRawBuf[nextIndex] = getSerialTemp();
-        *data.currentTemperatureIndex = nextIndex;
+        prevData     = data.temperatureRawBuf[currentIndex];
+        incomingData = getSerialTemp();
+        dataDifference = (incomingData > prevData)?
+                         (incomingData - prevData): (prevData - incomingData);
+        if((dataDifference * 100.0 / prevData) > THRESHOLD_PULSE_PERCENT) {
+          data.temperatureRawBuf[nextIndex] = incomingData;
+          *data.currentTemperatureIndex = nextIndex;
+        }
+        else {
+          data.temperatureRawBuf[currentIndex] = incomingData;
+        }
         tempRawChanged = true;
         tempCheck      = false;
         alarmCheck     = true;
