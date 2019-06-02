@@ -28,6 +28,8 @@ static unsigned int* tempValuePointer     = &temperatureRaw_INIT;
        unsigned int* bloodPressurePointer = &bloodPressureRaw_INIT;
 static unsigned int* prValuePointer       = &pulseRateRaw_INIT;
 static unsigned int* respirationValuePointer = &respirationRateRaw_INIT;
+static unsigned int* ekgValuePointer      = &ekg_INIT;
+
 // Grabbing external Functions
 extern void temperatureInterpreter(unsigned int* tempValuePointer);
 extern void systolicPressInterpreter(unsigned int* sysValuePointer);
@@ -60,6 +62,10 @@ unsigned int interpretByte(unsigned char input) {
       case measureRespiration:
          respirationRateInterpreter(respirationValuePointer);
          return *respirationValuePointer;
+         break;
+      case measureEKG:
+         ekgInterpreter(ekgValuePointer);
+         return *ekgValuePointer;
          break;
       default:
          return 0;

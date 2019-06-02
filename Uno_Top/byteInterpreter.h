@@ -18,5 +18,6 @@ unsigned int interpretByte(unsigned char input);
 #define measureBloodPressure 0x01
 #define measureRespiration   0x02
 #define measurePulseRate     0x03
+#define measureEKG           0x04
 
 #endif /* __BYTEINTERPRETER_H__ */

@@ -11,6 +11,7 @@ extern "C" {
   #include "byteInterpreter.h"
   #include "measureInterpreter.h"
   #include "init.h"
+  #include "arduinoFFT.h"
 }
 
 // Pin assignments
@@ -19,6 +20,7 @@ static const int RESPIRATION_INTERRUPT = 3;
 static const int    NETWORK_CORRUPTION = 4;
 static const int       PULSE_DIGITAL_OUT = 12;
 static const int RESPIRATION_DIGITAL_OUT = 13;
+static const int         EKG_ANALOG_IN = A0;
 static const int        TEMP_ANALOG_IN = A1;
 static const int      BUTTON_ANALOG_IN = A2;
 static const int      SWITCH_ANALOG_IN = A3;
@@ -32,6 +34,9 @@ extern unsigned int* bloodPressurePointer;
 const static byte START = 0xE7;
 const static byte   END = 0xDB;
 const static byte    NA = 0xFF;
+
+// FFT object
+arduinoFFT FFT = arduinoFFT();
 
 void setup() {                                          //sets up the serial for sending and recieving information.
   // Setting the baud rate
@@ -63,6 +68,9 @@ void loop() {
          unsigned int data1 = interpretByte(task);
          unsigned int data2 = interpretByte(task);
          sendMessage(START, NA, NA, (byte)data1, (byte)data2, END);
+       }
+       else if(task == measureEKG) {
+         
        }
        else {
          unsigned int data = interpretByte(task);
