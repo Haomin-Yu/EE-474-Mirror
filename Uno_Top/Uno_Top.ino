@@ -11,7 +11,6 @@ extern "C" {
   #include "byteInterpreter.h"
   #include "measureInterpreter.h"
   #include "init.h"
-  #include "arduinoFFT.h"
 }
 
 // Pin assignments
@@ -35,10 +34,7 @@ const static byte START = 0xE7;
 const static byte   END = 0xDB;
 const static byte    NA = 0xFF;
 const static byte    OK = 0xAA;
-const unsigned int BUFFER_SIZE = 64;
-
-// FFT object
-arduinoFFT FFT = arduinoFFT();
+const unsigned int SERIAL_BUFFER_SIZE = 64;
 
 void setup() {                                          //sets up the serial for sending and recieving information.
   // Setting the baud rate
@@ -79,10 +75,10 @@ void loop() {
          waitFor(OK);
          // Sending data
          for(int i = 0; i < SAMPLING_SIZE; i++) {
-           if(i % BUFFER_SIZE == BUFFER_SIZE) {
+           if(i % SERIAL_BUFFER_SIZE == 0) {
              waitFor(OK);
            }
-           Serial.write(arrayPointer[i]);
+           Serial.write((byte)arrayPointer[i]);
          }
          waitFor(OK);
          Serial.write(END);
@@ -93,7 +89,7 @@ void loop() {
        }
      }
      else { // Flush
-       while(!Serial.available() == 0) {
+       while(Serial.available() != 0) {
          Serial.read();
        }
      }

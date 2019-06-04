@@ -13,12 +13,14 @@ static const unsigned short measureTemp        = 1;
 static const unsigned short measureBloodPress  = 2;
 static const unsigned short measureRespiration = 3;
 static const unsigned short measurePulseRate   = 4;
+static const unsigned short measureEKG         = 5;
 // Global variables
 // (Indicating whether a new measurement has been made)
 bool tempRawChanged          = true;
 bool bloodPressureRawChanged = true;
 bool pulseRateRawChanged   = true;
 bool respirationRawChanged = true;
+bool ekgRawCganged         = true;
 // Global indicators
 // (When the corrosponding button is pressed)
 extern bool tempCheck;
@@ -27,6 +29,7 @@ extern bool respirationCheck;
 extern bool pulseCheck;
 extern bool enableStatus;
 extern bool alarmCheck;
+extern bool ekgCheck;
 
 // Measures the data 'temperatureRaw', 'systolicPressRaw',
 // 'diastolicPressRaw', and/or 'pulseRateRaw' beased on
@@ -130,6 +133,10 @@ void measure(void* Data) {
         tft.fillRect((14 + BUTTONWIDTH * 2), 160, BUTTONWIDTH, BUTTONHEIGHT, CYAN);
         TFT_Write(RED, (16 + BUTTONWIDTH * 2), 175, " R.R.");
         *data.measurementSelection = outOfBounds;
+        break;
+      case measureEKG:
+        // TODO
+        // 
         break;
       default:
         break;

@@ -9,6 +9,7 @@
 #include "TouchScreen.h"
 #include "rawStructs.h"
 #include "display.h"
+#include "arduinoFFT.h"
 
 //defines minimum values for touchscreen
 #define TS_MINX 120
@@ -27,6 +28,7 @@ long sysTime = 0;
 long diasTime = 0;
 long pulseTime = 0;
 
+arduinoFFT FFT = arduinoFFT();
 TouchScreen ts = TouchScreen(XP, YP, XM, YM, 300);
 
 // The control pins for the LCD can be assigned to any digital or
@@ -79,6 +81,7 @@ bool tempCheck = false;                 //boolean used to see if temp button was
 bool bloodPressCheck  = false;
 bool respirationCheck = false;
 bool pulseCheck = false;                //boolean used to see if pulse button was pressed.
+bool ekgCheck = false;
 bool alarmCheck = false;                //boolean used to see if alarm button was pressed.
 
 
