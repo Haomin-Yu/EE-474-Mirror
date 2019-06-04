@@ -76,6 +76,7 @@ void updateMeasurements(double tempCorrected,
                         double diastolicPressCorrected,
                         double pulseRateCorrected,
                         double respirationCorrected,
+                        double ekgCorrected,
                         unsigned short batteryState) {
   // Updating the measurements as well as decides the color at which each measurement should be displayed.
   bool newBatteryUpdate = newTempComputed || newBloodPressComputed || newPulseRateComputed;
@@ -181,6 +182,9 @@ void updateMeasurements(double tempCorrected,
      newTempComputed = false;
      pulseBlink = false;
   }
+
+  // EKG and data display
+  // TODO
   
   //battery color and data display
   if(newBatteryUpdate) {                          

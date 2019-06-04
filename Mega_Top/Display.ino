@@ -15,6 +15,7 @@ extern bool newTempComputed;
 extern bool newBloodPressComputed;
 extern bool newPulseRateComputed;
 extern bool newRespirationComputed;
+extern bool newEKGComputed;
 
 long pulseBlinkTime;
 long tempBlinkTime;
@@ -39,12 +40,14 @@ void display(void* Data) {
           pulseBlinkTime = millis();
           pulseBlink = true;
     }
-   if(newTempComputed || newBloodPressComputed || newPulseRateComputed || newRespirationComputed || pulseBlink || bpBlink || tempBlink) {
+   bool newCompute = newTempComputed || newBloodPressComputed || newPulseRateComputed || newRespirationComputed || newEKGComputed;
+   if(newCompute || pulseBlink || bpBlink || tempBlink) {
     updateMeasurements(data.tempCorrectedBuf[*data.currentTemperatureIndex], 
                              data.bloodPressCorrectedBuf[*data.currentSysPressIndex],
                              data.bloodPressCorrectedBuf[*data.currentDiasPressIndex],
                              data.prCorrectedBuf[*data.currentPulseRateIndex],
                              data.respirationCorrectedBuf[*data.currentRespirationIndex],
+                             data.EKGFreqBuf[*data.currentEKGIndex],
                              *data.batteryState);
    }
 }
