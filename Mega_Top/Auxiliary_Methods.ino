@@ -24,6 +24,7 @@ extern bool newTempComputed;
 extern bool newBloodPressComputed;
 extern bool newPulseRateComputed;
 extern bool newRespirationComputed;
+extern bool newEKGComputed;
 extern const unsigned long BUTTON_TIME;
 extern unsigned long previousTime;
 extern bool pulseBlink;
@@ -184,7 +185,9 @@ void updateMeasurements(double tempCorrected,
   }
 
   // EKG and data display
-  // TODO
+  if(newEKGComputed) {
+    // TODO
+  }
   
   //battery color and data display
   if(newBatteryUpdate) {                          
