@@ -33,6 +33,7 @@ void initialize(MeasureDataStruct* MeasureData,
      bloodPressRawBuf_INIT,
      pulseRateRawBuf_INIT,
      respirationRawBuf_INIT,
+     ekg_real_INIT,
      &localMeasurementSelection_INIT,
 
      &currentTemperatureIndex_INIT,
@@ -48,13 +49,15 @@ void initialize(MeasureDataStruct* MeasureData,
      bloodPressCorrectedBuf_INIT,
      pulseRateCorrectedBuf_INIT,
      respirationCorrectedBuf_INIT,
+     ekgCorrectedBuf_INIT,
      &batteryState_INIT,
 
      &currentTemperatureIndex_INIT,
      &currentSysPressIndex_INIT,
      &currentDiasPressIndex_INIT,
      &currentPulseRateIndex_INIT,
-     &currentRespirationIndex_INIT
+     &currentRespirationIndex_INIT,
+     &currentEKGIndex_INIT
   };
 	// Initializing compute variables
   *ComputeData = (ComputeDataStruct) {
@@ -62,17 +65,20 @@ void initialize(MeasureDataStruct* MeasureData,
      bloodPressRawBuf_INIT,
      pulseRateRawBuf_INIT,
      respirationRawBuf_INIT,
+     ekg_real_INIT,
      tempCorrectedBuf_INIT,
      bloodPressCorrectedBuf_INIT,
      pulseRateCorrectedBuf_INIT,
      respirationCorrectedBuf_INIT,
+     ekgCorrectedBuf_INIT,
      &localMeasurementSelection_INIT,
 
      &currentTemperatureIndex_INIT,
      &currentSysPressIndex_INIT,
      &currentDiasPressIndex_INIT,
      &currentPulseRateIndex_INIT,
-     &currentRespirationIndex_INIT
+     &currentRespirationIndex_INIT,
+     &currentEKGIndex_INIT
   };
 	// Initializing warning/alarm variables
   *WarningAlarmData = (WarningAlarmDataStruct) {
@@ -116,11 +122,13 @@ void initialize(MeasureDataStruct* MeasureData,
      bloodPressCorrectedBuf_INIT,
      pulseRateCorrectedBuf_INIT,
      respirationCorrectedBuf_INIT,
+     ekgCorrectedBuf_INIT,
 
      &currentTemperatureIndex_INIT,
      &currentSysPressIndex_INIT,
      &currentDiasPressIndex_INIT,
      &currentPulseRateIndex_INIT,
-     &currentRespirationIndex_INIT
+     &currentRespirationIndex_INIT,
+     &currentEKGIndex_INIT
   };
 }
