@@ -8,10 +8,10 @@
  * Author: Haomin Yu
  *****************************************
  * 0x00: Measure Temperature
- * 0x01: Measure Systolic Pressure
- * 0x02: Measure Diastolic Pressure
+ * 0x01: Measure Blood Pressure
+ * 0x02: Measure Respiration Rate
  * 0x03: Measure Pulse Rate
- * 0x04: Measure Respiration Rate
+ * 0x04: Measure EKG
  * (Others will do nothing)
  */
 #include "init.h"
@@ -28,7 +28,7 @@ static unsigned int* tempValuePointer     = &temperatureRaw_INIT;
        unsigned int* bloodPressurePointer = &bloodPressureRaw_INIT;
 static unsigned int* prValuePointer       = &pulseRateRaw_INIT;
 static unsigned int* respirationValuePointer = &respirationRateRaw_INIT;
-static unsigned int* ekgValuePointer      = &ekg_INIT;
+static signed   int* ekgValuePointer      = ekg_INIT;
 
 // Grabbing external Functions
 extern void temperatureInterpreter(unsigned int* tempValuePointer);
@@ -36,6 +36,7 @@ extern void systolicPressInterpreter(unsigned int* sysValuePointer);
 extern void diastolicPressInterpreter(unsigned int* diasValuePointer);
 extern void pulseRateInterpreter(unsigned int* prValuePointer);
 extern void respirationRateInterpreter(unsigned int* respirationValuePointer);
+extern void ekgInterpreter(signed int* ekgValuePointer);
 
 // Interprets the byte as described in class header
 unsigned int interpretByte(unsigned char input);
@@ -65,7 +66,7 @@ unsigned int interpretByte(unsigned char input) {
          break;
       case measureEKG:
          ekgInterpreter(ekgValuePointer);
-         return *ekgValuePointer;
+         return ekgValuePointer;
          break;
       default:
          return 0;

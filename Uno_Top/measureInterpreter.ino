@@ -134,33 +134,13 @@ void respirationRateInterpreter(unsigned int* respirationValuePointer) {
 }
 
 // Interprets signal from EKG_ANALOG_IN as electrocardiogram measurements
-static const unsigned int SAMPLING_FREQUENCY = 5000;
-static const unsigned int SAMPLING_SIZE      = 128;
-void ekgInterpreter(unsigned int* ekgValuePointer) {
-  static double vReal[SAMPLING_SIZE];
-  static double vImag[SAMPLING_SIZE];
-  unsigned int samplingPeriod = round(1000000.0 / SAMPLING_FREQUENCY);
+void ekgInterpreter(signed int* ekgValuePointer) {
   unsigned long prevTime = 0;
+  unsigned int samplingPeriod = round(1000000.0 / SAMPLING_FREQUENCY);
   // Sampling
   for(int i = 0; i < SAMPLING_SIZE; i++) {
     prevTime = micros();
-    vReal[i] = analogRead(EKG_ANALOG_IN);
-    vImag[i] = 0;
+    ekgValuePointer[i] = analogRead(EKG_ANALOG_IN);
     while(micros() < (prevTime + samplingPeriod)) {}
-  }
-  // FFT
-  FFT.Windowing(vReal, SAMPLING_SIZE, FFT_WIN_TYP_HAMMING, FFT_FORWARD);
-  FFT.Compute(vReal, vImag, SAMPLING_SIZE, FFT_FORWARD);
-  FFT.ComplexToMagnitude(vReal, vImag, SAMPLING_SIZE);
-  double peak = FFT.MajorPeak(vReal, SAMPLING_SIZE, SAMPLING_FREQUENCY);
-
-  /*PRINT RESULTS*/
-  //Serial.println(peak);     //Print out what frequency is the most dominant.
-
-  for(int i = 0; i < (SAMPLING_SIZE / 2); i++) {
-      /*View all these three lines in serial terminal to see which frequencies has which amplitudes*/
-      //Serial.print((i * 1.0 * SAMPLING_FREQUENCY) / SAMPLES, 1);
-      //Serial.print(" ");
-      Serial.println(vReal[i], 1);    //View only this line in serial plotter to visualize the bins
   }
 }

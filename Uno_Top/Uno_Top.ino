@@ -34,6 +34,8 @@ extern unsigned int* bloodPressurePointer;
 const static byte START = 0xE7;
 const static byte   END = 0xDB;
 const static byte    NA = 0xFF;
+const static byte    OK = 0xAA;
+const unsigned int BUFFER_SIZE = 64;
 
 // FFT object
 arduinoFFT FFT = arduinoFFT();
@@ -70,7 +72,20 @@ void loop() {
          sendMessage(START, NA, NA, (byte)data1, (byte)data2, END);
        }
        else if(task == measureEKG) {
-         
+         signed int* arrayPointer = interpretByte(task);
+         Serial.write(START);
+         Serial.write(NA);
+         Serial.write(NA);
+         waitFor(OK);
+         // Sending data
+         for(int i = 0; i < SAMPLING_SIZE; i++) {
+           if(i % BUFFER_SIZE == BUFFER_SIZE) {
+             waitFor(OK);
+           }
+           Serial.write(arrayPointer[i]);
+         }
+         waitFor(OK);
+         Serial.write(END);
        }
        else {
          unsigned int data = interpretByte(task);
@@ -125,4 +140,15 @@ void sendMessage(byte startByte,
   Serial.write(data1);
   Serial.write(data2);
   Serial.write(endByte);
+}
+
+/*
+ * Halts program until 'okByte' is received
+ */
+void waitFor(byte okByte) {
+  bool okByteFound = false;
+  do {
+    okByteFound = (okByte == Serial.read());
+  }
+  while(!okByteFound);
 }
