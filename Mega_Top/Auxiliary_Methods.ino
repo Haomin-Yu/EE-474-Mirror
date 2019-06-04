@@ -319,7 +319,17 @@ unsigned int getSerialUInt(byte task) {
     byte requestByte = Serial1.read();
     // Checking if it is valid EKG identifier
     if((startByte == 0xE7) && (taskByte == 0xFF) && (requestByte == 0xFF)) {
-       
+       double* arrayPointer = MeasureData.EKGRawBuf;
+       Serial1.write(0xAA);
+       for(int times = 0; times < 4; times++) {
+         for(int i = 0; i < 64; i++) {
+           arrayPointer[i] = Serial1.read();
+         }
+         Serial1.write(0xAA);
+       }
+       // Throwing away end byte
+       Serial1.read();
+       return arrayPointer;
     }
     else { // Nope. Flush
       while(Serial1.available() != 0) {
@@ -385,14 +395,12 @@ unsigned int getPulseRate() {
   }
 }
 // Calls on the Uno to get the EKG measurement & prints information in serial monitor
-signed int getEKG() {
+void getEKG() {
   if(ekgCheck) {
      ekgCheck = false;
      annonciationCounter++;
      sendLocalMessage(0xE7, 0x04, 0xFF, 0xFF, 0xDB);
-     serialValue = getSerialUInt(0x04);
-     Serial.print("Locally Received EKG peak frequency = ");
-     Serial.println(serialValue);
-     return serialValue;
+     getSerialUInt(0x04);
+     Serial.println("Locally Received EKG measurements..");
   }
 }

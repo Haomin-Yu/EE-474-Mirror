@@ -6,6 +6,7 @@
  *                       unit value of the measured data.
  * Author: Haomin Yu
  */
+#include "init.h"
 #include "rawStructs.h"
 #include <stdio.h>
 
@@ -22,6 +23,7 @@ extern bool tempRawChanged;
 extern bool bloodPressureRawChanged;
 extern bool respirationRawChanged;
 extern bool pulseRateRawChanged;
+extern bool ekgRawChanged;
 
 // Global variables
 // (Indicating whether a new computation has been made)
@@ -29,6 +31,7 @@ bool newTempComputed;
 bool newBloodPressComputed;
 bool newPulseRateComputed;
 bool newRespirationComputed;
+bool newEKGComputed;
 
 // Computes the values for 'tempCorrected', 'sysCorrected',
 // 'diasCorrected', and 'prCorrected' if needed
@@ -60,6 +63,13 @@ void compute(void* Data) {
      pulseRateRawChanged  = false;
      newPulseRateComputed = true;
    }
+   if(ekgRawChanged) {
+     unsigned short nextIndex = (*data.currentEKGIndex + 1) % 8;
+     data.EKGFreqBuf[nextIndex] = computeEKG(data.EKGRawBuf);
+     *data.currentEKGIndex = nextIndex;
+     ekgRawChanged  = false;
+     newEKGComputed = true;
+   }
 }
 
 // Computes the temperature in celsius
@@ -87,4 +97,13 @@ double computeRespiration(unsigned int respirationRaw) {
 double computePr(unsigned int bpRaw) {
 	//return 8 + 3*bpRaw;
   return bpRaw*10;
+}
+
+// Computes the peak EKG from the measurements
+double computeEKG(double* arrayPointer) {
+  FFT.Windowing(arrayPointer, SAMPLES, FFT_WIN_TYP_HAMMING, FFT_FORWARD);
+  FFT.Compute(arrayPointer, ekg_imag_INIT, SAMPLES, FFT_FORWARD);
+  FFT.ComplexToMagnitude(arrayPointer, ekg_imag_INIT, SAMPLES);
+  double peak = FFT.MajorPeak(arrayPointer, SAMPLES, SAMPLING_FREQUENCY);
+  return peak;
 }

@@ -29,6 +29,7 @@ struct MeasureData {
 	unsigned int* bloodPressRawBuf;
 	unsigned int* pulseRateRawBuf;
   unsigned int* respirationRateRawBuf;
+  double* EKGRawBuf;
   unsigned short* measurementSelection;
   
   unsigned short* currentTemperatureIndex;
@@ -45,10 +46,12 @@ struct ComputeData {
   unsigned int* bloodPressRawBuf;
   unsigned int* pulseRateRawBuf;
   unsigned int* respirationRateRawBuf;
+  double* EKGRawBuf;
 	double* tempCorrectedBuf;
 	double* bloodPressCorrectedBuf;
 	double* prCorrectedBuf;
   double* respirationRateCorrectedBuf;
+  double* EKGFreqBuf;
   unsigned short* measurementSelection;
 
   unsigned short* currentTemperatureIndex;
@@ -56,6 +59,7 @@ struct ComputeData {
   unsigned short* currentDiasPressIndex;
   unsigned short* currentPulseRateIndex;
   unsigned short* currentRespirationIndex;
+  unsigned short* currentEKGIndex;
 };
 typedef struct ComputeData ComputeDataStruct;
 
@@ -66,6 +70,7 @@ struct DisplayData {
   double* bloodPressCorrectedBuf;
   double* prCorrectedBuf;
   double* respirationCorrectedBuf;
+  double* EKGFreqBuf;
 	unsigned short* batteryState;
 
   unsigned short* currentTemperatureIndex;
@@ -73,6 +78,7 @@ struct DisplayData {
   unsigned short* currentDiasPressIndex;
   unsigned short* currentPulseRateIndex;
   unsigned short* currentRespirationIndex;
+  unsigned short* currentEKGIndex;
 };
 typedef struct DisplayData DisplayDataStruct;
 
@@ -130,12 +136,14 @@ struct CommunicationsData {
   double* bloodPressCorrectedBuf;
   double* prCorrectedBuf;
   double* respirationRateCorrectedBuf;
+  double* EKGFreqBuf;
 
   unsigned short* currentTemperatureIndex;
   unsigned short* currentSysPressIndex;
   unsigned short* currentDiasPressIndex;
   unsigned short* currentPulseRateIndex;
   unsigned short* currentRespirationRateIndex;
+  unsigned short* currentEKGIndex;
 };
 typedef struct CommunicationsData CommunicationsDataStruct;
 

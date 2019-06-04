@@ -20,7 +20,7 @@ bool tempRawChanged          = true;
 bool bloodPressureRawChanged = true;
 bool pulseRateRawChanged   = true;
 bool respirationRawChanged = true;
-bool ekgRawCganged         = true;
+bool ekgRawChanged         = true;
 // Global indicators
 // (When the corrosponding button is pressed)
 extern bool tempCheck;
@@ -135,8 +135,13 @@ void measure(void* Data) {
         *data.measurementSelection = outOfBounds;
         break;
       case measureEKG:
-        // TODO
-        // 
+        getEKG();
+        ekgRawChanged = true;
+        ekgCheck      = false;
+        alarmCheck    = true;
+        enableStatus  = true;
+        // TODO - Buttons not added
+        *data.measurementSelection = outOfBounds;
         break;
       default:
         break;
