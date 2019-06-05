@@ -28,7 +28,7 @@ static unsigned int* tempValuePointer     = &temperatureRaw_INIT;
        unsigned int* bloodPressurePointer = &bloodPressureRaw_INIT;
 static unsigned int* prValuePointer       = &pulseRateRaw_INIT;
 static unsigned int* respirationValuePointer = &respirationRateRaw_INIT;
-static signed   int* ekgValuePointer      = ekg_INIT;
+static unsigned int* ekgValuePointer      = ekg_INIT;
 
 // Grabbing external Functions
 extern void temperatureInterpreter(unsigned int* tempValuePointer);
@@ -36,7 +36,7 @@ extern void systolicPressInterpreter(unsigned int* sysValuePointer);
 extern void diastolicPressInterpreter(unsigned int* diasValuePointer);
 extern void pulseRateInterpreter(unsigned int* prValuePointer);
 extern void respirationRateInterpreter(unsigned int* respirationValuePointer);
-extern void ekgInterpreter(signed int* ekgValuePointer);
+extern void ekgInterpreter(unsigned int* ekgValuePointer);
 
 // Interprets the byte as described in class header
 unsigned int interpretByte(unsigned char input);

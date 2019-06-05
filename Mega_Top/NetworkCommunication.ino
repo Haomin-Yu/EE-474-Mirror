@@ -82,8 +82,7 @@ void remoteCommunication() {
           ekgCheck = true;
           remoteDataMessage = "Remotely Received Peak EKG = ";
           arrayPointer = getEKG();
-          Serial.print("Bytes = ");Serial.println(Serial1.available());
-          measuredData = computeEKG(arrayPointer);
+          measuredData = (unsigned int)computeEKG(arrayPointer);
           break;
         default:
           remoteDataMessage = "Unknown Function Type!";

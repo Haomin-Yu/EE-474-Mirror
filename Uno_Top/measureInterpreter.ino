@@ -134,7 +134,7 @@ void respirationRateInterpreter(unsigned int* respirationValuePointer) {
 }
 
 // Interprets signal from EKG_ANALOG_IN as electrocardiogram measurements
-void ekgInterpreter(signed int* ekgValuePointer) {
+void ekgInterpreter(unsigned int* ekgValuePointer) {
   unsigned long prevTime = 0;
   unsigned int samplingPeriod = round(1000000.0 / SAMPLING_FREQUENCY);
   // Sampling
