@@ -30,7 +30,7 @@ extern bool pulseRateRawChanged;
 void userSetup() {                                            // Initializes the display to its initial display
   // Makes the whole screen black
   tft.fillScreen(BLACK);
-  // Sets texts to font 3
+  // Sets texts to font 2
   tft.setTextSize(2);
   // Makes the text display horizontally
   tft.setRotation(HORIZONTAL);

@@ -6,6 +6,7 @@
  * getBP   : E701FFD8
  * getRR   : E702FFD8
  * getPulse: E703FFD8
+ * getEKG  : E704FFD8
  * 
  * Author: Haomin Yu
  */
@@ -26,6 +27,7 @@ const static byte measureTemperatureFunc   = 0x00;
 const static byte measureBloodPressureFunc = 0x01;
 const static byte measureRespirationFunc   = 0x02;
 const static byte measurePulseRateFunc     = 0x03;
+const static byte measureEKGFunc           = 0x04;
 
 // Class variables
 static String remoteDataMessage = "";
@@ -51,7 +53,8 @@ void remoteCommunication() {
       Serial.read();
       Serial.read();
       // Executing task and sending message
-      unsigned int measuredData  = 0;
+      unsigned int measuredData = 0;
+      double* arrayPointer = 0;
       switch(task) {
         case measureTemperatureFunc:
           tempCheck = true;
@@ -74,6 +77,13 @@ void remoteCommunication() {
           pulseCheck = true;
           remoteDataMessage = "Remotely Received Pulse Rate = ";
           measuredData = computePr(getPulseRate());
+          break;
+        case measureEKGFunc:
+          ekgCheck = true;
+          remoteDataMessage = "Remotely Received Peak EKG = ";
+          arrayPointer = getEKG();
+          Serial.print("Bytes = ");Serial.println(Serial1.available());
+          measuredData = computeEKG(arrayPointer);
           break;
         default:
           remoteDataMessage = "Unknown Function Type!";
@@ -133,7 +143,10 @@ void sendRemoteMessage(byte startByte,
     Serial.print("/");
     Serial.print(data & 0xFF, DEC);
   }
-  else if(task != 0xFF){
+  else if(task == measureTemperatureFunc ||
+          task == measurePulseRateFunc   ||
+          task == measureRespirationFunc ||
+          task == measureEKGFunc){
     Serial.print(data, DEC);
   }
   Serial.println();

@@ -38,7 +38,7 @@ const unsigned int SERIAL_BUFFER_SIZE = 64;
 
 void setup() {                                          //sets up the serial for sending and recieving information.
   // Setting the baud rate
-  Serial.begin(57600);
+  Serial.begin(9600);
   pinMode(PULSE_DIGITAL_OUT, OUTPUT);
   pinMode(RESPIRATION_DIGITAL_OUT, OUTPUT);
   pinMode(NETWORK_CORRUPTION, OUTPUT);

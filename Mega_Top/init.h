@@ -36,7 +36,7 @@ static double ekg_real_INIT[256] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 #define SAMPLES 256             // Sample size
-#define SAMPLING_FREQUENCY 9000 // Hz, must be less than 10000 due to ADC
+#define SAMPLING_FREQUENCY 8000 // Hz, must be less than 10000 due to ADC
 static double ekg_imag_INIT[256] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,

@@ -51,11 +51,12 @@ void TFT_Write(int Color, int x, int y, String content) {
 }
 // Sets up labels
 void labelsInit() {
-  TFT_Write(GREEN, 10, 23,  "Body.Temp  ->        C");
-  TFT_Write(GREEN, 10, 48,  "   B.P     ->        mmHg"); 
-  TFT_Write(GREEN, 10, 73,  "Resp. Rate ->        RR"); 
-  TFT_Write(GREEN, 10, 98,  "Pulse Rate ->        BPM"); 
-  TFT_Write(GREEN, 10, 123, "Battery    ->");
+  TFT_Write(GREEN, 10, 10,  "Body.Temp  ->        C");
+  TFT_Write(GREEN, 10, 35,  "   B.P     ->        mmHg"); 
+  TFT_Write(GREEN, 10, 60,  "Resp. Rate ->        BPM"); 
+  TFT_Write(GREEN, 10, 85,  "Pulse Rate ->        BPM"); 
+  TFT_Write(GREEN, 10, 110, " Peak EKG  ->        Hz"); 
+  TFT_Write(GREEN, 10, 135, "Battery    ->");
   tft.fillRect(10, 160, (BUTTONWIDTH), (BUTTONHEIGHT), CYAN);
   tft.fillRect((12 + BUTTONWIDTH), 160, (BUTTONWIDTH), (BUTTONHEIGHT), CYAN);
   tft.fillRect((14 + BUTTONWIDTH * 2), 160, (BUTTONWIDTH), (BUTTONHEIGHT), CYAN);
@@ -99,8 +100,8 @@ void updateMeasurements(double tempCorrected,
     } else {
       tempColor = GREEN;
     }
-    tft.fillRect(170, 23, 85, 24, BLACK);
-    TFT_Write(tempColor, 170, 23, (String)tempCorrected);
+    tft.fillRect(170, 10, 85, 24, BLACK);
+    TFT_Write(tempColor, 170, 10, (String)tempCorrected);
     tempBlink = false;
   }
   
@@ -136,10 +137,10 @@ void updateMeasurements(double tempCorrected,
     } else {
       diasColor = GREEN;
     }
-    tft.fillRect(170, 48, 85, 24, BLACK);
+    tft.fillRect(170, 35, 85, 24, BLACK);
     String bloodPressure = (String)(unsigned int)systolicPressCorrected + "/" 
                          + (String)(unsigned int)diastolicPressCorrected;
-    TFT_Write(sysColor, 170, 48, bloodPressure);
+    TFT_Write(sysColor, 170, 35, bloodPressure);
     bpBlink = false;
   }
 
@@ -154,8 +155,8 @@ void updateMeasurements(double tempCorrected,
        respirationColor = GREEN;
      }
      
-     tft.fillRect(170, 73, 85, 24, BLACK);
-     TFT_Write(respirationColor, 170, 73, (String)(int)respirationCorrected); 
+     tft.fillRect(170, 60, 85, 24, BLACK);
+     TFT_Write(respirationColor, 170, 60, (String)(int)respirationCorrected); 
   }
   
   //pulse color and data display
@@ -175,8 +176,8 @@ void updateMeasurements(double tempCorrected,
      } else {
        pulseColor = GREEN;
      }
-     tft.fillRect(170, 98, 85, 24, BLACK);
-     TFT_Write(pulseColor, 170, 98,  (String)(int)pulseRateCorrected); 
+     tft.fillRect(170, 85, 85, 24, BLACK);
+     TFT_Write(pulseColor, 170, 85,  (String)(int)pulseRateCorrected); 
      newPulseRateComputed = false;
      newBloodPressComputed = false;
      newRespirationComputed = false;
@@ -186,7 +187,10 @@ void updateMeasurements(double tempCorrected,
 
   // EKG and data display
   if(newEKGComputed) {
-    // TODO
+    int ekgColor = GREEN;
+    tft.fillRect(170, 110, 85, 24, BLACK);
+    TFT_Write(ekgColor, 170, 110, (String)(int)ekgCorrected);
+    newEKGComputed = false;
   }
   
   //battery color and data display
@@ -199,8 +203,8 @@ void updateMeasurements(double tempCorrected,
      } else {
        battColor = GREEN;
      }
-     tft.fillRect(170, 123, 85, 24, BLACK);
-     TFT_Write(battColor, 170, 123, (String)batteryState); 
+     tft.fillRect(170, 135, 85, 24, BLACK);
+     TFT_Write(battColor, 170, 135, (String)batteryState); 
   }
 }
 
@@ -211,14 +215,6 @@ void touchScreen() {
   digitalWrite(13, LOW);
   pinMode(XM, OUTPUT);
   pinMode(YP, OUTPUT);
-
-  if (!(*KeypadData.alarmAcknowledge == 0) && alarmCheck) {   //if an alarm is meant to go off and it is not acknowledged, it will display an alarm warning
-    if (annonciationCounter > 4) {
-      tft.fillRect(0, 0, 320, 20, RED);
-      TFT_Write(WHITE, 5, 3, "ALARM ACTIVE  ALARM ACTIVE");
-      alarmCheck = false;
-    }
-  }
 
   //maps our tft display based off of the fact that we have a horizontal display.
   p.x = map(p.x, TS_MINY, TS_MAXY, tft.height(), 0);
@@ -278,7 +274,7 @@ void touchScreen() {
   } else if (alarmButton && ((millis() - previousTime) > BUTTON_TIME)){                                               //if the alarm button was pressed and its time to look at the 
       previousTime = millis();                                                                                        //buttons pressed we will check them
       alarmButton = false;
-      tft.fillRect(0, 0, 320, 20, BLACK);                                                            //clears screen to normal and buttons back to unpressed.
+      //tft.fillRect(0, 0, 320, 20, BLACK);                                                            //clears screen to normal and buttons back to unpressed.
       tft.fillRect((54 + BUTTONWIDTH), 202, BUTTONWIDTH, BUTTONHEIGHT, CYAN);
       TFT_Write(RED, (60 + BUTTONWIDTH), 217, "Alarm");
       Serial.println("Alarm Acknowledged");                                                          //will print in serial that alarm was acknowledged
@@ -328,17 +324,21 @@ unsigned int getSerialUInt(byte task) {
     if((startByte == 0xE7) && (taskByte == 0xFF) && (requestByte == 0xFF)) {
        double* arrayPointer = MeasureData.EKGRawBuf;
        Serial1.write(0xAA);
-       for(int times = 0; times < 4; times++) {
-         for(int i = 0; i < 64; i++) {
-           arrayPointer[i] = Serial1.read();
+       for(int times = 0; times < 16; times++) {
+         delay(50);
+         for(int i = 0; i < 16; i++) {
+           byte b1 = Serial1.read();
+           byte b2 = Serial1.read();
+           arrayPointer[times*16 + i] = (b1 << 8) | b2;
          }
          Serial1.write(0xAA);
        }
        // Throwing away end byte
+       delay(10);
        Serial1.read();
        return arrayPointer;
     }
-    else { // Nope. Flush
+    else { // Nope. Flush.
       while(Serial1.available() != 0) {
         Serial1.read();
       }
@@ -402,12 +402,13 @@ unsigned int getPulseRate() {
   }
 }
 // Calls on the Uno to get the EKG measurement & prints information in serial monitor
-void getEKG() {
+double* getEKG() {
   if(ekgCheck) {
      ekgCheck = false;
      annonciationCounter++;
      sendLocalMessage(0xE7, 0x04, 0xFF, 0xFF, 0xDB);
-     getSerialUInt(0x04);
+     double* arrayPointer = getSerialUInt(0x04);
      Serial.println("Locally Received EKG measurements..");
+     return arrayPointer;
   }
 }

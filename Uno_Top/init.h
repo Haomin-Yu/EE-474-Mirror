@@ -18,7 +18,7 @@ static unsigned int pulseRateRaw_INIT     = 0;
 static unsigned int respirationRateRaw_INIT = 0;
 
 // EKG shit
-static const unsigned int SAMPLING_FREQUENCY = 9000;
+static const unsigned int SAMPLING_FREQUENCY = 8000;
 static const unsigned int SAMPLING_SIZE      = 256;
 static signed int ekg_INIT[256] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
