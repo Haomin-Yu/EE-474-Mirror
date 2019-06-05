@@ -19,7 +19,6 @@ static const int RESPIRATION_INTERRUPT = 3;
 static const int    NETWORK_CORRUPTION = 4;
 static const int       PULSE_DIGITAL_OUT = 12;
 static const int RESPIRATION_DIGITAL_OUT = 13;
-static const int         EKG_ANALOG_IN = A0;
 static const int        TEMP_ANALOG_IN = A1;
 static const int      BUTTON_ANALOG_IN = A2;
 static const int      SWITCH_ANALOG_IN = A3;
@@ -33,8 +32,6 @@ extern unsigned int* bloodPressurePointer;
 const static byte START = 0xE7;
 const static byte   END = 0xDB;
 const static byte    NA = 0xFF;
-const static byte    OK = 0xAA;
-const unsigned int SERIAL_BUFFER_SIZE = 64;
 
 void setup() {                                          //sets up the serial for sending and recieving information.
   // Setting the baud rate
@@ -66,23 +63,6 @@ void loop() {
          unsigned int data1 = interpretByte(task);
          unsigned int data2 = interpretByte(task);
          sendMessage(START, NA, NA, (byte)data1, (byte)data2, END);
-       }
-       else if(task == measureEKG) {
-         signed int* arrayPointer = interpretByte(task);
-         Serial.write(START);
-         Serial.write(NA);
-         Serial.write(NA);
-         // Sending data
-         for(int i = 0; i < SAMPLING_SIZE; i++) {
-           // Sends 16 int(32 bytes) per round
-           if(i % (SERIAL_BUFFER_SIZE/4) == 0) {
-             waitFor(OK);
-           }
-           Serial.write((byte)(arrayPointer[i] >> 8));
-           Serial.write((byte)(arrayPointer[i] & 0xFF));
-         }
-         waitFor(OK);
-         Serial.write(END);
        }
        else {
          unsigned int data = interpretByte(task);
@@ -137,14 +117,4 @@ void sendMessage(byte startByte,
   Serial.write(data1);
   Serial.write(data2);
   Serial.write(endByte);
-}
-
-/*
- * Halts program until 'okByte' is received
- */
-void waitFor(byte okByte) {
-  bool okByteFound = false;
-  while(!okByteFound) {
-    okByteFound = (okByte == Serial.read());
-  }
 }

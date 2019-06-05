@@ -16,7 +16,6 @@ void systolicPressInterpreter(unsigned int* sysValuePointer);
 void diastolicPressInterpreter(unsigned int* diasValuePointer);
 void pulseRateInterpreter(unsigned int* prValuePointer);
 void respirationRateInterpreter(unsigned int* respirationValuePointer);
-void ekgInterpreter(unsigned int* ekgValuePointer);
 
 // Class constants
 static const double MINUTE = 60000.0;
@@ -131,16 +130,4 @@ void respirationRateInterpreter(unsigned int* respirationValuePointer) {
   detachInterrupt(RESPIRATION_INTERRUPT);
   //*respirationValuePointer = respirationCount * MINUTE / MEASURE_RESPIRATION_TIME;
   *respirationValuePointer = respirationCount;
-}
-
-// Interprets signal from EKG_ANALOG_IN as electrocardiogram measurements
-void ekgInterpreter(unsigned int* ekgValuePointer) {
-  unsigned long prevTime = 0;
-  unsigned int samplingPeriod = round(1000000.0 / SAMPLING_FREQUENCY);
-  // Sampling
-  for(int i = 0; i < SAMPLING_SIZE; i++) {
-    prevTime = micros();
-    ekgValuePointer[i] = analogRead(EKG_ANALOG_IN);
-    while(micros() < (prevTime + samplingPeriod)) {}
-  }
 }

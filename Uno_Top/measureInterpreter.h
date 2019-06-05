@@ -13,7 +13,6 @@ void systolicPressInterpreter(unsigned int* sysValuePointer);
 void diastolicPressInterpreter(unsigned int* diasValuePointer);
 void pulseRateInterpreter(unsigned int* prValuePointer);
 void respirationRateInterpreter(unsigned int* respirationValuePointer);
-void ekgInterpreter(unsigned int* ekgValuePointer);
 
 #ifdef __cplusplus
 } // extern "C"
