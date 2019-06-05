@@ -38,7 +38,7 @@ const unsigned int SERIAL_BUFFER_SIZE = 64;
 
 void setup() {                                          //sets up the serial for sending and recieving information.
   // Setting the baud rate
-  Serial.begin(9600);
+  Serial.begin(57600);
   pinMode(PULSE_DIGITAL_OUT, OUTPUT);
   pinMode(RESPIRATION_DIGITAL_OUT, OUTPUT);
   pinMode(NETWORK_CORRUPTION, OUTPUT);
@@ -72,13 +72,14 @@ void loop() {
          Serial.write(START);
          Serial.write(NA);
          Serial.write(NA);
-         waitFor(OK);
          // Sending data
          for(int i = 0; i < SAMPLING_SIZE; i++) {
-           if(i % SERIAL_BUFFER_SIZE == 0) {
+           // Sends 16 int(32 bytes) per round
+           if(i % (SERIAL_BUFFER_SIZE/4) == 0) {
              waitFor(OK);
            }
-           Serial.write((byte)arrayPointer[i]);
+           Serial.write((byte)(arrayPointer[i] >> 8));
+           Serial.write((byte)(arrayPointer[i] & 0xFF));
          }
          waitFor(OK);
          Serial.write(END);
@@ -143,8 +144,7 @@ void sendMessage(byte startByte,
  */
 void waitFor(byte okByte) {
   bool okByteFound = false;
-  do {
+  while(!okByteFound) {
     okByteFound = (okByte == Serial.read());
   }
-  while(!okByteFound);
 }
