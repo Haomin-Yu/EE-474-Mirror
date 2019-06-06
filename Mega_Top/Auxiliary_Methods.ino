@@ -316,34 +316,6 @@ unsigned int getSerialUInt(byte task) {
     measuredInt = (data1 << 8) | data2;
     return measuredInt;
   }
-  else if(Serial1.available() == 3) {
-    byte startByte = Serial1.read();
-    byte taskByte  = Serial1.read();
-    byte requestByte = Serial1.read();
-    // Checking if it is valid EKG identifier
-    if((startByte == 0xE7) && (taskByte == 0xFF) && (requestByte == 0xFF)) {
-       double* arrayPointer = MeasureData.EKGRawBuf;
-       Serial1.write(0xAA);
-       for(int times = 0; times < 16; times++) {
-         delay(50);
-         for(int i = 0; i < 16; i++) {
-           byte b1 = Serial1.read();
-           byte b2 = Serial1.read();
-           arrayPointer[times*16 + i] = (b1 << 8) | b2;
-         }
-         Serial1.write(0xAA);
-       }
-       // Throwing away end byte
-       delay(10);
-       Serial1.read();
-       return arrayPointer;
-    }
-    else { // Nope. Flush.
-      while(Serial1.available() != 0) {
-        Serial1.read();
-      }
-    }
-  }
   else { // Flush
     while(Serial1.available() != 0) {
       Serial1.read();
@@ -402,13 +374,21 @@ unsigned int getPulseRate() {
   }
 }
 // Calls on the Uno to get the EKG measurement & prints information in serial monitor
+static unsigned int sampling_period_us = round(1000000*(1.0/SAMPLING_FREQUENCY));
 double* getEKG() {
   if(ekgCheck) {
      ekgCheck = false;
      annonciationCounter++;
-     sendLocalMessage(0xE7, 0x04, 0xFF, 0xFF, 0xDB);
-     double* arrayPointer = getSerialUInt(0x04);
+     unsigned long microseconds = 0;
+     double* realArrayPointer = MeasureData.EKGRawBuf;
+     double* imagArrayPointer = ekg_imag_INIT;
+     for(int i=0; i<SAMPLES; i++) {
+        microseconds = micros();
+        realArrayPointer[i] = analogRead(EKG);
+        imagArrayPointer[i] = 0;
+        while(micros() < (microseconds + sampling_period_us)){}
+    }
      Serial.println("Locally Received EKG measurements..");
-     return arrayPointer;
+     return realArrayPointer;
   }
 }

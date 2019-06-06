@@ -22,9 +22,10 @@
 #define XM A2  // must be an analog pin, use "An" notation!
 #define YM 9   // can be a digital pin
 #define XP 8   // can be a digital pin
+#define EKG A15
 
 long tempTime = 0;
-long sysTime = 0;
+long sysTime  = 0;
 long diasTime = 0;
 long pulseTime = 0;
 
