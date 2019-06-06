@@ -61,16 +61,16 @@ void labelsInit() {
   tft.fillRect((12 + BUTTONWIDTH), 160, (BUTTONWIDTH), (BUTTONHEIGHT), CYAN);
   tft.fillRect((14 + BUTTONWIDTH * 2), 160, (BUTTONWIDTH), (BUTTONHEIGHT), CYAN);
   tft.fillRect((16 + BUTTONWIDTH * 3), 160, (BUTTONWIDTH), (BUTTONHEIGHT), CYAN);
-  tft.fillRect((54 + BUTTONWIDTH), 202, (BUTTONWIDTH), (BUTTONHEIGHT), CYAN);
   tft.fillRect(10, 202, (BUTTONWIDTH), (BUTTONHEIGHT), CYAN);
-  tft.fillRect((16 + BUTTONWIDTH * 3), 202, (BUTTONWIDTH), (BUTTONHEIGHT), CYAN);
+  tft.fillRect((12 + BUTTONWIDTH), 202, (BUTTONWIDTH), (BUTTONHEIGHT), CYAN);
+  tft.fillRect((14 + BUTTONWIDTH * 2), 202, (BUTTONWIDTH), (BUTTONHEIGHT), CYAN);
   TFT_Write(RED, 12, 175, " Temp.");
   TFT_Write(RED, (14 + BUTTONWIDTH), 175, " B.P.");
   TFT_Write(RED, (16 + BUTTONWIDTH * 2), 175, " R.R.");
   TFT_Write(RED, (18 + BUTTONWIDTH * 3), 175, "Pulse");
-  TFT_Write(RED, (60 + BUTTONWIDTH), 217, "Alarm");
-  TFT_Write(RED, 12, 217, " Blank");
-  TFT_Write(RED, (18 + BUTTONWIDTH * 3), 217, "Blank");
+  TFT_Write(RED, (18 + BUTTONWIDTH), 217, "Alarm");
+  TFT_Write(RED, 12, 217, " EKG");
+  TFT_Write(RED, (14 + BUTTONWIDTH * 2), 217, "Traffic");
 }
 // Updates the measurement values(Erases the previous value)
 void updateMeasurements(double tempCorrected, 
@@ -254,29 +254,33 @@ void touchScreen() {
         }
      }
      else if((p.x < (BUTTONHEIGHT + 202)) && (p.x > 202)) {                                                           //checks to see if it alligns with the buttons horizontal axis.
-      if(((tft.height()-p.y) < ((BUTTONWIDTH *2) + 54)) && ((tft.height()-p.y) > (54 + BUTTONWIDTH))) {               //checks to see if the vertical axis for alarm was pressed.
+      if(((tft.height()-p.y) < ((BUTTONWIDTH *2) + 12)) && ((tft.height()-p.y) > (12 + BUTTONWIDTH))) {               //checks to see if the vertical axis for alarm was pressed.
            
             annonciationCounter = 0;                                              //sets counter used to see how long its been since an acknowledgment to zero
            *KeypadData.alarmAcknowledge = 0;                                      //sets alarm acknowledgement
            alarmButton = true;                                                    //says alarm button was pressed
-           tft.fillRect((54 + BUTTONWIDTH), 202, BUTTONWIDTH, BUTTONHEIGHT, BLUE);//changes color to represent a button press
-           TFT_Write(RED, (60 + BUTTONWIDTH), 217, "Alarm");
+           tft.fillRect((12 + BUTTONWIDTH), 202, BUTTONWIDTH, BUTTONHEIGHT, BLUE);//changes color to represent a button press
+           TFT_Write(RED, (18 + BUTTONWIDTH), 217, "Alarm");
            
         } else if (((tft.height()-p.y) < ((BUTTONWIDTH) + 10)) && ((tft.height()-p.y) > 10)) {                        //checks to see if the vertical axis for blank was pressed.
+          ekgCheck = true;
+           *MeasureData.measurementSelection = 5; //assigns button selected data
+           *KeypadData.localMeasurementSelection = 5;
           tft.fillRect(10, 202, (BUTTONWIDTH), (BUTTONHEIGHT), BLUE);             //changes color to represent a button press
-          TFT_Write(RED, 12, 217,"Blank");
+          TFT_Write(RED, 12, 217," EKG");
           
-        } else if (((tft.height()-p.y) < ((16 + BUTTONWIDTH * 4))) && ((tft.height()-p.y) > 16)) {                    //checks to see if the vertical axis for blank was pressed.
-          tft.fillRect((16 + BUTTONWIDTH * 3), 202, (BUTTONWIDTH), (BUTTONHEIGHT), BLUE);//changes color to represent a button press
-          TFT_Write(RED, (18 + BUTTONWIDTH * 3), 217,"Blank");
+        } else if (((tft.height()-p.y) < ((14 + BUTTONWIDTH * 3))) && ((tft.height()-p.y) > (14 + BUTTONWIDTH * 2))) {                    //checks to see if the vertical axis for blank was pressed.
+          tft.fillRect((14 + BUTTONWIDTH * 2), 202, (BUTTONWIDTH), (BUTTONHEIGHT), BLUE);//changes color to represent a button press
+          TFT_Write(RED, (16 + BUTTONWIDTH * 2), 217,"Traffic");
+          
         }
      } 
   } else if (alarmButton && ((millis() - previousTime) > BUTTON_TIME)){                                               //if the alarm button was pressed and its time to look at the 
       previousTime = millis();                                                                                        //buttons pressed we will check them
       alarmButton = false;
       //tft.fillRect(0, 0, 320, 20, BLACK);                                                            //clears screen to normal and buttons back to unpressed.
-      tft.fillRect((54 + BUTTONWIDTH), 202, BUTTONWIDTH, BUTTONHEIGHT, CYAN);
-      TFT_Write(RED, (60 + BUTTONWIDTH), 217, "Alarm");
+      tft.fillRect((12 + BUTTONWIDTH), 202, BUTTONWIDTH, BUTTONHEIGHT, CYAN);
+      TFT_Write(RED, (18 + BUTTONWIDTH), 217, "Alarm");
       Serial.println("Alarm Acknowledged");                                                          //will print in serial that alarm was acknowledged
   }
 }
@@ -384,7 +388,7 @@ double* getEKG() {
      double* imagArrayPointer = ekg_imag_INIT;
      for(int i=0; i<SAMPLES; i++) {
         microseconds = micros();
-        realArrayPointer[i] = analogRead(EKG);
+        realArrayPointer[i] = analogRead(EKG) - 610;
         imagArrayPointer[i] = 0;
         while(micros() < (microseconds + sampling_period_us)){}
     }

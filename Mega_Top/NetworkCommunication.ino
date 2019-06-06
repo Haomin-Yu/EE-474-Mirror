@@ -2,11 +2,11 @@
  * This class handles the communication with the Arduino Uno
  * and the remote device
  * ==============================================================
- * getTemp : E700FFD8
- * getBP   : E701FFD8
- * getRR   : E702FFD8
- * getPulse: E703FFD8
- * getEKG  : E704FFD8
+ * getTemp : E700FFDB
+ * getBP   : E701FFDB
+ * getRR   : E702FFDB
+ * getPulse: E703FFDB
+ * getEKG  : E704FFDB
  * 
  * Author: Haomin Yu
  */

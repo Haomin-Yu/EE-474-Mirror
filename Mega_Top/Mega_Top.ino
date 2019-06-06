@@ -85,7 +85,6 @@ bool pulseCheck = false;                //boolean used to see if pulse button wa
 bool ekgCheck = false;
 bool alarmCheck = false;                //boolean used to see if alarm button was pressed.
 
-
 void setup(void) {
   // Setting up data rate for the serial monitor
   Serial.begin(9600);

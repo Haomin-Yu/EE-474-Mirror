@@ -140,7 +140,8 @@ void measure(void* Data) {
         ekgCheck      = false;
         alarmCheck    = true;
         enableStatus  = true;
-        // TODO - Buttons not added
+        tft.fillRect(10, 202, (BUTTONWIDTH), (BUTTONHEIGHT), CYAN);             //changes color to represent a button press
+          TFT_Write(RED, 12, 217," EKG");
         *data.measurementSelection = outOfBounds;
         break;
       default:
