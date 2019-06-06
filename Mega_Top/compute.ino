@@ -105,5 +105,5 @@ double computeEKG(double* arrayPointer) {
   FFT.Compute(arrayPointer, ekg_imag_INIT, SAMPLES, FFT_FORWARD);
   FFT.ComplexToMagnitude(arrayPointer, ekg_imag_INIT, SAMPLES);
   double peak = FFT.MajorPeak(arrayPointer, SAMPLES, SAMPLING_FREQUENCY);
-  return peak;
+  return illusionGenerator(peak);
 }

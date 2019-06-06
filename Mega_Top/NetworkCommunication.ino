@@ -82,7 +82,7 @@ void remoteCommunication() {
           ekgCheck = true;
           remoteDataMessage = "Remotely Received Peak EKG = ";
           arrayPointer = getEKG();
-          measuredData = (unsigned int)illusionGenerator(computeEKG(arrayPointer));
+          measuredData = (unsigned int)computeEKG(arrayPointer);
           break;
         default:
           remoteDataMessage = "Unknown Function Type!";
