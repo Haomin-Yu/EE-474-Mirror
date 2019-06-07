@@ -12,15 +12,24 @@
  */
 #include "compute.h"
 
+// Global structs
+extern DisplayDataStruct DisplayData;
+extern WarningAlarmDataStruct WarningAlarmData;
+
 // Function prototypes
 void remoteCommunication();
 void sendLocalMessage(byte startByte, byte task, byte ID, byte data, byte endByte);
 void sendRemoteMessage(byte startByte, byte task, byte ID, int data, byte endByte);
+byte toUpper(byte input);
 
 // Network Identifiers
-const static byte START = 0xE7;
-const static byte   END = 0xDB;
-const static byte    NA = 0xFF;
+const static byte I = 0x49;
+const static byte E = 0x45;
+const static byte S = 0x53;
+const static byte P = 0x50;
+const static byte D = 0x44;
+const static byte M = 0x4D;
+const static byte W = 0x57;
 
 // Measure Definitions
 const static byte measureTemperatureFunc   = 0x00;
@@ -35,27 +44,48 @@ static String remoteDataMessage = "";
 /*
  * Handles the remote communication from and to the system
  */
+static bool initialized = false;
 void remoteCommunication() {
   if(Serial.available() > 0) {
-    // Waiting for all bytes to come in
-    delay(10);
-    if(Serial.available() == 8) {
-      // Throwing away start byte
-      Serial.read();
-      Serial.read();
-      // Grabbing task byte
-      byte task = convertHexDump(Serial.read()) << 4;
-      task |= convertHexDump(Serial.read());
-      // Throwing away function request
-      Serial.read();
-      Serial.read();
-      // Throwing away end byte
-      Serial.read();
-      Serial.read();
-      // Executing task and sending message
-      unsigned int measuredData = 0;
-      double* arrayPointer = 0;
-      switch(task) {
+    byte command = toUpper(Serial.read());
+    if(command == I) {
+      if(initialized) {
+        Serial.println("Re-initializing network..");
+      }
+      else {
+        Serial.println("Initializing network..");
+      }
+      initialized = true;
+      Serial.println("Done");
+    }
+    else if (!initialized){
+      Serial.println("Network is not initialized!");
+      Serial.println("Try using the command 'I'");
+    }
+    else if(command == E) {
+      Serial.println("This an error response when incorrect or non-existent commands are given");
+    }
+    else if(command == S) {
+      // Start Measurement
+    }
+    else if(command == P) {
+      // Break from measurement
+    }
+    else if(command == D) {
+      // Toggles TFT display
+    }
+    else if(command == M) {
+      // Prints out information from 'DisplayData'
+    }
+    else if(command == W) {
+      // Prints out information from 'WarningAlarmData'
+    }
+    else {
+      Serial.println("E: Command Not Recognized");
+    }
+  }
+  
+     /*
         case measureTemperatureFunc:
           tempCheck = true;
           remoteDataMessage = "Remotely Received Temperature = ";
@@ -89,18 +119,7 @@ void remoteCommunication() {
           measuredData = 0;
           annonciationCounter++;
           break;
-      }
-      annonciationCounter--;
-      sendRemoteMessage(START, task, NA, measuredData, END);
-    }
-    else { // Flush
-      Serial.println("Invalid input has been flushed!");
-      delay(5);
-      while(Serial.available() > 0) {
-        Serial.read();
-      }
-    }
-  }
+      */
 }
 
 /*
@@ -152,19 +171,12 @@ void sendRemoteMessage(byte startByte,
 }
 
 /*
- * Converts string hex dump to its hex respresentation
+ * Converts 'input' into a uppercase letter
+ * if it is a lowercase letter
+ * (Returns same char if not a lowercase char)
  */
-byte convertHexDump(byte hexDump) {
-  if(hexDump >= 0x30 && hexDump <= 0x39) {
-    return hexDump - 0x30;
-  }
-  else if(hexDump >= 0x41 && hexDump <= 0x46) {
-    return hexDump - 0x37;
-  }
-  else if(hexDump >= 0x61 && hexDump <= 0x66) {
-    return hexDump - 0x57;
-  }
-  else {
-    return 0xFF;
+byte toUpper(byte input) {
+  if(input >= 0x61 && input <= 0x7A) {
+    return input - 0x20;
   }
 }

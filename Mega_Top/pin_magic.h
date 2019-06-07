@@ -146,20 +146,20 @@
   #define CD_MASK B00000100
   #define CS_MASK B00001000
 
-  #define write8inline(d) {                                              \
-    PORTH = (PORTH&B10000111)|(((d)&B11000000)>>3)|(((d)&B00000011)<<5); \
-    PORTB = (PORTB&B01001111)|(((d)&B00101100)<<2);                      \
-    PORTG = (PORTG&B11011111)|(((d)&B00010000)<<1);                      \
+  #define write8inline(d) {                                              
+    PORTH = (PORTH&B10000111)|(((d)&B11000000)>>3)|(((d)&B00000011)<<5); 
+    PORTB = (PORTB&B01001111)|(((d)&B00101100)<<2);                      
+    PORTG = (PORTG&B11011111)|(((d)&B00010000)<<1);                      
     WR_STROBE; }
-  #define read8inline(result) {                                      \
-    RD_ACTIVE;                                                       \
-    DELAY7;                                                          \
-    result = ((PINH & B00011000) << 3) | ((PINB & B10110000) >> 2) | \
-             ((PING & B00100000) >> 1) | ((PINH & B01100000) >> 5);  \
+  #define read8inline(result) {                                      
+    RD_ACTIVE;                                                       
+    DELAY7;                                                          
+    result = ((PINH & B00011000) << 3) | ((PINB & B10110000) >> 2) | 
+             ((PING & B00100000) >> 1) | ((PINH & B01100000) >> 5);  
     RD_IDLE; }
-  #define setWriteDirInline() {                                   \
+  #define setWriteDirInline() {                                   
     DDRH |=  B01111000; DDRB |=  B10110000; DDRG |=  B00100000; }
-  #define setReadDirInline()  {                                   \
+  #define setReadDirInline()  {                                   
     DDRH &= ~B01111000; DDRB &= ~B10110000; DDRG &= ~B00100000; }
 
  #else // Mega w/Breakout board
