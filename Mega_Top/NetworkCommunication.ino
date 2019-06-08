@@ -2,11 +2,6 @@
  * This class handles the communication with the Arduino Uno
  * and the remote device
  * ==============================================================
- * getTemp : E700FFDB
- * getBP   : E701FFDB
- * getRR   : E702FFDB
- * getPulse: E703FFDB
- * getEKG  : E704FFDB
  * 
  * Author: Haomin Yu
  */
@@ -45,42 +40,85 @@ static String remoteDataMessage = "";
  * Handles the remote communication from and to the system
  */
 static bool initialized = false;
+static bool displayOn   = true;
 void remoteCommunication() {
   if(Serial.available() > 0) {
     byte command = toUpper(Serial.read());
     if(command == I) {
+      // Initialize Network
       if(initialized) {
-        Serial.println("Re-initializing network..");
+        Serial.println("I: Re-initializing network..");
       }
       else {
-        Serial.println("Initializing network..");
+        Serial.println("I: Initializing network..");
       }
       initialized = true;
       Serial.println("Done");
     }
     else if (!initialized){
-      Serial.println("Network is not initialized!");
+      Serial.println("E: Network is not initialized!");
       Serial.println("Try using the command 'I'");
     }
     else if(command == E) {
-      Serial.println("This an error response when incorrect or non-existent commands are given");
+      // Show Error Message
+      Serial.println("E: This an error response when incorrect or non-existent commands are given");
     }
     else if(command == S) {
       // Start Measurement
+      Serial.println("S: Measurement mode enabled.");
+      
+      // TODO
     }
     else if(command == P) {
       // Break from measurement
+      Serial.println("E: No measurement is ongoing. Nothing to stop.");
     }
     else if(command == D) {
       // Toggles TFT display
+      if(displayOn) {
+        // Makes the whole screen black
+        tft.fillScreen(BLACK);
+      }
+      else {
+        // Repainting labels, measurements, and buttons
+        // TODO
+      }
+      displayOn = !displayOn;
     }
     else if(command == M) {
       // Prints out information from 'DisplayData'
+      String temp = (String)(int)DisplayData.tempCorrectedBuf[*DisplayData.currentTemperatureIndex];
+      String sys  = (String)(int)DisplayData.bloodPressCorrectedBuf[*DisplayData.currentSysPressIndex];
+      String dias = (String)(int)DisplayData.bloodPressCorrectedBuf[*DisplayData.currentDiasPressIndex];
+      String pr   = (String)(int)DisplayData.prCorrectedBuf[*DisplayData.currentPulseRateIndex];
+      String resp = (String)(int)DisplayData.respirationCorrectedBuf[*DisplayData.currentRespirationIndex];
+      String ekg  = (String)(int)DisplayData.EKGFreqBuf[*DisplayData.currentEKGIndex];
+      String batt = (String)*DisplayData.batteryState;
+      Serial.println("M: Printing out most recent data:");
+      Serial.print("* Temperature  = "); Serial.print(temp); Serial.println("\t C");
+      Serial.print("*  Sys. Press. = "); Serial.print(sys);  Serial.println("\t mmHg");
+      Serial.print("* Dias. Press. = "); Serial.print(dias); Serial.println("\t mmHg");
+      Serial.print("* Pulse Rate   = "); Serial.print(pr);   Serial.println("\t BPM");
+      Serial.print("* Resp. Rate   = "); Serial.print(resp); Serial.println("\t BPM");
+      Serial.print("* EKG          = "); Serial.print(ekg);  Serial.println("\t Hz");
+      Serial.print("* Battery      = "); Serial.print(batt); Serial.println();
     }
     else if(command == W) {
       // Prints out information from 'WarningAlarmData'
+      Serial.println("W: Printing out most recent warning/alarm information:");
+      Serial.print("* Temp    out of range? "); Serial.println(*WarningAlarmData.tempOutOfRange);
+      Serial.print("* BP      out of range? "); Serial.println(*WarningAlarmData.bpOutOfRange);
+      Serial.print("* Pulse   out of range? "); Serial.println(*WarningAlarmData.pulseOutOfRange);
+      Serial.print("* Resp.   out of range? "); Serial.println(*WarningAlarmData.respOutOfRange);
+      Serial.print("* Battery out of range? "); Serial.println(*WarningAlarmData.batteryOutOfRange);
+      Serial.print("* Temp. High? "); Serial.println(*WarningAlarmData.tempHigh);
+      Serial.print("* BP.   High? "); Serial.println(*WarningAlarmData.bpHigh);
+      Serial.print("* Resp. High? "); Serial.println(*WarningAlarmData.respHigh);
+      Serial.print("* Pulse   Low? "); Serial.println(*WarningAlarmData.pulseLow);
+      Serial.print("* Battery Low? "); Serial.println(*WarningAlarmData.batteryLow);
     }
     else {
+      // Unknown Command
       Serial.println("E: Command Not Recognized");
     }
   }
@@ -140,34 +178,6 @@ void sendLocalMessage(byte startByte,
   Serial1.write(ID);
   Serial1.write(data);
   Serial1.write(endByte);
-}
-
-/*
- * Sends a message to the remote device, with format:
- * 1. Start of message
- * 2. Requested task identifier
- * 3. ID of function
- * 4. Requested data
- * 5. End of message
- */
-void sendRemoteMessage(byte startByte,
-                       byte task,
-                       byte ID,
-                       int data,
-                       byte endByte) {
-  Serial.print(remoteDataMessage);
-  if(task == measureBloodPressureFunc) {
-    Serial.print((unsigned int)data >> 8, DEC);
-    Serial.print("/");
-    Serial.print(data & 0xFF, DEC);
-  }
-  else if(task == measureTemperatureFunc ||
-          task == measurePulseRateFunc   ||
-          task == measureRespirationFunc ||
-          task == measureEKGFunc){
-    Serial.print(data, DEC);
-  }
-  Serial.println();
 }
 
 /*

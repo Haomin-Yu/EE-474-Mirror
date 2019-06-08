@@ -64,7 +64,7 @@ void compute(void* Data) {
      newPulseRateComputed = true;
    }
    if(ekgRawChanged) {
-     unsigned short nextIndex = (*data.currentEKGIndex + 1) % 8;
+     unsigned short nextIndex = (*data.currentEKGIndex + 1) % 16;
      data.EKGFreqBuf[nextIndex] = computeEKG(data.EKGRawBuf);
      *data.currentEKGIndex = nextIndex;
      ekgRawChanged  = false;
