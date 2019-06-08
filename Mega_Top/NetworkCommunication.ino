@@ -66,8 +66,21 @@ void remoteCommunication() {
     else if(command == S) {
       // Start Measurement
       Serial.println("S: Measurement mode enabled.");
-      
-      // TODO
+      // Getting temperature
+      if(waitResponseSP()) {
+        tempCheck = true;
+        Serial.print("Remotely Received Temperature = "); Serial.println((int)computeTemp(getSerialTemp()));
+      }
+      else {
+        Serial.println("P: Measurement has stopped");
+        goto stopMeasurement;
+      }
+      // TODO - See lines 134-167
+      // Getting Blood Pressure
+      // Getting Resp. Rate
+      // Getting Pulse Rate
+      // Getting EKG
+      stopMeasurement:;
     }
     else if(command == P) {
       // Break from measurement
@@ -188,5 +201,27 @@ void sendLocalMessage(byte startByte,
 byte toUpper(byte input) {
   if(input >= 0x61 && input <= 0x7A) {
     return input - 0x20;
+  }
+}
+
+/*
+ * Waits for either S or P response
+ * Returns true  if 'S'
+ * Returns false if 'P'
+ */
+bool waitResponseSP() {
+  while(true) {
+    if(Serial.available() > 0) {
+      byte response = toUpper(Serial.read());
+      if(response == S) {
+        return true;
+      }
+      else if(response == P) {
+        return false;
+      }
+      else {
+        Serial.println("E: You must enter either 'S' or 'P'");
+      }
+    }
   }
 }
