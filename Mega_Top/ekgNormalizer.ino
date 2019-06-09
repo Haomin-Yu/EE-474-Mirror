@@ -13,6 +13,6 @@ double ekgNormalizer(double peak) {
     return peak*0.88 + 11.246;
 	}
   else {
-    return peak;
+    return peak*0.88;
  }
 }
