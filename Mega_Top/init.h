@@ -56,11 +56,11 @@ static double ekg_imag_INIT[256] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 
 // Display
 static unsigned short mode_INIT = 0;
-static double tempCorrectedBuf_INIT[8]        = {0, 0, 0, 0, 0, 0, 0, 0};
-static double bloodPressCorrectedBuf_INIT[16] = {0, 0, 0, 0, 0, 0, 0, 0,
-                                                 0, 0, 0, 0, 0, 0, 0, 0};
-static double pulseRateCorrectedBuf_INIT[8]   = {0, 0, 0, 0, 0, 0, 0, 0};
-static double respirationCorrectedBuf_INIT[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+static double tempCorrectedBuf_INIT[8]        = {61, 0, 0, 0, 0, 0, 0, 0};
+static double bloodPressCorrectedBuf_INIT[16] = {169, 0, 0, 0, 0, 0, 0, 0,
+                                                 126, 0, 0, 0, 0, 0, 0, 0};
+static double pulseRateCorrectedBuf_INIT[8]   = {8, 0, 0, 0, 0, 0, 0, 0};
+static double respirationCorrectedBuf_INIT[8] = {7, 0, 0, 0, 0, 0, 0, 0};
 static double ekgCorrectedBuf_INIT[16] = {0, 0, 0, 0, 0, 0, 0, 0,
                                           0, 0, 0, 0, 0, 0, 0, 0};
 

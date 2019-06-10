@@ -26,6 +26,11 @@ CommunicationsDataStruct CommunicationsData;                  // Saves communica
 extern bool tempRawChanged;
 extern bool bloodPressRawChanged;
 extern bool pulseRateRawChanged;
+extern bool newTempComputed;
+extern bool newBloodPressComputed;
+extern bool newPulseRateComputed;
+extern bool newRespirationComputed;
+extern bool newEKGComputed;
 
 void userSetup() {                                            // Initializes the display to its initial display
   // Makes the whole screen black
@@ -41,6 +46,18 @@ void userSetup() {                                            // Initializes the
              &ComputeData, &WarningAlarmData,
              &Status, &Scheduler,
              &KeypadData, &CommunicationsData);
+  newTempComputed = true;
+  newBloodPressComputed = true;
+  newPulseRateComputed = true;
+  newRespirationComputed = true;
+  newEKGComputed = true;
+  updateMeasurements((int)DisplayData.tempCorrectedBuf[*DisplayData.currentTemperatureIndex],
+                           (int)DisplayData.bloodPressCorrectedBuf[*DisplayData.currentSysPressIndex],
+                           (int)DisplayData.bloodPressCorrectedBuf[*DisplayData.currentDiasPressIndex],
+                           (int)DisplayData.prCorrectedBuf[*DisplayData.currentPulseRateIndex],
+                           (int)DisplayData.respirationCorrectedBuf[*DisplayData.currentRespirationIndex],
+                           (int)DisplayData.EKGFreqBuf[*DisplayData.currentEKGIndex],
+                           *DisplayData.batteryState);
   // Baud rate for data transmittion
   Serial1.begin(9600);
 }

@@ -6,6 +6,14 @@
  * Author: Haomin Yu
  */
 #include "compute.h"
+#include "rawStructs.h"
+#include <string.h>
+
+extern bool newTempComputed;
+extern bool newBloodPressComputed;
+extern bool newPulseRateComputed;
+extern bool newRespirationComputed;
+extern bool newEKGComputed;
 
 // Global structs
 extern DisplayDataStruct DisplayData;
@@ -41,6 +49,7 @@ static String remoteDataMessage = "";
  */
 static bool initialized = false;
 static bool displayOn   = true;
+static bool displaySwitch = true;
 void remoteCommunication() {
   if(Serial.available() > 0) {
     byte command = toUpper(Serial.read());
@@ -54,6 +63,9 @@ void remoteCommunication() {
       }
       initialized = true;
       Serial.println("Done");
+      Serial.println("Product Name: Doctor at Your Fingertips");
+      Serial.println("Patient's Name: Warren Buffett");
+      Serial.println("Doctor's Name: Dr.James Peckol");
     }
     else if (!initialized){
       Serial.println("E: Network is not initialized!");
@@ -68,13 +80,59 @@ void remoteCommunication() {
       Serial.println("S: Measurement mode enabled.");
       // Getting temperature
       if(waitResponseSP()) {
+        Serial.println("S: Measuring Temperature...");
         tempCheck = true;
-        Serial.print("Remotely Received Temperature = "); Serial.println((int)computeTemp(getSerialTemp()));
+        int measuredTempValue = getSerialTemp();
+        Serial.print("Remotely Received Temperature = "); Serial.println((int)computeTemp(measuredTempValue));
       }
       else {
         Serial.println("P: Measurement has stopped");
         goto stopMeasurement;
       }
+      if(waitResponseSP()) {
+        Serial.println("S: Measuring Blood Pressure...");
+        bloodPressCheck = true;
+        int measuredBPData = getBloodPress();
+        Serial.print("Remotely Received Blood Pressure = ");
+        Serial.print((int)computeSys((unsigned int)measuredBPData >> 8));
+        Serial.print("/");
+        measuredBPData = (int)computeDias(measuredBPData & 0xFF);
+        Serial.println(measuredBPData);
+      }
+      else {
+        Serial.println("P: Measurement has stopped");
+        goto stopMeasurement;
+     }
+    if(waitResponseSP()) {
+      Serial.println("S: Measuring Respiration...");
+        respirationCheck = true;
+        int measuredRespValue = getRespiration();
+        Serial.print("Remotely Received Respiration = "); Serial.println((int)computeRespiration(measuredRespValue));
+      }
+      else {
+        Serial.println("P: Measurement has stopped");
+        goto stopMeasurement;
+      }
+      if(waitResponseSP()) {
+        Serial.println("S: Measuring Pulse Rate...");
+        pulseCheck = true;
+        int measuredPulseValue = getPulseRate();
+        Serial.print("Remotely Received Pulse = "); Serial.println((int)computePr(measuredPulseValue));
+      }
+      else {
+        Serial.println("P: Measurement has stopped");
+        goto stopMeasurement;
+      }
+      if(waitResponseSP()) {
+        ekgCheck = true;
+        int measuredEKGValue = getEKG();
+        Serial.print("Remotely Received EKG = "); Serial.println((int)computePr(measuredEKGValue));
+      }
+      else {
+        Serial.println("P: Measurement has stopped");
+        goto stopMeasurement;
+      }
+     
       // TODO - See lines 134-167
       // Getting Blood Pressure
       // Getting Resp. Rate
@@ -91,10 +149,44 @@ void remoteCommunication() {
       if(displayOn) {
         // Makes the whole screen black
         tft.fillScreen(BLACK);
+        displaySwitch = true;
       }
       else {
-        // Repainting labels, measurements, and buttons
-        // TODO
+        TFT_Write(GREEN, 10, 10,  "Body.Temp  ->        C");
+        TFT_Write(GREEN, 10, 35,  "   B.P     ->        mmHg"); 
+        TFT_Write(GREEN, 10, 60,  "Resp. Rate ->        BPM"); 
+        TFT_Write(GREEN, 10, 85,  "Pulse Rate ->        BPM"); 
+        TFT_Write(GREEN, 10, 110, " Peak EKG  ->        Hz"); 
+        TFT_Write(GREEN, 10, 135, "Battery    ->");
+        if (displaySwitch == true) {
+          newTempComputed = true;
+          newBloodPressComputed = true;
+          newPulseRateComputed = true;
+          newRespirationComputed = true;
+          newEKGComputed = true;
+          displaySwitch = false;
+        }
+        updateMeasurements((int)DisplayData.tempCorrectedBuf[*DisplayData.currentTemperatureIndex],
+                           (int)DisplayData.bloodPressCorrectedBuf[*DisplayData.currentSysPressIndex],
+                           (int)DisplayData.bloodPressCorrectedBuf[*DisplayData.currentDiasPressIndex],
+                           (int)DisplayData.prCorrectedBuf[*DisplayData.currentPulseRateIndex],
+                           (int)DisplayData.respirationCorrectedBuf[*DisplayData.currentRespirationIndex],
+                           (int)DisplayData.EKGFreqBuf[*DisplayData.currentEKGIndex],
+                           *DisplayData.batteryState);                     
+        tft.fillRect(10, 160, (BUTTONWIDTH), (BUTTONHEIGHT), CYAN);
+        tft.fillRect((12 + BUTTONWIDTH), 160, (BUTTONWIDTH), (BUTTONHEIGHT), CYAN);
+        tft.fillRect((14 + BUTTONWIDTH * 2), 160, (BUTTONWIDTH), (BUTTONHEIGHT), CYAN);
+        tft.fillRect((16 + BUTTONWIDTH * 3), 160, (BUTTONWIDTH), (BUTTONHEIGHT), CYAN);
+        tft.fillRect(10, 202, (BUTTONWIDTH), (BUTTONHEIGHT), CYAN);
+        tft.fillRect((12 + BUTTONWIDTH), 202, (BUTTONWIDTH), (BUTTONHEIGHT), CYAN);
+        tft.fillRect((14 + BUTTONWIDTH * 2), 202, (BUTTONWIDTH), (BUTTONHEIGHT), CYAN);
+        TFT_Write(RED, 12, 175, " Temp.");
+        TFT_Write(RED, (14 + BUTTONWIDTH), 175, " B.P.");
+        TFT_Write(RED, (16 + BUTTONWIDTH * 2), 175, " R.R.");
+        TFT_Write(RED, (18 + BUTTONWIDTH * 3), 175, "Pulse");
+        TFT_Write(RED, (18 + BUTTONWIDTH), 217, "Alarm");
+        TFT_Write(RED, 12, 217, " EKG");
+        TFT_Write(RED, (14 + BUTTONWIDTH * 2), 217, "Traffic");
       }
       displayOn = !displayOn;
     }
@@ -109,7 +201,7 @@ void remoteCommunication() {
       String batt = (String)*DisplayData.batteryState;
       Serial.println("M: Printing out most recent data:");
       Serial.print("* Temperature  = "); Serial.print(temp); Serial.println("\t C");
-      Serial.print("*  Sys. Press. = "); Serial.print(sys);  Serial.println("\t mmHg");
+      Serial.print("* Sys. Press.  = "); Serial.print(sys);  Serial.println("\t mmHg");
       Serial.print("* Dias. Press. = "); Serial.print(dias); Serial.println("\t mmHg");
       Serial.print("* Pulse Rate   = "); Serial.print(pr);   Serial.println("\t BPM");
       Serial.print("* Resp. Rate   = "); Serial.print(resp); Serial.println("\t BPM");

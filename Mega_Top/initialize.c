@@ -27,6 +27,7 @@ void initialize(MeasureDataStruct* MeasureData,
                 SchedulerStruct* Scheduler,
                 TFTKeypadDataStruct* KeypadData, 
                 CommunicationsDataStruct* CommunicationsData) {
+
 	// Initializing measurement variables
   *MeasureData = (MeasureDataStruct) {
      temperatureRawBuf_INIT,

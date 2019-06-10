@@ -30,6 +30,7 @@ extern unsigned long previousTime;
 extern bool pulseBlink;
 extern bool tempBlink;
 extern bool bpBlink;
+extern bool displayOn;
 
 #define MINPRESSURE  10     //minimum pressure for a tft touch to be acknowledged.
 #define MAXPRESSURE  1000   //maximum pressure for a tft touch to be acknowledged.
@@ -37,6 +38,7 @@ extern bool bpBlink;
 bool alarmButton = false;   //boolean used to keep track of if alarm button was pressed.
 int pulseColor;
 int tempColor;
+int alarmColor;
 int sysColor;
 int diasColor;
 
@@ -89,7 +91,7 @@ void updateMeasurements(double tempCorrected,
       tempColor = RED;
     } else if(*WarningAlarmData.tempOutOfRange) {
       if (((tempCorrected > 39.7) && (tempCorrected < 43.4)) || ((tempCorrected < 34.3) && (tempCorrected > 30.7))) {
-          if (tempColor == YELLOW) {
+          if ((!displayOn) || (tempColor == YELLOW)) {
             tempColor = BLACK;
           } else {
             tempColor = YELLOW;
@@ -111,7 +113,7 @@ void updateMeasurements(double tempCorrected,
       sysColor = RED;
     } else if (*WarningAlarmData.bpOutOfRange) {
       if (((systolicPressCorrected > 136.5) && (systolicPressCorrected < 156)) || ((systolicPressCorrected < 114) && (systolicPressCorrected > 96))) {
-          if (sysColor == YELLOW) {
+          if ((!displayOn) || (sysColor == YELLOW)) {
             sysColor = BLACK;
           } else {
             sysColor = YELLOW;
@@ -126,7 +128,7 @@ void updateMeasurements(double tempCorrected,
       diasColor = RED;
     } else if(*WarningAlarmData.bpOutOfRange) {
       if (((diastolicPressCorrected > 84) && (diastolicPressCorrected < 96)) || ((diastolicPressCorrected < 66.5) && (diastolicPressCorrected > 56))) {
-          if (diasColor == YELLOW) {
+          if ((!displayOn) || (diasColor == YELLOW)) {
             diasColor = BLACK;
           } else {
             diasColor = YELLOW;
@@ -165,7 +167,7 @@ void updateMeasurements(double tempCorrected,
       pulseColor = RED;
     } else if(*WarningAlarmData.pulseOutOfRange) {
        if (((pulseRateCorrected > 105) && (pulseRateCorrected < 115)) || ((pulseRateCorrected < 57) && (pulseRateCorrected > 51))) {
-          if (pulseColor == YELLOW) {
+          if ((!displayOn) || (pulseColor == YELLOW)) {
             pulseColor = BLACK;
           } else {
             pulseColor = YELLOW;
@@ -216,13 +218,20 @@ void touchScreen() {
   pinMode(XM, OUTPUT);
   pinMode(YP, OUTPUT);
 
+  if(!(*KeypadData.alarmAcknowledge == 0) && !(alarmColor == RED)) {
+      tft.fillRect((16 + BUTTONWIDTH * 3), 202, (BUTTONWIDTH), (BUTTONHEIGHT), RED);
+      TFT_Write(WHITE, (18 + BUTTONWIDTH * 3), 204, "ALARM");
+      TFT_Write(WHITE, (18 + BUTTONWIDTH * 3), 224, "ACT.");
+      alarmColor = RED;
+  }
+
   //maps our tft display based off of the fact that we have a horizontal display.
   p.x = map(p.x, TS_MINY, TS_MAXY, tft.height(), 0);
   //p.x = tft.width()-map(p.x, TS_MINX, TS_MAXX, tft.width(), 0);
   p.y = (tft.height()-map(p.y, TS_MINX, TS_MAXX, tft.width(), 0));
   //p.y = map(p.y, TS_MINY, TS_MAXY, tft.height(), 0);
 
-  if (p.z > MINPRESSURE && p.z < MAXPRESSURE) {                                                                       //checks to see if the tft is pressed anywhere
+  if (displayOn && p.z > MINPRESSURE && p.z < MAXPRESSURE) {                                                                       //checks to see if the tft is pressed anywhere
      if((p.x < (BUTTONHEIGHT + 160)) && (p.x > 160) && (*KeypadData.alarmAcknowledge == 0)) {                         //checks to see if it alligns with the buttons horizontal axis.
         if(((tft.height()-p.y) < (BUTTONWIDTH + 10)) && ((tft.height()-p.y) > 10)) {                                  //checks to see if the vertical axis for temp was pressed.
            tempCheck = true;
@@ -262,14 +271,14 @@ void touchScreen() {
            tft.fillRect((12 + BUTTONWIDTH), 202, BUTTONWIDTH, BUTTONHEIGHT, BLUE);//changes color to represent a button press
            TFT_Write(RED, (18 + BUTTONWIDTH), 217, "Alarm");
            
-        } else if (((tft.height()-p.y) < ((BUTTONWIDTH) + 10)) && ((tft.height()-p.y) > 10)) {                        //checks to see if the vertical axis for blank was pressed.
+        } else if (((tft.height()-p.y) < ((BUTTONWIDTH) + 10)) && ((tft.height()-p.y) > 10) && (*KeypadData.alarmAcknowledge == 0)) {                        //checks to see if the vertical axis for blank was pressed.
           ekgCheck = true;
            *MeasureData.measurementSelection = 5; //assigns button selected data
            *KeypadData.localMeasurementSelection = 5;
           tft.fillRect(10, 202, (BUTTONWIDTH), (BUTTONHEIGHT), BLUE);             //changes color to represent a button press
           TFT_Write(RED, 12, 217," EKG");
           
-        } else if (((tft.height()-p.y) < ((14 + BUTTONWIDTH * 3))) && ((tft.height()-p.y) > (14 + BUTTONWIDTH * 2))) {                    //checks to see if the vertical axis for blank was pressed.
+        } else if (((tft.height()-p.y) < ((14 + BUTTONWIDTH * 3))) && ((tft.height()-p.y) > (14 + BUTTONWIDTH * 2)) && (*KeypadData.alarmAcknowledge == 0)) {                    //checks to see if the vertical axis for blank was pressed.
           tft.fillRect((14 + BUTTONWIDTH * 2), 202, (BUTTONWIDTH), (BUTTONHEIGHT), BLUE);//changes color to represent a button press
           TFT_Write(RED, (16 + BUTTONWIDTH * 2), 217,"Traffic");
           
@@ -278,7 +287,8 @@ void touchScreen() {
   } else if (alarmButton && ((millis() - previousTime) > BUTTON_TIME)){                                               //if the alarm button was pressed and its time to look at the 
       previousTime = millis();                                                                                        //buttons pressed we will check them
       alarmButton = false;
-      //tft.fillRect(0, 0, 320, 20, BLACK);                                                            //clears screen to normal and buttons back to unpressed.
+      tft.fillRect((16 + BUTTONWIDTH * 3), 202, (BUTTONWIDTH), (BUTTONHEIGHT), BLACK);                                                            //clears screen to normal and buttons back to unpressed.
+      alarmColor = BLACK;
       tft.fillRect((12 + BUTTONWIDTH), 202, BUTTONWIDTH, BUTTONHEIGHT, CYAN);
       TFT_Write(RED, (18 + BUTTONWIDTH), 217, "Alarm");
       Serial.println("Alarm Acknowledged");                                                          //will print in serial that alarm was acknowledged
