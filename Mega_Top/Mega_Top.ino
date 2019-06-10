@@ -45,6 +45,7 @@ TouchScreen ts = TouchScreen(XP, YP, XM, YM, 300);
 
 #define LCD_RESET A4 // Can alternately just connect to Arduino's reset pin
 
+
 // When using the BREAKOUT BOARD only, use these 8 data lines to the LCD:
 // For the Arduino Uno, Duemilanove, Diecimila, etc.:
 //   D0 connects to digital pin 8  (Notice these are

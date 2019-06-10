@@ -16,6 +16,9 @@ extern "C" {
   #include "NetworkCommunication.h"
 }
 
+
+#define BUZZER_PIN 52
+
 //includes all needed data structs, computational booleans, and variables needed to keep time.
 extern MeasureDataStruct MeasureData;
 extern WarningAlarmDataStruct WarningAlarmData;
@@ -41,6 +44,17 @@ int tempColor;
 int alarmColor;
 int sysColor;
 int diasColor;
+int tempWarningCount;
+int bpWarningCount;
+int pulseWarningCount;
+int respWarningCount;
+int batteryWarningCount;
+bool tempCountIncr = true;
+bool bpCountIncr = true;
+bool pulseCountIncr = true;
+bool respCountIncr = true;
+bool batteryCountIncr = true;
+long eightHourTimer = millis();
 
 // Writes 'content' in the given 'color' at position (x, y)
 void TFT_Write(int Color, int x, int y, String content) {
@@ -84,23 +98,49 @@ void updateMeasurements(double tempCorrected,
                         unsigned short batteryState) {
   // Updating the measurements as well as decides the color at which each measurement should be displayed.
   bool newBatteryUpdate = newTempComputed || newBloodPressComputed || newPulseRateComputed;
-  
+
+  if(!(*KeypadData.alarmAcknowledge == 0) && (alarmColor == BLACK) && displayOn) {
+      tft.fillRect((16 + BUTTONWIDTH * 3), 202, (BUTTONWIDTH), (BUTTONHEIGHT), RED);
+      TFT_Write(WHITE, (18 + BUTTONWIDTH * 3), 204, "ALARM");
+      TFT_Write(WHITE, (18 + BUTTONWIDTH * 3), 224, "ACT.");
+      alarmColor = RED;
+  }
+
   //temperature color and data display
   if(newTempComputed || (alarmCheck && (newBloodPressComputed || newRespirationComputed || newPulseRateComputed || newTempComputed)) || (tempBlink && (((tempCorrected > 39.7) && (tempCorrected < 43.4)) || ((tempCorrected < 34.3) && (tempCorrected > 30.7))))) {          
     if(*WarningAlarmData.tempOutOfRange && ((tempCorrected > 43.4) || (tempCorrected < 30.7)) && (annonciationCounter > 4)) {
       tempColor = RED;
+      if(tempCountIncr) {
+        tempWarningCount++;
+        tempCountIncr = false;
+      }
     } else if(*WarningAlarmData.tempOutOfRange) {
       if (((tempCorrected > 39.7) && (tempCorrected < 43.4)) || ((tempCorrected < 34.3) && (tempCorrected > 30.7))) {
           if ((!displayOn) || (tempColor == YELLOW)) {
             tempColor = BLACK;
+            if(tempCountIncr) {
+              tempWarningCount++;
+              tempCountIncr = false;
+            }
           } else {
             tempColor = YELLOW;
+            if(tempCountIncr) {
+              tempWarningCount++;
+              tempCountIncr = false;
+            }
           }
       } else {
       tempColor = YELLOW;
+      if(tempCountIncr) {
+        tempWarningCount++;
+        tempCountIncr = false;
+      }
       }
     } else {
       tempColor = GREEN;
+      if(!tempCountIncr) {
+        tempCountIncr = true;
+      }
     }
     tft.fillRect(170, 10, 85, 24, BLACK);
     TFT_Write(tempColor, 170, 10, (String)tempCorrected);
@@ -111,33 +151,71 @@ void updateMeasurements(double tempCorrected,
   if(newBloodPressComputed || (alarmCheck && (newBloodPressComputed || newRespirationComputed || newPulseRateComputed || newTempComputed)) || (bpBlink && (((systolicPressCorrected > 136.5) && (systolicPressCorrected < 156)) || ((systolicPressCorrected < 114) && (systolicPressCorrected > 96)) || ((diastolicPressCorrected > 84) && (diastolicPressCorrected < 96)) || ((diastolicPressCorrected < 66.5) && (diastolicPressCorrected > 56))))) {     
     if(*WarningAlarmData.bpOutOfRange && ((systolicPressCorrected > 156) || (systolicPressCorrected < 96)) && (annonciationCounter > 4)) {
       sysColor = RED;
+      if(bpCountIncr) {
+        bpWarningCount++;
+        bpCountIncr = false;
+      }
     } else if (*WarningAlarmData.bpOutOfRange) {
       if (((systolicPressCorrected > 136.5) && (systolicPressCorrected < 156)) || ((systolicPressCorrected < 114) && (systolicPressCorrected > 96))) {
           if ((!displayOn) || (sysColor == YELLOW)) {
             sysColor = BLACK;
+            if(bpCountIncr) {
+        bpWarningCount++;
+        bpCountIncr = false;
+      }
           } else {
             sysColor = YELLOW;
+            if(bpCountIncr) {
+        bpWarningCount++;
+        bpCountIncr = false;
+      }
           }
       } else {
         sysColor = YELLOW;
+        if(bpCountIncr) {
+        bpWarningCount++;
+        bpCountIncr = false;
+      }
       }
     } else {
       sysColor = GREEN;
+      if(!bpCountIncr) {
+        bpCountIncr = true;
+      }
     }
     if(*WarningAlarmData.bpOutOfRange && ((diastolicPressCorrected > 96) || (diastolicPressCorrected < 56)) && (annonciationCounter > 4)) {
       diasColor = RED;
+      if(bpCountIncr) {
+        bpWarningCount++;
+        bpCountIncr = false;
+      }
     } else if(*WarningAlarmData.bpOutOfRange) {
       if (((diastolicPressCorrected > 84) && (diastolicPressCorrected < 96)) || ((diastolicPressCorrected < 66.5) && (diastolicPressCorrected > 56))) {
           if ((!displayOn) || (diasColor == YELLOW)) {
             diasColor = BLACK;
+            if(bpCountIncr) {
+        bpWarningCount++;
+        bpCountIncr = false;
+      }
           } else {
             diasColor = YELLOW;
+            if(bpCountIncr) {
+        bpWarningCount++;
+        bpCountIncr = false;
+      }
           }
       } else {
         diasColor = YELLOW;
+        if(bpCountIncr) {
+        bpWarningCount++;
+        bpCountIncr = false;
+      }
       }
     } else {
       diasColor = GREEN;
+      if(!bpCountIncr) {
+        bpCountIncr = true;
+      }
     }
     tft.fillRect(170, 35, 85, 24, BLACK);
     String bloodPressure = (String)(unsigned int)systolicPressCorrected + "/" 
@@ -151,10 +229,21 @@ void updateMeasurements(double tempCorrected,
      int respirationColor;
      if(*WarningAlarmData.respOutOfRange && ((respirationCorrected > 28) || (respirationCorrected < 10)) && (annonciationCounter > 4)) {
        respirationColor = RED;
+       if(respCountIncr) {
+        respWarningCount++;
+        respCountIncr = false;
+      }
      } else if (*WarningAlarmData.respOutOfRange) {
        respirationColor = YELLOW;
+       if(respCountIncr) {
+        respWarningCount++;
+        respCountIncr = false;
+      }
      } else {
        respirationColor = GREEN;
+       if(respCountIncr) {
+        respCountIncr = true;
+      }
      }
      
      tft.fillRect(170, 60, 85, 24, BLACK);
@@ -165,18 +254,37 @@ void updateMeasurements(double tempCorrected,
   if(newPulseRateComputed || (alarmCheck && (newBloodPressComputed || newRespirationComputed || newPulseRateComputed || newTempComputed)) || (pulseBlink && (((pulseRateCorrected > 105) && (pulseRateCorrected < 115)) || ((pulseRateCorrected < 57) && (pulseRateCorrected > 51))))) {
      if(*WarningAlarmData.pulseOutOfRange && ((pulseRateCorrected > 115) || (pulseRateCorrected < 51)) && (annonciationCounter > 4)) {
       pulseColor = RED;
+      if(pulseCountIncr) {
+        pulseWarningCount++;
+        pulseCountIncr = false;
+      }
     } else if(*WarningAlarmData.pulseOutOfRange) {
        if (((pulseRateCorrected > 105) && (pulseRateCorrected < 115)) || ((pulseRateCorrected < 57) && (pulseRateCorrected > 51))) {
           if ((!displayOn) || (pulseColor == YELLOW)) {
             pulseColor = BLACK;
+            if(pulseCountIncr) {
+        pulseWarningCount++;
+        pulseCountIncr = false;
+      }
           } else {
             pulseColor = YELLOW;
+            if(pulseCountIncr) {
+        pulseWarningCount++;
+        pulseCountIncr = false;
+      }
           }
       } else {
         pulseColor = YELLOW;
+        if(pulseCountIncr) {
+        pulseWarningCount++;
+        pulseCountIncr = false;
+      }
       }
      } else {
        pulseColor = GREEN;
+       if(!pulseCountIncr) {
+        pulseCountIncr = true;
+      }
      }
      tft.fillRect(170, 85, 85, 24, BLACK);
      TFT_Write(pulseColor, 170, 85,  (String)(int)pulseRateCorrected); 
@@ -200,10 +308,21 @@ void updateMeasurements(double tempCorrected,
      int battColor;
      if(*WarningAlarmData.batteryOutOfRange && (annonciationCounter > 4)) {
        battColor = RED;
+       if(batteryCountIncr) {
+        batteryWarningCount++;
+        batteryCountIncr = false;
+      }
      } else if (*WarningAlarmData.batteryOutOfRange) {
        battColor = YELLOW;
+       if(batteryCountIncr) {
+        batteryWarningCount++;
+        batteryCountIncr = false;
+      }
      } else {
        battColor = GREEN;
+       if(!batteryCountIncr) {
+        batteryCountIncr = true;
+      }
      }
      tft.fillRect(170, 135, 85, 24, BLACK);
      TFT_Write(battColor, 170, 135, (String)batteryState); 
@@ -218,11 +337,13 @@ void touchScreen() {
   pinMode(XM, OUTPUT);
   pinMode(YP, OUTPUT);
 
-  if(!(*KeypadData.alarmAcknowledge == 0) && !(alarmColor == RED)) {
-      tft.fillRect((16 + BUTTONWIDTH * 3), 202, (BUTTONWIDTH), (BUTTONHEIGHT), RED);
-      TFT_Write(WHITE, (18 + BUTTONWIDTH * 3), 204, "ALARM");
-      TFT_Write(WHITE, (18 + BUTTONWIDTH * 3), 224, "ACT.");
-      alarmColor = RED;
+  if((millis() - eightHourTimer) > 28800000) {
+    tempWarningCount = 0;
+    bpWarningCount = 0;
+    pulseWarningCount = 0;
+    respWarningCount = 0;
+    batteryWarningCount = 0;
+    eightHourTimer = millis();
   }
 
   //maps our tft display based off of the fact that we have a horizontal display.
@@ -281,7 +402,34 @@ void touchScreen() {
         } else if (((tft.height()-p.y) < ((14 + BUTTONWIDTH * 3))) && ((tft.height()-p.y) > (14 + BUTTONWIDTH * 2)) && (*KeypadData.alarmAcknowledge == 0)) {                    //checks to see if the vertical axis for blank was pressed.
           tft.fillRect((14 + BUTTONWIDTH * 2), 202, (BUTTONWIDTH), (BUTTONHEIGHT), BLUE);//changes color to represent a button press
           TFT_Write(RED, (16 + BUTTONWIDTH * 2), 217,"Traffic");
-          
+          unsigned int i;
+          for(i=0;i<75;i++) {
+            digitalWrite(BUZZER_PIN,HIGH);
+            delay(4);//wait for 1ms
+            digitalWrite(BUZZER_PIN,LOW);
+            delay(4);//wait for 1ms
+          }
+          //output another frequency
+          for(i=0;i<200;i++) {
+            digitalWrite(BUZZER_PIN,HIGH);
+            delay(1);
+            digitalWrite(BUZZER_PIN,LOW);
+            delay(1);
+          }
+          for(i=0;i<200;i++) {
+            digitalWrite(BUZZER_PIN,HIGH);
+            delay(2);
+            digitalWrite(BUZZER_PIN,LOW);
+            delay(2);
+          }
+          for(i=0;i<175;i++) {
+            digitalWrite(BUZZER_PIN,HIGH);
+            delay(3);
+            digitalWrite(BUZZER_PIN,LOW);
+            delay(3);
+          }
+          tft.fillRect((14 + BUTTONWIDTH * 2), 202, (BUTTONWIDTH), (BUTTONHEIGHT), CYAN);//changes color to represent a button press
+          TFT_Write(RED, (16 + BUTTONWIDTH * 2), 217,"Traffic");
         }
      } 
   } else if (alarmButton && ((millis() - previousTime) > BUTTON_TIME)){                                               //if the alarm button was pressed and its time to look at the 

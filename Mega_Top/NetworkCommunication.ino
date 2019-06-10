@@ -14,6 +14,12 @@ extern bool newBloodPressComputed;
 extern bool newPulseRateComputed;
 extern bool newRespirationComputed;
 extern bool newEKGComputed;
+extern int alarmColor;
+extern int tempWarningCount;
+extern int bpWarningCount;
+extern int pulseWarningCount;
+extern int respWarningCount;
+extern int batteryWarningCount;
 
 // Global structs
 extern DisplayDataStruct DisplayData;
@@ -125,8 +131,8 @@ void remoteCommunication() {
       }
       if(waitResponseSP()) {
         ekgCheck = true;
-        int measuredEKGValue = getEKG();
-        Serial.print("Remotely Received EKG = "); Serial.println((int)computePr(measuredEKGValue));
+        double* measuredEKGValue = getEKG();
+        Serial.print("Remotely Received EKG = "); Serial.println((int)computeEKG(measuredEKGValue));
       }
       else {
         Serial.println("P: Measurement has stopped");
@@ -149,6 +155,7 @@ void remoteCommunication() {
       if(displayOn) {
         // Makes the whole screen black
         tft.fillScreen(BLACK);
+        alarmColor = BLACK;
         displaySwitch = true;
       }
       else {
@@ -200,27 +207,105 @@ void remoteCommunication() {
       String ekg  = (String)(int)DisplayData.EKGFreqBuf[*DisplayData.currentEKGIndex];
       String batt = (String)*DisplayData.batteryState;
       Serial.println("M: Printing out most recent data:");
-      Serial.print("* Temperature  = "); Serial.print(temp); Serial.println("\t C");
-      Serial.print("* Sys. Press.  = "); Serial.print(sys);  Serial.println("\t mmHg");
-      Serial.print("* Dias. Press. = "); Serial.print(dias); Serial.println("\t mmHg");
-      Serial.print("* Pulse Rate   = "); Serial.print(pr);   Serial.println("\t BPM");
-      Serial.print("* Resp. Rate   = "); Serial.print(resp); Serial.println("\t BPM");
+      Serial.print("* Temperature  = "); Serial.print(temp); Serial.print("\t C"); Serial.print("     Warning Count: ");  Serial.println(tempWarningCount);
+      Serial.print("* Sys. Press.  = "); Serial.print(sys);  Serial.print("\t mmHg"); Serial.print("  Warning Count: "); Serial.println(bpWarningCount);
+      Serial.print("* Dias. Press. = "); Serial.print(dias); Serial.print("\t mmHg"); Serial.print("  Warning Count: "); Serial.println(bpWarningCount);
+      Serial.print("* Pulse Rate   = "); Serial.print(pr);   Serial.print("\t BPM"); Serial.print("   Warning Count: "); Serial.println(pulseWarningCount);
+      Serial.print("* Resp. Rate   = "); Serial.print(resp); Serial.print("\t BPM"); Serial.print("   Warning Count: "); Serial.println(respWarningCount);
       Serial.print("* EKG          = "); Serial.print(ekg);  Serial.println("\t Hz");
-      Serial.print("* Battery      = "); Serial.print(batt); Serial.println();
+      Serial.print("* Battery      = "); Serial.print(batt);  Serial.print("           Warning Count: "); Serial.println(batteryWarningCount);
     }
     else if(command == W) {
       // Prints out information from 'WarningAlarmData'
+      /*
+       * (int)DisplayData.tempCorrectedBuf[*DisplayData.currentTemperatureIndex],
+                           (int)DisplayData.bloodPressCorrectedBuf[*DisplayData.currentSysPressIndex],
+                           (int)DisplayData.bloodPressCorrectedBuf[*DisplayData.currentDiasPressIndex],
+                           (int)DisplayData.prCorrectedBuf[*DisplayData.currentPulseRateIndex],
+                           (int)DisplayData.respirationCorrectedBuf[*DisplayData.currentRespirationIndex],
+                           (int)DisplayData.EKGFreqBuf[*DisplayData.currentEKGIndex],
+                           *DisplayData.batteryState
+      */
       Serial.println("W: Printing out most recent warning/alarm information:");
-      Serial.print("* Temp    out of range? "); Serial.println(*WarningAlarmData.tempOutOfRange);
-      Serial.print("* BP      out of range? "); Serial.println(*WarningAlarmData.bpOutOfRange);
-      Serial.print("* Pulse   out of range? "); Serial.println(*WarningAlarmData.pulseOutOfRange);
-      Serial.print("* Resp.   out of range? "); Serial.println(*WarningAlarmData.respOutOfRange);
-      Serial.print("* Battery out of range? "); Serial.println(*WarningAlarmData.batteryOutOfRange);
-      Serial.print("* Temp. High? "); Serial.println(*WarningAlarmData.tempHigh);
-      Serial.print("* BP.   High? "); Serial.println(*WarningAlarmData.bpHigh);
-      Serial.print("* Resp. High? "); Serial.println(*WarningAlarmData.respHigh);
-      Serial.print("* Pulse   Low? "); Serial.println(*WarningAlarmData.pulseLow);
-      Serial.print("* Battery Low? "); Serial.println(*WarningAlarmData.batteryLow);
+      Serial.print("* Temp:    ");
+      int currentTempCorrected = (int)DisplayData.tempCorrectedBuf[*DisplayData.currentTemperatureIndex];
+       if(*WarningAlarmData.tempOutOfRange && ((currentTempCorrected > 43.4) || (currentTempCorrected < 30.7))) {
+        if((annonciationCounter > 4)) {
+          Serial.println("Alarm Active");
+        } else {
+          Serial.println("Alarm Active (Acknowledged)");
+        }
+    } else if(*WarningAlarmData.tempOutOfRange) {
+      if (((currentTempCorrected > 39.7) && (currentTempCorrected < 43.4)) || ((currentTempCorrected < 34.3) && (currentTempCorrected > 30.7))) {
+          Serial.println("Warning (Blinking)");
+      } else {
+        Serial.println("Warning");
+      }
+    } else {
+      Serial.println("Normal Range");
+    } 
+    
+      Serial.print("* BP:      ");
+      int currentSysCorrected = (int)DisplayData.bloodPressCorrectedBuf[*DisplayData.currentSysPressIndex];
+      int currentDiasCorrected = (int)DisplayData.bloodPressCorrectedBuf[*DisplayData.currentDiasPressIndex];
+      if(*WarningAlarmData.bpOutOfRange && (((currentSysCorrected > 156) || (currentSysCorrected < 96)) || ((currentDiasCorrected > 96) || (currentDiasCorrected < 56)))) {
+        if((annonciationCounter > 4)) {
+          Serial.println("Alarm Active");
+        } else {
+          Serial.println("Alarm Active (Acknowledged)");
+        }
+    } else if(*WarningAlarmData.bpOutOfRange) {
+      if ((((currentSysCorrected > 136.5) && (currentSysCorrected < 156)) || ((currentSysCorrected < 114) && (currentSysCorrected > 96))) || (((currentDiasCorrected > 84) && (currentDiasCorrected < 96)) || ((currentDiasCorrected < 66.5) && (currentDiasCorrected > 56)))) {
+          Serial.println("Warning (Blinking)");
+      } else {
+        Serial.println("Warning");
+      }
+    } else {
+      Serial.println("Normal Range");
+    } 
+    
+      Serial.print("* Pulse:   ");
+       int currentPulseCorrected = (int)DisplayData.prCorrectedBuf[*DisplayData.currentPulseRateIndex];
+       if(*WarningAlarmData.pulseOutOfRange && ((currentPulseCorrected > 115) || (currentPulseCorrected < 51))) {
+        if((annonciationCounter > 4)) {
+          Serial.println("Alarm Active");
+        } else {
+          Serial.println("Alarm Active (Acknowledged)");
+        }
+    } else if(*WarningAlarmData.pulseOutOfRange) {
+      if (((currentPulseCorrected > 105) && (currentPulseCorrected < 115)) || ((currentPulseCorrected < 57) && (currentPulseCorrected > 51))) {
+          Serial.println("Warning (Blinking)");
+      } else {
+        Serial.println("Warning");
+      }
+    } else {
+      Serial.println("Normal Range");
+    } 
+      
+      Serial.print("* Resp.:   ");
+      int currentRespCorrected = (int)DisplayData.respirationCorrectedBuf[*DisplayData.currentRespirationIndex];
+       if(*WarningAlarmData.respOutOfRange && ((currentRespCorrected > 28) || (currentRespCorrected < 10))) {
+        if((annonciationCounter > 4)) {
+          Serial.println("Alarm Active");
+        } else {
+          Serial.println("Alarm Active (Acknowledged)");
+        }
+    } else if(*WarningAlarmData.respOutOfRange) {
+        Serial.println("Warning");
+    } else {
+      Serial.println("Normal Range");
+    }
+      
+      Serial.print("* Battery: "); 
+      if(*WarningAlarmData.batteryOutOfRange) {
+        if((annonciationCounter > 4)){
+          Serial.println("Alarm Active");
+        } else {
+          Serial.println("Alarm Active (Acknowledged)");
+        }
+     } else {
+       Serial.println("Normal Range");
+     }
     }
     else {
       // Unknown Command
