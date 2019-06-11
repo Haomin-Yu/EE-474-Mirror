@@ -1,8 +1,10 @@
 /* 
  * Function name: measureInterpreter
- * Function inputs: takes an ac wave input representing pulse rate
- * Function outputs: outputs the pointer value corresponding to the measured pulse rate value
- * Function description: this is used in order to calculate the pulserate from an inputed ac voltage function.
+ * Function inputs: takes an ac wave input representing pulse rate or resperation. It also takes in signals from
+ * buttons and a potentiometer for other measurements.
+ * Function outputs: outputs the pointer value corresponding to the reequested measurement
+ * Function description: this is used in order to calculate all of the measurements requested by the
+ * mega.
  * 
  * Author: Nathan Ness, Haomin Yu
  */
@@ -38,7 +40,7 @@ void pulseInterupt() { //if interupt is called it will increment counter
   pulseCount++;
 }
 
-void respirationInterupt() {
+void respirationInterupt() {//if interupt is called it will increment counter
   respirationCount++;
 }
 
@@ -97,7 +99,7 @@ void diastolicPressInterpreter(unsigned int* bloodPressurePointer) {
 }
 
 // Interprets signal from PULSE_ANALOG_IN as actial pulse rates
-static const unsigned long MEASURE_PULSE_TIME = 6000;
+static const unsigned long MEASURE_PULSE_TIME = 6000; //Decides how long the pulse will be measured
 void pulseRateInterpreter(unsigned int* prValuePointer) {
   unsigned long startTime = millis();
   pulseCount = 0;                                                                   //resets counter value
@@ -110,24 +112,22 @@ void pulseRateInterpreter(unsigned int* prValuePointer) {
     }
   }
   detachInterrupt(PULSE_INTERRUPT);                                                 //detaches interupt
-  //*prValuePointer = pulseCount * MINUTE / MEASURE_PULSE_TIME;                     //multiplies the measured data by 10 to make it beats per minute.
   *prValuePointer = pulseCount;
 }
 
 // Interprets signal from RESPIRATION_ANALOG_IN as actial respiration rates
-static const unsigned long MEASURE_RESPIRATION_TIME = 6000;
+static const unsigned long MEASURE_RESPIRATION_TIME = 6000;//Defines how long resperation is measured
 void respirationRateInterpreter(unsigned int* respirationValuePointer) {
   unsigned long startTime = millis();
-  respirationCount = 0;
-  attachInterrupt(digitalPinToInterrupt(RESPIRATION_INTERRUPT), respirationInterupt, FALLING);
-  while (millis() - startTime < MEASURE_RESPIRATION_TIME) { 
-    if(analogRead(RESPIRATION_ANALOG_IN) < RESPIRATION_THRESHOLD) {                  //decides if it will be a low or high signal
+  respirationCount = 0;                                                                         //resets counter value
+  attachInterrupt(digitalPinToInterrupt(RESPIRATION_INTERRUPT), respirationInterupt, FALLING);  //attaches inturpt when it sees a falling edge
+  while (millis() - startTime < MEASURE_RESPIRATION_TIME) {                                     //runs for 6 seconds
+    if(analogRead(RESPIRATION_ANALOG_IN) < RESPIRATION_THRESHOLD) {                             //decides if it will be a low or high signal
       digitalWrite(RESPIRATION_DIGITAL_OUT, LOW);
     } else {
       digitalWrite(RESPIRATION_DIGITAL_OUT, HIGH);
     }
   }
   detachInterrupt(RESPIRATION_INTERRUPT);
-  //*respirationValuePointer = respirationCount * MINUTE / MEASURE_RESPIRATION_TIME;
   *respirationValuePointer = respirationCount;
 }

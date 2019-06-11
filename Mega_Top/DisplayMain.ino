@@ -33,7 +33,7 @@ extern bool newRespirationComputed;
 extern bool newEKGComputed;
 
 void userSetup() {                                            // Initializes the display to its initial display
-  pinMode(BUZZER_PIN, OUTPUT);
+  pinMode(BUZZER_PIN, OUTPUT);  //sets the buzzer pin for traffic
   // Makes the whole screen black
   tft.fillScreen(BLACK);
   // Sets texts to font 2

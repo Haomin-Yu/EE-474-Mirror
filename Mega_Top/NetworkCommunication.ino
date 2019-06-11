@@ -1,14 +1,18 @@
-/* 
- * This class handles the communication with the Arduino Uno
- * and the remote device
- * ==============================================================
- * 
- * Author: Haomin Yu
+/*
+ * Function name: NetworkCommunication
+ * Function inputs: This file inputs the compute and rawstruct files in order to gather the needed information for
+ *                  the communication between the local and remote networks. It also inputs data from the remote network
+ * Function outputs: This outputs data to the remote communication so it can be displayed remotely for the doctor.
+ * Function description: This function is used to communicate between the local arduino network and the used remote puTTy network.
+ * Author: Haomin Yu and Nathan Ness
  */
+
+ //adds the compute and rawstruct files to be used in NetworkCommunications
 #include "compute.h"
 #include "rawStructs.h"
 #include <string.h>
 
+//externs all needed variables from other files
 extern bool newTempComputed;
 extern bool newBloodPressComputed;
 extern bool newPulseRateComputed;
@@ -96,6 +100,7 @@ void remoteCommunication() {
         goto stopMeasurement;
       }
       if(waitResponseSP()) {
+        //getting blood pressure
         Serial.println("S: Measuring Blood Pressure...");
         bloodPressCheck = true;
         int measuredBPData = getBloodPress();
@@ -110,6 +115,7 @@ void remoteCommunication() {
         goto stopMeasurement;
      }
     if(waitResponseSP()) {
+      //getting respiration
       Serial.println("S: Measuring Respiration...");
         respirationCheck = true;
         int measuredRespValue = getRespiration();
@@ -120,6 +126,7 @@ void remoteCommunication() {
         goto stopMeasurement;
       }
       if(waitResponseSP()) {
+        //getting pulse rate
         Serial.println("S: Measuring Pulse Rate...");
         pulseCheck = true;
         int measuredPulseValue = getPulseRate();
@@ -130,6 +137,7 @@ void remoteCommunication() {
         goto stopMeasurement;
       }
       if(waitResponseSP()) {
+        //getting EKG
         ekgCheck = true;
         double* measuredEKGValue = getEKG();
         Serial.print("Remotely Received EKG = "); Serial.println((int)computeEKG(measuredEKGValue));
@@ -138,12 +146,6 @@ void remoteCommunication() {
         Serial.println("P: Measurement has stopped");
         goto stopMeasurement;
       }
-     
-      // TODO - See lines 134-167
-      // Getting Blood Pressure
-      // Getting Resp. Rate
-      // Getting Pulse Rate
-      // Getting EKG
       stopMeasurement:;
     }
     else if(command == P) {
@@ -153,12 +155,15 @@ void remoteCommunication() {
     else if(command == D) {
       // Toggles TFT display
       if(displayOn) {
+        Serial.println("D: TFT Screen Off...");
         // Makes the whole screen black
         tft.fillScreen(BLACK);
         alarmColor = BLACK;
         displaySwitch = true;
       }
       else {
+        //turns TFT screen back on
+        Serial.println("D: TFT Screen On...");
         TFT_Write(GREEN, 10, 10,  "Body.Temp  ->        C");
         TFT_Write(GREEN, 10, 35,  "   B.P     ->        mmHg"); 
         TFT_Write(GREEN, 10, 60,  "Resp. Rate ->        BPM"); 
@@ -217,17 +222,9 @@ void remoteCommunication() {
     }
     else if(command == W) {
       // Prints out information from 'WarningAlarmData'
-      /*
-       * (int)DisplayData.tempCorrectedBuf[*DisplayData.currentTemperatureIndex],
-                           (int)DisplayData.bloodPressCorrectedBuf[*DisplayData.currentSysPressIndex],
-                           (int)DisplayData.bloodPressCorrectedBuf[*DisplayData.currentDiasPressIndex],
-                           (int)DisplayData.prCorrectedBuf[*DisplayData.currentPulseRateIndex],
-                           (int)DisplayData.respirationCorrectedBuf[*DisplayData.currentRespirationIndex],
-                           (int)DisplayData.EKGFreqBuf[*DisplayData.currentEKGIndex],
-                           *DisplayData.batteryState
-      */
       Serial.println("W: Printing out most recent warning/alarm information:");
       Serial.print("* Temp:    ");
+      //decides temps current alarm state
       int currentTempCorrected = (int)DisplayData.tempCorrectedBuf[*DisplayData.currentTemperatureIndex];
        if(*WarningAlarmData.tempOutOfRange && ((currentTempCorrected > 43.4) || (currentTempCorrected < 30.7))) {
         if((annonciationCounter > 4)) {
@@ -246,6 +243,7 @@ void remoteCommunication() {
     } 
     
       Serial.print("* BP:      ");
+       //decides blood pressures current alarm state
       int currentSysCorrected = (int)DisplayData.bloodPressCorrectedBuf[*DisplayData.currentSysPressIndex];
       int currentDiasCorrected = (int)DisplayData.bloodPressCorrectedBuf[*DisplayData.currentDiasPressIndex];
       if(*WarningAlarmData.bpOutOfRange && (((currentSysCorrected > 156) || (currentSysCorrected < 96)) || ((currentDiasCorrected > 96) || (currentDiasCorrected < 56)))) {
@@ -265,6 +263,7 @@ void remoteCommunication() {
     } 
     
       Serial.print("* Pulse:   ");
+       //decides pulses current alarm state
        int currentPulseCorrected = (int)DisplayData.prCorrectedBuf[*DisplayData.currentPulseRateIndex];
        if(*WarningAlarmData.pulseOutOfRange && ((currentPulseCorrected > 115) || (currentPulseCorrected < 51))) {
         if((annonciationCounter > 4)) {
@@ -283,6 +282,7 @@ void remoteCommunication() {
     } 
       
       Serial.print("* Resp.:   ");
+       //decides respirations current alarm state
       int currentRespCorrected = (int)DisplayData.respirationCorrectedBuf[*DisplayData.currentRespirationIndex];
        if(*WarningAlarmData.respOutOfRange && ((currentRespCorrected > 28) || (currentRespCorrected < 10))) {
         if((annonciationCounter > 4)) {
@@ -297,6 +297,7 @@ void remoteCommunication() {
     }
       
       Serial.print("* Battery: "); 
+       //decides batteries current alarm state
       if(*WarningAlarmData.batteryOutOfRange) {
         if((annonciationCounter > 4)){
           Serial.println("Alarm Active");
@@ -312,42 +313,6 @@ void remoteCommunication() {
       Serial.println("E: Command Not Recognized");
     }
   }
-  
-     /*
-        case measureTemperatureFunc:
-          tempCheck = true;
-          remoteDataMessage = "Remotely Received Temperature = ";
-          measuredData = computeTemp(getSerialTemp());
-          break;
-        case measureBloodPressureFunc:
-          bloodPressCheck = true;
-          remoteDataMessage = "Remotely Received BloodPressure = ";
-          measuredData = getBloodPress();
-          measuredData = (int)computeSys((unsigned int)measuredData >> 8) << 8 
-                       | (int)computeDias(measuredData & 0xFF);
-          break;
-        case measureRespirationFunc:
-          respirationCheck = true;
-          remoteDataMessage = "Remotely Received Respiration = ";
-          measuredData = computeRespiration(getRespiration());
-          break;
-        case measurePulseRateFunc:
-          pulseCheck = true;
-          remoteDataMessage = "Remotely Received Pulse Rate = ";
-          measuredData = computePr(getPulseRate());
-          break;
-        case measureEKGFunc:
-          ekgCheck = true;
-          remoteDataMessage = "Remotely Received Peak EKG = ";
-          arrayPointer = getEKG();
-          measuredData = (unsigned int)computeEKG(arrayPointer);
-          break;
-        default:
-          remoteDataMessage = "Unknown Function Type!";
-          measuredData = 0;
-          annonciationCounter++;
-          break;
-      */
 }
 
 /*

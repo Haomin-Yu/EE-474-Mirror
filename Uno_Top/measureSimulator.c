@@ -1,6 +1,6 @@
 /*
  * Function name: measureSimulator
- * Function inputs: takes in the initial values from init
+ * Function inputs: takes in the initial values from init (THIS IS NO LONGER USED BECAUSE WE NO LONGER SIMULATE MEASUREMENTS)
  * Function outputs: outputs the simulated measure values.
  * Function description: runs a simulation of values that are being used currently in place of sensors,
  *                       allowing us to test our system without any real sensors.

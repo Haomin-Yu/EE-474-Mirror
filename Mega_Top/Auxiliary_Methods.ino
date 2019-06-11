@@ -4,7 +4,7 @@
  * Function outputs: contains many miscillanious methods mentioned below such as tft labels and data from touchscreen.
  * Function description: Creatues many miscillanious methods to be used throughout
  *                       the rest of out programs so it can be cleaner, easier to understand, and easier to call.
- *                       this includes the touchscreen funcitonality
+ *                       this includes the touchscreen funcitonality and some communications.
  *                       
  * Author: Haomin Yu and Nathan Ness
  *
@@ -17,7 +17,7 @@ extern "C" {
 }
 
 
-#define BUZZER_PIN 52
+#define BUZZER_PIN 52 //defines the pin used for our traffic alarm
 
 //includes all needed data structs, computational booleans, and variables needed to keep time.
 extern MeasureDataStruct MeasureData;
@@ -34,27 +34,29 @@ extern bool pulseBlink;
 extern bool tempBlink;
 extern bool bpBlink;
 extern bool displayOn;
+extern bool newEKGComputed;
+extern bool newRespirationComputed;
 
 #define MINPRESSURE  10     //minimum pressure for a tft touch to be acknowledged.
 #define MAXPRESSURE  1000   //maximum pressure for a tft touch to be acknowledged.
 
-bool alarmButton = false;   //boolean used to keep track of if alarm button was pressed.
-int pulseColor;
-int tempColor;
-int alarmColor;
-int sysColor;
-int diasColor;
-int tempWarningCount;
-int bpWarningCount;
-int pulseWarningCount;
-int respWarningCount;
-int batteryWarningCount;
-bool tempCountIncr = true;
-bool bpCountIncr = true;
-bool pulseCountIncr = true;
-bool respCountIncr = true;
-bool batteryCountIncr = true;
-long eightHourTimer = millis();
+bool alarmButton = false;             //boolean used to keep track of if alarm button was pressed.
+int pulseColor;                       //used to define a color used
+int tempColor;                        //used to define a color used
+int alarmColor;                       //used to define a color used
+int sysColor;                         //used to define a color used
+int diasColor;                        //used to define a color used
+int tempWarningCount;                 //used to define the amount of warnings seen in 8 hours
+int bpWarningCount;                   //used to define the amount of warnings seen in 8 hours
+int pulseWarningCount;                //used to define the amount of warnings seen in 8 hours
+int respWarningCount;                 //used to define the amount of warnings seen in 8 hours
+int batteryWarningCount;              //used to define the amount of warnings seen in 8 hours
+bool tempCountIncr = true;            //used to decide when to increment the warning counter
+bool bpCountIncr = true;              //used to decide when to increment the warning counter
+bool pulseCountIncr = true;           //used to decide when to increment the warning counter
+bool respCountIncr = true;            //used to decide when to increment the warning counter
+bool batteryCountIncr = true;         //used to decide when to increment the warning counter
+long eightHourTimer = millis();       //used to define the current time to check if its been 8 hours
 
 // Writes 'content' in the given 'color' at position (x, y)
 void TFT_Write(int Color, int x, int y, String content) {
@@ -97,8 +99,9 @@ void updateMeasurements(double tempCorrected,
                         double ekgCorrected,
                         unsigned short batteryState) {
   // Updating the measurements as well as decides the color at which each measurement should be displayed.
-  bool newBatteryUpdate = newTempComputed || newBloodPressComputed || newPulseRateComputed;
+  bool newBatteryUpdate = newRespirationComputed || newEKGComputed ||newTempComputed || newBloodPressComputed || newPulseRateComputed;
 
+//Displays indicator that alarm is active
   if(!(*KeypadData.alarmAcknowledge == 0) && (alarmColor == BLACK) && displayOn) {
       tft.fillRect((16 + BUTTONWIDTH * 3), 202, (BUTTONWIDTH), (BUTTONHEIGHT), RED);
       TFT_Write(WHITE, (18 + BUTTONWIDTH * 3), 204, "ALARM");
@@ -107,7 +110,7 @@ void updateMeasurements(double tempCorrected,
   }
 
   //temperature color and data display
-  if(newTempComputed || (alarmCheck && (newBloodPressComputed || newRespirationComputed || newPulseRateComputed || newTempComputed)) || (tempBlink && (((tempCorrected > 39.7) && (tempCorrected < 43.4)) || ((tempCorrected < 34.3) && (tempCorrected > 30.7))))) {          
+  if(newTempComputed || (alarmCheck && (newBloodPressComputed || newEKGComputed || newRespirationComputed || newPulseRateComputed || newTempComputed)) || (tempBlink && (((tempCorrected > 39.7) && (tempCorrected < 43.4)) || ((tempCorrected < 34.3) && (tempCorrected > 30.7))))) {          
     if(*WarningAlarmData.tempOutOfRange && ((tempCorrected > 43.4) || (tempCorrected < 30.7)) && (annonciationCounter > 4)) {
       tempColor = RED;
       if(tempCountIncr) {
@@ -148,7 +151,7 @@ void updateMeasurements(double tempCorrected,
   }
   
   //blood pressure color and data display
-  if(newBloodPressComputed || (alarmCheck && (newBloodPressComputed || newRespirationComputed || newPulseRateComputed || newTempComputed)) || (bpBlink && (((systolicPressCorrected > 136.5) && (systolicPressCorrected < 156)) || ((systolicPressCorrected < 114) && (systolicPressCorrected > 96)) || ((diastolicPressCorrected > 84) && (diastolicPressCorrected < 96)) || ((diastolicPressCorrected < 66.5) && (diastolicPressCorrected > 56))))) {     
+  if(newBloodPressComputed || (alarmCheck && (newBloodPressComputed || newEKGComputed || newRespirationComputed || newPulseRateComputed || newTempComputed)) || (bpBlink && (((systolicPressCorrected > 136.5) && (systolicPressCorrected < 156)) || ((systolicPressCorrected < 114) && (systolicPressCorrected > 96)) || ((diastolicPressCorrected > 84) && (diastolicPressCorrected < 96)) || ((diastolicPressCorrected < 66.5) && (diastolicPressCorrected > 56))))) {     
     if(*WarningAlarmData.bpOutOfRange && ((systolicPressCorrected > 156) || (systolicPressCorrected < 96)) && (annonciationCounter > 4)) {
       sysColor = RED;
       if(bpCountIncr) {
@@ -225,7 +228,7 @@ void updateMeasurements(double tempCorrected,
   }
 
   //respiration color and data display
-  if(newRespirationComputed || (alarmCheck && (newBloodPressComputed || newRespirationComputed || newPulseRateComputed || newTempComputed))) {  
+  if(newRespirationComputed || (alarmCheck && (newBloodPressComputed || newEKGComputed || newRespirationComputed || newPulseRateComputed || newTempComputed))) {  
      int respirationColor;
      if(*WarningAlarmData.respOutOfRange && ((respirationCorrected > 28) || (respirationCorrected < 10)) && (annonciationCounter > 4)) {
        respirationColor = RED;
@@ -251,7 +254,7 @@ void updateMeasurements(double tempCorrected,
   }
   
   //pulse color and data display
-  if(newPulseRateComputed || (alarmCheck && (newBloodPressComputed || newRespirationComputed || newPulseRateComputed || newTempComputed)) || (pulseBlink && (((pulseRateCorrected > 105) && (pulseRateCorrected < 115)) || ((pulseRateCorrected < 57) && (pulseRateCorrected > 51))))) {
+  if(newPulseRateComputed || (alarmCheck && (newBloodPressComputed || newEKGComputed || newRespirationComputed || newPulseRateComputed || newTempComputed)) || (pulseBlink && (((pulseRateCorrected > 105) && (pulseRateCorrected < 115)) || ((pulseRateCorrected < 57) && (pulseRateCorrected > 51))))) {
      if(*WarningAlarmData.pulseOutOfRange && ((pulseRateCorrected > 115) || (pulseRateCorrected < 51)) && (annonciationCounter > 4)) {
       pulseColor = RED;
       if(pulseCountIncr) {
@@ -337,6 +340,7 @@ void touchScreen() {
   pinMode(XM, OUTPUT);
   pinMode(YP, OUTPUT);
 
+//used to decide if 8 hours has passed. if it has it sets all the warning counts equal to 0 and resets 8 hours counter.
   if((millis() - eightHourTimer) > 28800000) {
     tempWarningCount = 0;
     bpWarningCount = 0;
@@ -392,62 +396,63 @@ void touchScreen() {
            tft.fillRect((12 + BUTTONWIDTH), 202, BUTTONWIDTH, BUTTONHEIGHT, BLUE);//changes color to represent a button press
            TFT_Write(RED, (18 + BUTTONWIDTH), 217, "Alarm");
            
-        } else if (((tft.height()-p.y) < ((BUTTONWIDTH) + 10)) && ((tft.height()-p.y) > 10) && (*KeypadData.alarmAcknowledge == 0)) {                        //checks to see if the vertical axis for blank was pressed.
+        } else if (((tft.height()-p.y) < ((BUTTONWIDTH) + 10)) && ((tft.height()-p.y) > 10) && (*KeypadData.alarmAcknowledge == 0)) {                        //checks to see if the vertical axis for EKG was pressed.
           ekgCheck = true;
            *MeasureData.measurementSelection = 5; //assigns button selected data
            *KeypadData.localMeasurementSelection = 5;
           tft.fillRect(10, 202, (BUTTONWIDTH), (BUTTONHEIGHT), BLUE);             //changes color to represent a button press
           TFT_Write(RED, 12, 217," EKG");
           
-        } else if (((tft.height()-p.y) < ((14 + BUTTONWIDTH * 3))) && ((tft.height()-p.y) > (14 + BUTTONWIDTH * 2)) && (*KeypadData.alarmAcknowledge == 0)) {                    //checks to see if the vertical axis for blank was pressed.
+        } else if (((tft.height()-p.y) < ((14 + BUTTONWIDTH * 3))) && ((tft.height()-p.y) > (14 + BUTTONWIDTH * 2)) && (*KeypadData.alarmAcknowledge == 0)) {                    //checks to see if the vertical axis for traffic was pressed.
           tft.fillRect((14 + BUTTONWIDTH * 2), 202, (BUTTONWIDTH), (BUTTONHEIGHT), BLUE);//changes color to represent a button press
           TFT_Write(RED, (16 + BUTTONWIDTH * 2), 217,"Traffic");
           unsigned int i;
-          for(i=0;i<75;i++) {
+          for(i=0;i<75;i++) {//loops through ringing buzzer with low pitch because of the longer delay
             digitalWrite(BUZZER_PIN,HIGH);
-            delay(4);//wait for 1ms
+            delay(4);
             digitalWrite(BUZZER_PIN,LOW);
-            delay(4);//wait for 1ms
+            delay(4);
           }
           //output another frequency
-          for(i=0;i<200;i++) {
+          for(i=0;i<200;i++) {//loops through ringing buzzer with high pitch because of the shorter delay
             digitalWrite(BUZZER_PIN,HIGH);
             delay(1);
             digitalWrite(BUZZER_PIN,LOW);
             delay(1);
           }
-          for(i=0;i<200;i++) {
+          for(i=0;i<200;i++) {//loops through ringing buzzer with high pitch because of the shorter delay
             digitalWrite(BUZZER_PIN,HIGH);
             delay(2);
             digitalWrite(BUZZER_PIN,LOW);
             delay(2);
           }
-          for(i=0;i<175;i++) {
+          for(i=0;i<175;i++) {//loops through ringing buzzer with low pitch because of the longer delay
             digitalWrite(BUZZER_PIN,HIGH);
             delay(3);
             digitalWrite(BUZZER_PIN,LOW);
             delay(3);
           }
-          tft.fillRect((14 + BUTTONWIDTH * 2), 202, (BUTTONWIDTH), (BUTTONHEIGHT), CYAN);//changes color to represent a button press
+          tft.fillRect((14 + BUTTONWIDTH * 2), 202, (BUTTONWIDTH), (BUTTONHEIGHT), CYAN);//changes color back to represent unpressed
           TFT_Write(RED, (16 + BUTTONWIDTH * 2), 217,"Traffic");
         }
      } 
   } else if (alarmButton && ((millis() - previousTime) > BUTTON_TIME)){                                               //if the alarm button was pressed and its time to look at the 
       previousTime = millis();                                                                                        //buttons pressed we will check them
       alarmButton = false;
-      tft.fillRect((16 + BUTTONWIDTH * 3), 202, (BUTTONWIDTH), (BUTTONHEIGHT), BLACK);                                                            //clears screen to normal and buttons back to unpressed.
+      tft.fillRect((16 + BUTTONWIDTH * 3), 202, (BUTTONWIDTH), (BUTTONHEIGHT), BLACK);                                //clears screen to normal and buttons back to unpressed.
       alarmColor = BLACK;
       tft.fillRect((12 + BUTTONWIDTH), 202, BUTTONWIDTH, BUTTONHEIGHT, CYAN);
       TFT_Write(RED, (18 + BUTTONWIDTH), 217, "Alarm");
-      Serial.println("Alarm Acknowledged");                                                          //will print in serial that alarm was acknowledged
+      Serial.println("Alarm Acknowledged");                                                                          //will print in serial that alarm was acknowledged
   }
 }
 
 // Gets an unsigned int from the Uno
+//used for serial communications
 unsigned int getSerialUInt(byte task) {
   unsigned int measuredInt = 0;
   while(Serial1.available() == 0) {}
-  delay(10);
+  delay(10);//waits for bytes
   if(Serial1.available() == 5) {
     // Throwing away start byte
     Serial1.read();

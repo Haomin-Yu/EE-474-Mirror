@@ -32,11 +32,14 @@ extern bool alarmCheck;
 extern bool ekgCheck;
 
 // Measures the data 'temperatureRaw', 'systolicPressRaw',
-// 'diastolicPressRaw', and/or 'pulseRateRaw' beased on
+// 'diastolicPressRaw', 'RespirationRaw', 'EKGRaw', and/or 'pulseRateRaw' beased on
 // the given measureSelection in 'Data'
+
+//precents deciding if it will be saved in the buffer
 static const double THRESHOLD_PULSE_PERCENT       = 15.0;
 static const double THRESHOLD_RESPIRATION_PERCENT = 15.0;
 static const double THRESHOLD_TEMPERATURE_PERCENT = 15.0;
+//actual function used to send what will be measured and take in the measured data
 void measure(void* Data) {
   	MeasureDataStruct data = *((MeasureDataStruct*)Data);
     unsigned short select = *data.measurementSelection;
@@ -48,6 +51,7 @@ void measure(void* Data) {
     unsigned int incomingData2;
     unsigned int dataDifference;
     switch(select) {
+      //selects temp measurement
       case measureTemp:
         currentIndex = *data.currentTemperatureIndex;
         nextIndex = (*data.currentTemperatureIndex + 1) % 8;
@@ -70,6 +74,7 @@ void measure(void* Data) {
         TFT_Write(RED, 12, 175, " Temp.");
         *data.measurementSelection = outOfBounds;
         break;
+        //selects blood pressure measurement
       case measureBloodPress:
         nextIndex  = (*data.currentSysPressIndex + 1) % 8;
         nextIndex2 = ((*data.currentDiasPressIndex + 1) % 8) + 8;
@@ -88,6 +93,7 @@ void measure(void* Data) {
         TFT_Write(RED, (14 + BUTTONWIDTH), 175, " B.P.");
         *data.measurementSelection = outOfBounds;
         break;
+        //selects pulse measurement
       case measurePulseRate:
         currentIndex = *data.currentPulseRateIndex;
         nextIndex    = (*data.currentPulseRateIndex + 1) % 8;
@@ -111,6 +117,7 @@ void measure(void* Data) {
         TFT_Write(RED, (18 + BUTTONWIDTH * 3), 175, "Pulse");
         *data.measurementSelection = outOfBounds;
         break;
+        //selects respiration measurement
       case measureRespiration:
         currentIndex = *data.currentRespirationIndex;
         nextIndex = (*data.currentRespirationIndex + 1) % 8;
@@ -134,6 +141,7 @@ void measure(void* Data) {
         TFT_Write(RED, (16 + BUTTONWIDTH * 2), 175, " R.R.");
         *data.measurementSelection = outOfBounds;
         break;
+        //selects EKG measurement
       case measureEKG:
         getEKG();
         ekgRawChanged = true;

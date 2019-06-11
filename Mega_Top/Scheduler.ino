@@ -137,8 +137,6 @@ void rmv(TCB* task) {                                             //allows for t
   }
 }
 
-//TCB taskQueue[] = {MeasurementTask, ComputationTask, StatusTask, AlarmTask, DisplayTask, NULL};   //creates an array of the tasks so they can easily be executed in order.
-
 // Global constants
 const unsigned long BUTTON_TIME = 2000;                                                 //defines the constant that states how often the button should be checked
 unsigned long previousTime = millis();                                                  //be executed. in this case its set to 2 seconds but can be changed in milliseconds.

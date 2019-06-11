@@ -34,7 +34,7 @@ bool newRespirationComputed;
 bool newEKGComputed;
 
 // Computes the values for 'tempCorrected', 'sysCorrected',
-// 'diasCorrected', and 'prCorrected' if needed
+// 'diasCorrected', 'respCorrected', 'ekgCorrected', and 'prCorrected' if needed
 void compute(void* Data) {
    ComputeDataStruct data = *((ComputeDataStruct*)Data);
    if(tempRawChanged) {
